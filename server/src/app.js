@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // Path: E:\EduQuest\server\src\app.js
 
 const express = require("express");
@@ -23,3 +24,21 @@ app.use("/api/badges", badgeRoutes);  // Register badge routes under '/api/badge
 app.use("/api/quizzes", quizRoutes);  // Register quiz routes under '/api/quizzes' (added for Day 8)
 
 module.exports = app;  // Export the app to be used in server.js
+=======
+const express = require("express");
+const cors = require("cors");
+
+const authRoutes = require("./routes/auth.routes");
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+app.get("/health", (req, res) => {
+  res.json({ ok: true, message: "EduQuest API running" });
+});
+
+app.use("/api/auth", authRoutes);
+
+module.exports = app;
+>>>>>>> 0ad2d58b43f9bd9354ef25eb60d7b8f51ecbfe20
