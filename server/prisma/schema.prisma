@@ -1,0 +1,162 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  STUDENT
+  INSTRUCTOR
+  ADMIN
+}
+
+model User {
+  id           String   @id @default(cuid())
+  fullName     String
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(STUDENT)
+
+  totalPoints  Int      @default(0)
+  level        Int      @default(1)
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  coursesCreated Course[]     @relation("InstructorCourses")
+  enrollments    Enrollment[]
+  quizAttempts   QuizAttempt[]
+  userBadges     UserBadge[]
+
+  @@index([role])
+}
+
+model Course {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  price       Float
+  level       Int      // e.g., 1 for beginner, 2 for intermediate, 3 for advanced
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  instructorId String
+  instructor   User     @relation("InstructorCourses", fields: [instructorId], references: [id])
+
+  lessons     Lesson[]  // Related lessons
+  enrollments Enrollment[]  // Students enrolled in the course
+  quizzes     Quiz[]    // Quizzes associated with the course
+
+  @@index([instructorId])
+}
+
+model Lesson {
+  id        String @id @default(cuid())
+  courseId  String
+  course    Course @relation(fields: [courseId], references: [id])
+  title     String
+  content   String
+  orderNo   Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([courseId, orderNo])
+  @@index([courseId])
+}
+
+model Enrollment {
+  id        String   @id @default(cuid())
+  userId    String
+  courseId  String
+  progress  Int      @default(0) // 0..100
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id])
+  course Course @relation(fields: [courseId], references: [id])
+
+  @@unique([userId, courseId])
+  @@index([userId])
+  @@index([courseId])
+}
+
+model Quiz {
+  id        String   @id @default(cuid())
+  courseId  String
+  title     String
+  timeLimit Int?     // seconds
+  passScore Int      @default(50)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  course    Course     @relation(fields: [courseId], references: [id])
+  questions Question[] // Questions associated with the quiz
+  attempts  QuizAttempt[] // Students' quiz attempts
+
+  @@index([courseId])
+}
+
+model Question {
+  id        String @id @default(cuid())
+  quizId    String
+  quiz      Quiz   @relation(fields: [quizId], references: [id])
+
+  prompt    String
+  optionA   String
+  optionB   String
+  optionC   String
+  optionD   String
+  correct   String // "A"|"B"|"C"|"D"
+  points    Int    @default(10)
+
+  @@index([quizId])
+}
+
+model QuizAttempt {
+  id        String   @id @default(cuid())
+  userId    String
+  quizId    String
+
+  score     Int
+  percent   Int
+  passed    Boolean
+
+  earnedPoints Int @default(0)
+
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+  quiz Quiz @relation(fields: [quizId], references: [id])
+
+  @@index([userId])
+  @@index([quizId])
+  @@index([createdAt])
+}
+
+model Badge {
+  id          String @id @default(cuid())
+  code        String @unique // FIRST_QUIZ etc.
+  name        String
+  description String
+  pointsBonus Int    @default(0)
+
+  userBadges UserBadge[] // List of users who earned this badge
+}
+
+model UserBadge {
+  id        String   @id @default(cuid())
+  userId    String
+  badgeId   String
+  awardedAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id])
+  badge Badge @relation(fields: [badgeId], references: [id])
+
+  @@unique([userId, badgeId])
+  @@index([userId])
+  @@index([badgeId])
+}
