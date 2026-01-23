@@ -1,5 +1,7 @@
-const { PrismaClient } = require("@prisma/client");
+// Path: E:\EduQuest\server\src\prisma.js
 
-const prisma = new PrismaClient();
+const { PrismaClient } = require("@prisma/client");  // Import PrismaClient
 
-module.exports = prisma;
+const prisma = new PrismaClient();  // Initialize PrismaClient
+
+module.exports = prisma;  // Export the Prisma client to be used in other parts of the app
