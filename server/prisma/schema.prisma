@@ -7,26 +7,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  STUDENT
-  INSTRUCTOR
-  ADMIN
-}
-
 model User {
-  id           String   @id @default(cuid())
-  fullName     String
-  email        String   @unique
-  passwordHash String
-  role         Role     @default(STUDENT)
-
-  totalPoints  Int      @default(0)
-  level        Int      @default(1)
-
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  coursesCreated Course[]     @relation("InstructorCourses")
+  id             String        @id @default(cuid())
+  fullName       String
+  email          String        @unique
+  passwordHash   String
+  role           Role          @default(STUDENT)
+  totalPoints    Int           @default(0)
+  level          Int           @default(1)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  coursesCreated Course[]      @relation("InstructorCourses")
   enrollments    Enrollment[]
   quizAttempts   QuizAttempt[]
   userBadges     UserBadge[]
@@ -35,34 +26,31 @@ model User {
 }
 
 model Course {
-  id          String   @id @default(cuid())
-  title       String
-  description String
-  price       Float
-  level       Int      // e.g., 1 for beginner, 2 for intermediate, 3 for advanced
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
+  id           String       @id @default(cuid())
+  title        String
+  description  String
+  price        Float
+  level        Int
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
   instructorId String
-  instructor   User     @relation("InstructorCourses", fields: [instructorId], references: [id])
-
-  lessons     Lesson[]  // Related lessons
-  enrollments Enrollment[]  // Students enrolled in the course
-  quizzes     Quiz[]    // Quizzes associated with the course
+  instructor   User         @relation("InstructorCourses", fields: [instructorId], references: [id])
+  enrollments  Enrollment[]
+  lessons      Lesson[]
+  quizzes      Quiz[]
 
   @@index([instructorId])
 }
 
 model Lesson {
-  id        String @id @default(cuid())
+  id        String   @id @default(cuid())
   courseId  String
-  course    Course @relation(fields: [courseId], references: [id])
   title     String
   content   String
   orderNo   Int
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  course    Course   @relation(fields: [courseId], references: [id])
 
   @@unique([courseId, orderNo])
   @@index([courseId])
@@ -72,11 +60,10 @@ model Enrollment {
   id        String   @id @default(cuid())
   userId    String
   courseId  String
-  progress  Int      @default(0) // 0..100
+  progress  Int      @default(0)
   createdAt DateTime @default(now())
-
-  user   User   @relation(fields: [userId], references: [id])
-  course Course @relation(fields: [courseId], references: [id])
+  course    Course   @relation(fields: [courseId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 
   @@unique([userId, courseId])
   @@index([userId])
@@ -84,53 +71,46 @@ model Enrollment {
 }
 
 model Quiz {
-  id        String   @id @default(cuid())
+  id        String        @id @default(cuid())
   courseId  String
   title     String
-  timeLimit Int?     // seconds
-  passScore Int      @default(50)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  course    Course     @relation(fields: [courseId], references: [id])
-  questions Question[] // Questions associated with the quiz
-  attempts  QuizAttempt[] // Students' quiz attempts
+  timeLimit Int?
+  passScore Int           @default(50)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  questions Question[]
+  course    Course        @relation(fields: [courseId], references: [id])
+  attempts  QuizAttempt[]
 
   @@index([courseId])
 }
 
 model Question {
-  id        String @id @default(cuid())
-  quizId    String
-  quiz      Quiz   @relation(fields: [quizId], references: [id])
-
-  prompt    String
-  optionA   String
-  optionB   String
-  optionC   String
-  optionD   String
-  correct   String // "A"|"B"|"C"|"D"
-  points    Int    @default(10)
+  id      String @id @default(cuid())
+  quizId  String
+  prompt  String
+  optionA String
+  optionB String
+  optionC String
+  optionD String
+  correct String
+  points  Int    @default(10)
+  quiz    Quiz   @relation(fields: [quizId], references: [id])
 
   @@index([quizId])
 }
 
 model QuizAttempt {
-  id        String   @id @default(cuid())
-  userId    String
-  quizId    String
-
-  score     Int
-  percent   Int
-  passed    Boolean
-
-  earnedPoints Int @default(0)
-
-  createdAt DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id])
-  quiz Quiz @relation(fields: [quizId], references: [id])
+  id           String   @id @default(cuid())
+  userId       String
+  quizId       String
+  score        Int
+  percent      Int
+  passed       Boolean
+  earnedPoints Int      @default(0)
+  createdAt    DateTime @default(now())
+  quiz         Quiz     @relation(fields: [quizId], references: [id])
+  user         User     @relation(fields: [userId], references: [id])
 
   @@index([userId])
   @@index([quizId])
@@ -138,13 +118,12 @@ model QuizAttempt {
 }
 
 model Badge {
-  id          String @id @default(cuid())
-  code        String @unique // FIRST_QUIZ etc.
+  id          String      @id @default(cuid())
+  code        String      @unique
   name        String
   description String
-  pointsBonus Int    @default(0)
-
-  userBadges UserBadge[] // List of users who earned this badge
+  pointsBonus Int         @default(0)
+  userBadges  UserBadge[]
 }
 
 model UserBadge {
@@ -152,11 +131,16 @@ model UserBadge {
   userId    String
   badgeId   String
   awardedAt DateTime @default(now())
-
-  user  User  @relation(fields: [userId], references: [id])
-  badge Badge @relation(fields: [badgeId], references: [id])
+  badge     Badge    @relation(fields: [badgeId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 
   @@unique([userId, badgeId])
   @@index([userId])
   @@index([badgeId])
+}
+
+enum Role {
+  STUDENT
+  INSTRUCTOR
+  ADMIN
 }

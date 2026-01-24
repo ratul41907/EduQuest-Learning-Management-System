@@ -161,3 +161,4 @@ model UserBadge {
   @@index([userId])
   @@index([badgeId])
 }
+
