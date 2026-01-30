@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  engineType    = "binary"
 }
 
 datasource db {
@@ -26,10 +27,12 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  coursesCreated Course[]     @relation("InstructorCourses")
-  enrollments    Enrollment[]
-  quizAttempts   QuizAttempt[]
-  userBadges     UserBadge[]
+  coursesCreated    Course[]           @relation("InstructorCourses")
+  enrollments       Enrollment[]
+  quizAttempts      QuizAttempt[]
+  userBadges        UserBadge[]
+  // Day 25: Relation to track completed lessons
+  lessonCompletions LessonCompletion[] 
 
   @@index([role])
 }
@@ -47,6 +50,8 @@ model Course {
   lessons     Lesson[]
   enrollments Enrollment[]
   quizzes     Quiz[]
+  // Day 25: Relation to track completions within this course
+  lessonCompletions LessonCompletion[] 
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -55,12 +60,15 @@ model Course {
 }
 
 model Lesson {
-  id        String @id @default(cuid())
-  courseId  String
-  course    Course @relation(fields: [courseId], references: [id])
-  title     String
-  content   String
-  orderNo   Int
+  id          String @id @default(cuid())
+  courseId    String
+  course      Course @relation(fields: [courseId], references: [id])
+  title       String
+  content     String
+  orderNo     Int
+
+  // Day 25: Relation to track who completed this specific lesson
+  completions LessonCompletion[] 
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -84,6 +92,24 @@ model Enrollment {
   @@index([courseId])
 }
 
+model LessonCompletion {
+  id        String   @id @default(cuid())
+  userId    String
+  courseId  String
+  lessonId  String
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id])
+  course Course @relation(fields: [courseId], references: [id])
+  lesson Lesson @relation(fields: [lessonId], references: [id])
+
+  // Ensures a student can't complete the same lesson multiple times
+  @@unique([userId, lessonId])
+  @@index([userId])
+  @@index([courseId])
+  @@index([lessonId])
+}
+
 model Quiz {
   id        String   @id @default(cuid())
   courseId  String
@@ -94,7 +120,7 @@ model Quiz {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  course    Course     @relation(fields: [courseId], references: [id])
+  course    Course      @relation(fields: [courseId], references: [id])
   questions Question[]
   attempts  QuizAttempt[]
 
@@ -118,13 +144,13 @@ model Question {
 }
 
 model QuizAttempt {
-  id        String   @id @default(cuid())
-  userId    String
-  quizId    String
+  id           String   @id @default(cuid())
+  userId       String
+  quizId       String
 
-  score     Int
-  percent   Int
-  passed    Boolean
+  score        Int
+  percent      Int
+  passed       Boolean
 
   earnedPoints Int @default(0)
 
@@ -161,4 +187,3 @@ model UserBadge {
   @@index([userId])
   @@index([badgeId])
 }
-
