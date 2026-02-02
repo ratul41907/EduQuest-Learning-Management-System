@@ -1,9 +1,13 @@
 // Path: E:\EduQuest\server\src\routes\badge.routes.js
+
 const router = require("express").Router();
 const prisma = require("../prisma");
 const { requireAuth } = require("../middleware/auth");
 
-// GET /api/badges - List all badges
+// ===========================
+// GET /api/badges
+// Public: list all badges
+// ===========================
 router.get("/", async (req, res) => {
   try {
     const badges = await prisma.badge.findMany({
@@ -14,6 +18,7 @@ router.get("/", async (req, res) => {
         description: true,
         pointsBonus: true,
       },
+      orderBy: { name: "asc" },
     });
 
     return res.json(badges);
@@ -22,28 +27,37 @@ router.get("/", async (req, res) => {
   }
 });
 
-// POST /api/badges - Create a new badge (Instructor only)
-router.post("/", requireAuth, async (req, res) => {
-  if (req.user.role !== "INSTRUCTOR") {
-    return res.status(403).json({ message: "Access denied" });
-  }
-
-  const { code, name, description, pointsBonus } = req.body;
-
+// ===========================
+// GET /api/badges/my
+// Protected: logged-in user's earned badges
+// Header: Authorization: Bearer <TOKEN>
+// ===========================
+router.get("/my", requireAuth, async (req, res) => {
   try {
-    const badge = await prisma.badge.create({
-      data: {
-        code,
-        name,
-        description,
-        pointsBonus,
+    const userId = req.user.sub;
+
+    const earned = await prisma.userBadge.findMany({
+      where: { userId },
+      select: {
+        id: true,
+        awardedAt: true,
+        badge: {
+          select: {
+            id: true,
+            code: true,
+            name: true,
+            description: true,
+            pointsBonus: true,
+          },
+        },
       },
+      orderBy: { awardedAt: "desc" },
     });
 
-    return res.status(201).json(badge);
+    return res.json(earned);
   } catch (err) {
-    return res.status(500).json({ message: "Error creating badge", error: err.message });
+    return res.status(500).json({ message: "Error fetching my badges", error: err.message });
   }
 });
 
-module.exports = router;  // Export the router to be used in app.js
+module.exports = router;
