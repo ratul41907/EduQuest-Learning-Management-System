@@ -26,8 +26,9 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  coursesCreated Course[]     @relation("InstructorCourses")
+  coursesCreated Course[]      @relation("InstructorCourses")
   enrollments    Enrollment[]
+  lessonProgress LessonProgress[]
   quizAttempts   QuizAttempt[]
   userBadges     UserBadge[]
 
@@ -35,35 +36,37 @@ model User {
 }
 
 model Course {
-  id          String   @id @default(cuid())
-  title       String
-  description String
-  thumbnail   String?
-  isPublished Boolean  @default(false)
+  id           String   @id @default(cuid())
+  title        String
+  description  String
+  price        Float
+  level        Int
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   instructorId String
   instructor   User     @relation("InstructorCourses", fields: [instructorId], references: [id])
 
-  lessons     Lesson[]
-  enrollments Enrollment[]
-  quizzes     Quiz[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  enrollments  Enrollment[]
+  lessons      Lesson[]
+  quizzes      Quiz[]
 
   @@index([instructorId])
 }
 
 model Lesson {
-  id        String @id @default(cuid())
+  id        String   @id @default(cuid())
   courseId  String
-  course    Course @relation(fields: [courseId], references: [id])
   title     String
   content   String
   orderNo   Int
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  course    Course         @relation(fields: [courseId], references: [id])
+  progress  LessonProgress[]
 
   @@unique([courseId, orderNo])
   @@index([courseId])
@@ -73,7 +76,7 @@ model Enrollment {
   id        String   @id @default(cuid())
   userId    String
   courseId  String
-  progress  Int      @default(0) // 0..100
+  progress  Int      @default(0)
   createdAt DateTime @default(now())
 
   user   User   @relation(fields: [userId], references: [id])
@@ -84,11 +87,27 @@ model Enrollment {
   @@index([courseId])
 }
 
+model LessonProgress {
+  id        String   @id @default(cuid())
+  userId    String
+  lessonId  String
+  courseId  String
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id])
+  lesson Lesson @relation(fields: [lessonId], references: [id])
+
+  @@unique([userId, lessonId])
+  @@index([userId])
+  @@index([lessonId])
+  @@index([courseId])
+}
+
 model Quiz {
   id        String   @id @default(cuid())
   courseId  String
   title     String
-  timeLimit Int?     // seconds
+  timeLimit Int?
   passScore Int      @default(50)
 
   createdAt DateTime @default(now())
@@ -102,33 +121,30 @@ model Quiz {
 }
 
 model Question {
-  id        String @id @default(cuid())
-  quizId    String
-  quiz      Quiz   @relation(fields: [quizId], references: [id])
+  id      String @id @default(cuid())
+  quizId  String
+  prompt  String
+  optionA String
+  optionB String
+  optionC String
+  optionD String
+  correct String
+  points  Int    @default(10)
 
-  prompt    String
-  optionA   String
-  optionB   String
-  optionC   String
-  optionD   String
-  correct   String // "A"|"B"|"C"|"D"
-  points    Int    @default(10)
+  quiz Quiz @relation(fields: [quizId], references: [id])
 
   @@index([quizId])
 }
 
 model QuizAttempt {
-  id        String   @id @default(cuid())
-  userId    String
-  quizId    String
-
-  score     Int
-  percent   Int
-  passed    Boolean
-
-  earnedPoints Int @default(0)
-
-  createdAt DateTime @default(now())
+  id           String   @id @default(cuid())
+  userId       String
+  quizId       String
+  score        Int
+  percent      Int
+  passed       Boolean
+  earnedPoints Int      @default(0)
+  createdAt    DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id])
   quiz Quiz @relation(fields: [quizId], references: [id])
@@ -140,7 +156,7 @@ model QuizAttempt {
 
 model Badge {
   id          String @id @default(cuid())
-  code        String @unique // FIRST_QUIZ etc.
+  code        String @unique
   name        String
   description String
   pointsBonus Int    @default(0)
@@ -160,4 +176,10 @@ model UserBadge {
   @@unique([userId, badgeId])
   @@index([userId])
   @@index([badgeId])
+}
+
+enum Role {
+  STUDENT
+  INSTRUCTOR
+  ADMIN
 }
