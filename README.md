@@ -58,7 +58,7 @@ server/
 
 ---
 
-## 🧠 Database Models (High-Level)
+## 🧠 Database Models 
 
 - **User**
 - **Course**
@@ -247,19 +247,12 @@ http://localhost:5000
 
 ---
 
-## 💼 Job Readiness Statement
-
-> “I designed and developed a production-style backend system using Node.js, Express.js, Prisma, and PostgreSQL, implementing secure authentication, RESTful APIs, role-based access control, gamification, reviews, notifications, and scalable database architecture.”
-
-This project aligns directly with **backend developer roles requiring 1+ year experience**.
-
----
 
 ## 📜 License
 
 MIT License
 
-Copyright (c) 2026
+Copyright (c) Arafat Zaman Ratul 2026
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction.
 
