@@ -2,16 +2,21 @@ const router = require("express").Router();
 const prisma = require("../prisma");
 const { requireAuth } = require("../middleware/auth");
 
-// ===============================
+// Level rule: every 100 totalPoints => next level (Level 1 starts at 0)
+function calcLevel(totalPoints) {
+  return Math.floor((Number(totalPoints) || 0) / 100) + 1;
+}
+
+// ===================================================
 // GET /api/lessons/course/:courseId
-// Student: view lessons for a course
-// Protected: Bearer token required
-// ===============================
+// Student: view lessons for a course (must be enrolled)
+// Returns: { lessons: [], completedLessonIds: [] }
+// ===================================================
 router.get("/course/:courseId", requireAuth, async (req, res) => {
   try {
     const { courseId } = req.params;
 
-    // (Optional) enforce student enrollment
+    // Student must be enrolled
     if (req.user.role === "STUDENT") {
       const enrolled = await prisma.enrollment.findUnique({
         where: { userId_courseId: { userId: req.user.sub, courseId } },
@@ -29,26 +34,24 @@ router.get("/course/:courseId", requireAuth, async (req, res) => {
         title: true,
         content: true,
         orderNo: true,
+        points: true,
         createdAt: true,
         updatedAt: true,
       },
       orderBy: { orderNo: "asc" },
     });
 
-    // ✅ Because lessonProgress does NOT have courseId, we compute by lessonIds
-    const lessonIds = lessons.map((l) => l.id);
-
     let completedLessonIds = [];
-    if (req.user?.sub && lessonIds.length > 0) {
+    if (req.user?.sub) {
       const completions = await prisma.lessonProgress.findMany({
-        where: {
-          userId: req.user.sub,
-          lessonId: { in: lessonIds },
-        },
+        where: { userId: req.user.sub },
         select: { lessonId: true },
       });
 
       completedLessonIds = completions.map((c) => c.lessonId);
+
+      const lessonIdsInCourse = new Set(lessons.map((l) => l.id));
+      completedLessonIds = completedLessonIds.filter((id) => lessonIdsInCourse.has(id));
     }
 
     return res.json({ lessons, completedLessonIds });
@@ -57,11 +60,10 @@ router.get("/course/:courseId", requireAuth, async (req, res) => {
   }
 });
 
-// ===============================
+// ===================================================
 // POST /api/lessons/:courseId
-// Instructor: create lesson
-// Protected: Instructor only
-// ===============================
+// Instructor: create lesson (orderNo unique per course)
+// ===================================================
 router.post("/:courseId", requireAuth, async (req, res) => {
   try {
     if (req.user.role !== "INSTRUCTOR") {
@@ -69,20 +71,20 @@ router.post("/:courseId", requireAuth, async (req, res) => {
     }
 
     const { courseId } = req.params;
-    const { title, content, orderNo } = req.body;
+    const { title, content, orderNo, points } = req.body;
 
     if (!title || !content || orderNo == null) {
       return res.status(400).json({ message: "title, content, orderNo required" });
     }
 
-    // prevent duplicate orderNo for same course
     const exists = await prisma.lesson.findFirst({
       where: { courseId, orderNo: Number(orderNo) },
     });
+
     if (exists) {
       return res.status(409).json({
         message: "orderNo already used for this course",
-        hint: "Use a different orderNo (e.g. 2,3,4...)",
+        hint: "Use a different orderNo (e.g. 2, 3, 4...)",
       });
     }
 
@@ -92,6 +94,7 @@ router.post("/:courseId", requireAuth, async (req, res) => {
         title,
         content,
         orderNo: Number(orderNo),
+        points: points != null ? Number(points) : 10,
       },
     });
 
@@ -101,11 +104,11 @@ router.post("/:courseId", requireAuth, async (req, res) => {
   }
 });
 
-// ===============================
+// ===================================================
 // POST /api/lessons/:lessonId/complete
-// Student: mark lesson complete + update course progress
-// Protected: Student only
-// ===============================
+// Student: complete lesson, award points, badges, progress
+// + Notification when course completed (progress===100)
+// ===================================================
 router.post("/:lessonId/complete", requireAuth, async (req, res) => {
   try {
     if (req.user.role !== "STUDENT") {
@@ -114,58 +117,147 @@ router.post("/:lessonId/complete", requireAuth, async (req, res) => {
 
     const { lessonId } = req.params;
 
+    // 1) Find lesson & course
     const lesson = await prisma.lesson.findUnique({
       where: { id: lessonId },
-      select: { id: true, courseId: true },
+      select: { id: true, courseId: true, points: true },
     });
     if (!lesson) return res.status(404).json({ message: "Lesson not found" });
 
-    // must be enrolled
+    // 2) Must be enrolled
     const enrolled = await prisma.enrollment.findUnique({
       where: { userId_courseId: { userId: req.user.sub, courseId: lesson.courseId } },
     });
     if (!enrolled) return res.status(403).json({ message: "You must enroll first" });
 
-    // ✅ IMPORTANT FIX: DO NOT include courseId here
-    await prisma.lessonProgress.upsert({
-      where: { userId_lessonId: { userId: req.user.sub, lessonId } },
-      update: {},
-      create: {
-        userId: req.user.sub,
-        lessonId,
-      },
-    });
+    // 3) Create completion (NO double completion)
+    let newlyCompleted = false;
+    try {
+      await prisma.lessonProgress.create({
+        data: {
+          userId: req.user.sub,
+          lessonId: lesson.id,
+        },
+      });
+      newlyCompleted = true;
+    } catch (e) {
+      newlyCompleted = false;
+    }
 
-    // ✅ compute progress without courseId column in lessonProgress
-    const allLessons = await prisma.lesson.findMany({
+    // 4) Compute course progress (only THIS course)
+    const totalLessons = await prisma.lesson.count({
       where: { courseId: lesson.courseId },
-      select: { id: true },
     });
-    const lessonIds = allLessons.map((l) => l.id);
 
-    const totalLessons = lessonIds.length;
-
-    const completed = await prisma.lessonProgress.count({
+    const completedInCourse = await prisma.lessonProgress.count({
       where: {
         userId: req.user.sub,
-        lessonId: { in: lessonIds },
+        lesson: { courseId: lesson.courseId },
       },
     });
 
-    const progress = totalLessons === 0 ? 0 : Math.round((completed / totalLessons) * 100);
+    const progress = totalLessons === 0 ? 0 : Math.round((completedInCourse / totalLessons) * 100);
 
-    // write progress into enrollment table
     await prisma.enrollment.update({
       where: { userId_courseId: { userId: req.user.sub, courseId: lesson.courseId } },
       data: { progress },
     });
 
+    // ✅ Ensure COURSE_COMPLETED notification exists whenever progress===100
+    if (progress === 100) {
+      const existing = await prisma.notification.findFirst({
+        where: {
+          userId: req.user.sub,
+          courseId: lesson.courseId,
+          type: "COURSE_COMPLETED",
+        },
+        select: { id: true },
+      });
+
+      if (!existing) {
+        await prisma.notification.create({
+          data: {
+            userId: req.user.sub,
+            courseId: lesson.courseId,
+            type: "COURSE_COMPLETED",
+            title: "Course Completed",
+            message: "Congrats! You finished the course.",
+            isRead: false,
+          },
+        });
+      }
+    }
+
+    // 5) If already completed, return without awarding points again
+    if (!newlyCompleted) {
+      return res.json({
+        message: "Lesson already completed",
+        lessonId,
+        progress,
+        completed: completedInCourse,
+        totalLessons,
+        pointsAwarded: 0,
+      });
+    }
+
+    // 6) Award points to user
+    const pointsAwarded = Number(lesson.points || 10);
+
+    const updatedUser = await prisma.user.update({
+      where: { id: req.user.sub },
+      data: { totalPoints: { increment: pointsAwarded } },
+      select: { id: true, fullName: true, totalPoints: true, level: true },
+    });
+
+    // 7) Update level if needed
+    const newLevel = calcLevel(updatedUser.totalPoints);
+    let finalUser = updatedUser;
+    if (updatedUser.level !== newLevel) {
+      finalUser = await prisma.user.update({
+        where: { id: req.user.sub },
+        data: { level: newLevel },
+        select: { id: true, fullName: true, totalPoints: true, level: true },
+      });
+    }
+
+    // 8) Badge awarding
+    let badgeAwarded = null;
+
+    // FIRST_LESSON badge (first ever completion)
+    const totalCompletions = await prisma.lessonProgress.count({
+      where: { userId: req.user.sub },
+    });
+
+    if (totalCompletions === 1) {
+      const badge = await prisma.badge.findUnique({ where: { code: "FIRST_LESSON" } });
+      if (badge) {
+        await prisma.userBadge
+          .create({ data: { userId: req.user.sub, badgeId: badge.id } })
+          .catch(() => {});
+        badgeAwarded = "FIRST_LESSON";
+      }
+    }
+
+    // COURSE_FINISHER badge (progress hits 100)
+    if (progress === 100) {
+      const badge = await prisma.badge.findUnique({ where: { code: "COURSE_FINISHER" } });
+      if (badge) {
+        await prisma.userBadge
+          .create({ data: { userId: req.user.sub, badgeId: badge.id } })
+          .catch(() => {});
+        badgeAwarded = badgeAwarded ? `${badgeAwarded},COURSE_FINISHER` : "COURSE_FINISHER";
+      }
+    }
+
     return res.json({
       message: "Lesson completed",
       lessonId,
       progress,
-      completed,
+      completed: completedInCourse,
       totalLessons,
+      pointsAwarded,
+      userProgress: finalUser,
+      badgeAwarded,
     });
   } catch (err) {
     return res.status(500).json({ message: "Failed to complete lesson", error: err.message });

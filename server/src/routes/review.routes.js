@@ -1,0 +1,109 @@
+const router = require("express").Router();
+const prisma = require("../prisma");
+const { requireAuth } = require("../middleware/auth");
+
+// ===============================
+// GET /api/reviews/course/:courseId
+// Public: list reviews + avg rating
+// ===============================
+router.get("/course/:courseId", async (req, res) => {
+  try {
+    const { courseId } = req.params;
+
+    const reviews = await prisma.review.findMany({
+      where: { courseId },
+      select: {
+        id: true,
+        rating: true,
+        comment: true,
+        createdAt: true,
+        user: { select: { id: true, fullName: true } },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    const avg =
+      reviews.length === 0
+        ? 0
+        : Math.round(
+            (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length) * 10
+          ) / 10;
+
+    return res.json({ avgRating: avg, count: reviews.length, reviews });
+  } catch (err) {
+    return res.status(500).json({ message: "Failed to load reviews", error: err.message });
+  }
+});
+
+// ===============================
+// POST /api/reviews/course/:courseId
+// Student: must be enrolled, 1 review per course
+// Body: { rating: 1-5, comment?: "" }
+// ===============================
+router.post("/course/:courseId", requireAuth, async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const { rating, comment } = req.body;
+
+    if (req.user.role !== "STUDENT") {
+      return res.status(403).json({ message: "Only students can review courses" });
+    }
+
+    const r = Number(rating);
+    if (!r || r < 1 || r > 5) {
+      return res.status(400).json({ message: "rating must be between 1 and 5" });
+    }
+
+    // must be enrolled
+    const enrolled = await prisma.enrollment.findUnique({
+      where: { userId_courseId: { userId: req.user.sub, courseId } },
+    });
+    if (!enrolled) {
+      return res.status(403).json({ message: "You must enroll before reviewing" });
+    }
+
+    // create OR update (idempotent for same user/course)
+    const review = await prisma.review.upsert({
+      where: { userId_courseId: { userId: req.user.sub, courseId } },
+      update: { rating: r, comment: comment ? String(comment) : null },
+      create: {
+        userId: req.user.sub,
+        courseId,
+        rating: r,
+        comment: comment ? String(comment) : null,
+      },
+      select: { id: true, courseId: true, rating: true, comment: true, createdAt: true },
+    });
+
+    return res.status(201).json({ message: "Review saved", review });
+  } catch (err) {
+    return res.status(500).json({ message: "Failed to save review", error: err.message });
+  }
+});
+
+// ===============================
+// DELETE /api/reviews/:id
+// Owner or ADMIN
+// ===============================
+router.delete("/:id", requireAuth, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const review = await prisma.review.findUnique({ where: { id } });
+    if (!review) return res.status(404).json({ message: "Review not found" });
+
+    const isOwner = review.userId === req.user.sub;
+    const isAdmin = req.user.role === "ADMIN";
+
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
+    await prisma.review.delete({ where: { id } });
+    return res.json({ message: "Review deleted" });
+  } catch (err) {
+    return res.status(500).json({ message: "Failed to delete review", error: err.message });
+  }
+});
+
+module.exports = router;
