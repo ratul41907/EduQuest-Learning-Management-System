@@ -1,22 +1,22 @@
+// Path: E:\EduQuest\server\src\routes\lesson.routes.js
+
 const router = require("express").Router();
 const prisma = require("../prisma");
 const { requireAuth } = require("../middleware/auth");
 
-// Level rule: every 100 totalPoints => next level (Level 1 starts at 0)
 function calcLevel(totalPoints) {
   return Math.floor((Number(totalPoints) || 0) / 100) + 1;
 }
 
-// ===================================================
+// =========================================
 // GET /api/lessons/course/:courseId
-// Student: view lessons for a course (must be enrolled)
-// Returns: { lessons: [], completedLessonIds: [] }
-// ===================================================
+// Student: view lessons (must be enrolled)
+// IMPORTANT: must stay above /:lessonId routes
+// =========================================
 router.get("/course/:courseId", requireAuth, async (req, res) => {
   try {
     const { courseId } = req.params;
 
-    // Student must be enrolled
     if (req.user.role === "STUDENT") {
       const enrolled = await prisma.enrollment.findUnique({
         where: { userId_courseId: { userId: req.user.sub, courseId } },
@@ -47,23 +47,25 @@ router.get("/course/:courseId", requireAuth, async (req, res) => {
         where: { userId: req.user.sub },
         select: { lessonId: true },
       });
-
-      completedLessonIds = completions.map((c) => c.lessonId);
-
       const lessonIdsInCourse = new Set(lessons.map((l) => l.id));
-      completedLessonIds = completedLessonIds.filter((id) => lessonIdsInCourse.has(id));
+      completedLessonIds = completions
+        .map((c) => c.lessonId)
+        .filter((id) => lessonIdsInCourse.has(id));
     }
 
     return res.json({ lessons, completedLessonIds });
   } catch (err) {
-    return res.status(500).json({ message: "Failed to load lessons", error: err.message });
+    return res.status(500).json({
+      message: "Failed to load lessons",
+      error: err.message,
+    });
   }
 });
 
-// ===================================================
+// =========================================
 // POST /api/lessons/:courseId
-// Instructor: create lesson (orderNo unique per course)
-// ===================================================
+// Instructor only: create a lesson
+// =========================================
 router.post("/:courseId", requireAuth, async (req, res) => {
   try {
     if (req.user.role !== "INSTRUCTOR") {
@@ -100,15 +102,17 @@ router.post("/:courseId", requireAuth, async (req, res) => {
 
     return res.status(201).json(lesson);
   } catch (err) {
-    return res.status(500).json({ message: "Failed to create lesson", error: err.message });
+    return res.status(500).json({
+      message: "Failed to create lesson",
+      error: err.message,
+    });
   }
 });
 
-// ===================================================
+// =========================================
 // POST /api/lessons/:lessonId/complete
-// Student: complete lesson, award points, badges, progress
-// + Notification when course completed (progress===100)
-// ===================================================
+// Student: complete lesson, award points + badges
+// =========================================
 router.post("/:lessonId/complete", requireAuth, async (req, res) => {
   try {
     if (req.user.role !== "STUDENT") {
@@ -117,34 +121,29 @@ router.post("/:lessonId/complete", requireAuth, async (req, res) => {
 
     const { lessonId } = req.params;
 
-    // 1) Find lesson & course
     const lesson = await prisma.lesson.findUnique({
       where: { id: lessonId },
       select: { id: true, courseId: true, points: true },
     });
     if (!lesson) return res.status(404).json({ message: "Lesson not found" });
 
-    // 2) Must be enrolled
     const enrolled = await prisma.enrollment.findUnique({
       where: { userId_courseId: { userId: req.user.sub, courseId: lesson.courseId } },
     });
     if (!enrolled) return res.status(403).json({ message: "You must enroll first" });
 
-    // 3) Create completion (NO double completion)
+    // Prevent double completion
     let newlyCompleted = false;
     try {
       await prisma.lessonProgress.create({
-        data: {
-          userId: req.user.sub,
-          lessonId: lesson.id,
-        },
+        data: { userId: req.user.sub, lessonId: lesson.id },
       });
       newlyCompleted = true;
     } catch (e) {
       newlyCompleted = false;
     }
 
-    // 4) Compute course progress (only THIS course)
+    // Recalculate course progress
     const totalLessons = await prisma.lesson.count({
       where: { courseId: lesson.courseId },
     });
@@ -156,14 +155,19 @@ router.post("/:lessonId/complete", requireAuth, async (req, res) => {
       },
     });
 
-    const progress = totalLessons === 0 ? 0 : Math.round((completedInCourse / totalLessons) * 100);
+    const progress =
+      totalLessons === 0
+        ? 0
+        : Math.round((completedInCourse / totalLessons) * 100);
 
     await prisma.enrollment.update({
-      where: { userId_courseId: { userId: req.user.sub, courseId: lesson.courseId } },
+      where: {
+        userId_courseId: { userId: req.user.sub, courseId: lesson.courseId },
+      },
       data: { progress },
     });
 
-    // ✅ Ensure COURSE_COMPLETED notification exists whenever progress===100
+    // Course completion notification + certificate
     if (progress === 100) {
       const existing = await prisma.notification.findFirst({
         where: {
@@ -180,15 +184,31 @@ router.post("/:lessonId/complete", requireAuth, async (req, res) => {
             userId: req.user.sub,
             courseId: lesson.courseId,
             type: "COURSE_COMPLETED",
-            title: "Course Completed",
-            message: "Congrats! You finished the course.",
+            title: "Course Completed! 🎉",
+            message: "Congrats! You finished the course. Your certificate is ready.",
             isRead: false,
+          },
+        });
+      }
+
+      // Create certificate if not exists
+      const existingCert = await prisma.certificate.findFirst({
+        where: { userId: req.user.sub, courseId: lesson.courseId },
+        select: { id: true },
+      });
+
+      if (!existingCert) {
+        await prisma.certificate.create({
+          data: {
+            userId: req.user.sub,
+            courseId: lesson.courseId,
+            code: `CERT-${req.user.sub.slice(-6).toUpperCase()}-${Date.now()}`,
           },
         });
       }
     }
 
-    // 5) If already completed, return without awarding points again
+    // Already completed — return without awarding points again
     if (!newlyCompleted) {
       return res.json({
         message: "Lesson already completed",
@@ -200,7 +220,7 @@ router.post("/:lessonId/complete", requireAuth, async (req, res) => {
       });
     }
 
-    // 6) Award points to user
+    // Award points
     const pointsAwarded = Number(lesson.points || 10);
 
     const updatedUser = await prisma.user.update({
@@ -209,7 +229,7 @@ router.post("/:lessonId/complete", requireAuth, async (req, res) => {
       select: { id: true, fullName: true, totalPoints: true, level: true },
     });
 
-    // 7) Update level if needed
+    // Update level
     const newLevel = calcLevel(updatedUser.totalPoints);
     let finalUser = updatedUser;
     if (updatedUser.level !== newLevel) {
@@ -220,10 +240,8 @@ router.post("/:lessonId/complete", requireAuth, async (req, res) => {
       });
     }
 
-    // 8) Badge awarding
+    // Badge: FIRST_LESSON
     let badgeAwarded = null;
-
-    // FIRST_LESSON badge (first ever completion)
     const totalCompletions = await prisma.lessonProgress.count({
       where: { userId: req.user.sub },
     });
@@ -235,22 +253,33 @@ router.post("/:lessonId/complete", requireAuth, async (req, res) => {
           .create({ data: { userId: req.user.sub, badgeId: badge.id } })
           .catch(() => {});
         badgeAwarded = "FIRST_LESSON";
+
+        await prisma.notification.create({
+          data: {
+            userId: req.user.sub,
+            type: "BADGE_EARNED",
+            title: "Badge Earned: First Step!",
+            message: "You completed your first lesson. Keep going!",
+          },
+        }).catch(() => {});
       }
     }
 
-    // COURSE_FINISHER badge (progress hits 100)
+    // Badge: COURSE_FINISHER
     if (progress === 100) {
       const badge = await prisma.badge.findUnique({ where: { code: "COURSE_FINISHER" } });
       if (badge) {
         await prisma.userBadge
           .create({ data: { userId: req.user.sub, badgeId: badge.id } })
           .catch(() => {});
-        badgeAwarded = badgeAwarded ? `${badgeAwarded},COURSE_FINISHER` : "COURSE_FINISHER";
+        badgeAwarded = badgeAwarded
+          ? `${badgeAwarded},COURSE_FINISHER`
+          : "COURSE_FINISHER";
       }
     }
 
     return res.json({
-      message: "Lesson completed",
+      message: "Lesson completed! ✅",
       lessonId,
       progress,
       completed: completedInCourse,
@@ -260,7 +289,89 @@ router.post("/:lessonId/complete", requireAuth, async (req, res) => {
       badgeAwarded,
     });
   } catch (err) {
-    return res.status(500).json({ message: "Failed to complete lesson", error: err.message });
+    return res.status(500).json({
+      message: "Failed to complete lesson",
+      error: err.message,
+    });
+  }
+});
+
+// =========================================
+// PATCH /api/lessons/:lessonId
+// NEW: Instructor only — update a lesson
+// =========================================
+router.patch("/:lessonId", requireAuth, async (req, res) => {
+  const { lessonId } = req.params;
+
+  try {
+    if (req.user.role !== "INSTRUCTOR") {
+      return res.status(403).json({ message: "Instructor only" });
+    }
+
+    const lesson = await prisma.lesson.findUnique({
+      where: { id: lessonId },
+      include: { course: { select: { instructorId: true } } },
+    });
+
+    if (!lesson) return res.status(404).json({ message: "Lesson not found" });
+
+    if (lesson.course.instructorId !== req.user.sub) {
+      return res.status(403).json({ message: "You do not own this lesson" });
+    }
+
+    const { title, content, points } = req.body;
+
+    const updated = await prisma.lesson.update({
+      where: { id: lessonId },
+      data: {
+        ...(title   && { title }),
+        ...(content && { content }),
+        ...(points != null && { points: Number(points) }),
+      },
+    });
+
+    return res.json({ message: "Lesson updated", lesson: updated });
+  } catch (err) {
+    return res.status(500).json({
+      message: "Error updating lesson",
+      error: err.message,
+    });
+  }
+});
+
+// =========================================
+// DELETE /api/lessons/:lessonId
+// NEW: Instructor only — delete a lesson
+// =========================================
+router.delete("/:lessonId", requireAuth, async (req, res) => {
+  const { lessonId } = req.params;
+
+  try {
+    if (req.user.role !== "INSTRUCTOR") {
+      return res.status(403).json({ message: "Instructor only" });
+    }
+
+    const lesson = await prisma.lesson.findUnique({
+      where: { id: lessonId },
+      include: { course: { select: { instructorId: true } } },
+    });
+
+    if (!lesson) return res.status(404).json({ message: "Lesson not found" });
+
+    if (lesson.course.instructorId !== req.user.sub) {
+      return res.status(403).json({ message: "You do not own this lesson" });
+    }
+
+    // Delete progress records first
+    await prisma.lessonProgress.deleteMany({ where: { lessonId } });
+    await prisma.lesson.delete({ where: { id: lessonId } });
+
+    return res.json({ message: "Lesson deleted successfully" });
+  } catch (err) {
+    return res.status(500).json({
+      message: "Error deleting lesson",
+      error: err.message,
+    });
   }
 });
 
