@@ -3,6 +3,33 @@ const prisma = require("../prisma");
 const { requireAuth } = require("../middleware/auth");
 
 // ===============================
+// GET /api/reviews/my
+// NEW: Student — see all my own reviews
+// IMPORTANT: must stay above /course/:courseId
+// ===============================
+router.get("/my", requireAuth, async (req, res) => {
+  try {
+    const userId = req.user.sub;
+
+    const reviews = await prisma.review.findMany({
+      where: { userId },
+      select: {
+        id: true,
+        rating: true,
+        comment: true,
+        createdAt: true,
+        course: { select: { id: true, title: true } },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return res.json({ count: reviews.length, reviews });
+  } catch (err) {
+    return res.status(500).json({ message: "Failed to load my reviews", error: err.message });
+  }
+});
+
+// ===============================
 // GET /api/reviews/course/:courseId
 // Public: list reviews + avg rating
 // ===============================
@@ -39,6 +66,7 @@ router.get("/course/:courseId", async (req, res) => {
 // POST /api/reviews/course/:courseId
 // Student: must be enrolled, 1 review per course
 // Body: { rating: 1-5, comment?: "" }
+// UPDATED: notifies instructor on first review
 // ===============================
 router.post("/course/:courseId", requireAuth, async (req, res) => {
   try {
@@ -62,6 +90,11 @@ router.post("/course/:courseId", requireAuth, async (req, res) => {
       return res.status(403).json({ message: "You must enroll before reviewing" });
     }
 
+    // Check if review already exists (to distinguish create vs update)
+    const existing = await prisma.review.findUnique({
+      where: { userId_courseId: { userId: req.user.sub, courseId } },
+    });
+
     // create OR update (idempotent for same user/course)
     const review = await prisma.review.upsert({
       where: { userId_courseId: { userId: req.user.sub, courseId } },
@@ -75,7 +108,29 @@ router.post("/course/:courseId", requireAuth, async (req, res) => {
       select: { id: true, courseId: true, rating: true, comment: true, createdAt: true },
     });
 
-    return res.status(201).json({ message: "Review saved", review });
+    // Notify instructor only on first review, not on update
+    if (!existing) {
+      const course = await prisma.course.findUnique({
+        where: { id: courseId },
+        select: { instructorId: true, title: true },
+      });
+      if (course) {
+        await prisma.notification.create({
+          data: {
+            userId: course.instructorId,
+            courseId,
+            type: "REVIEW_SUBMITTED",
+            title: "New Review Received!",
+            message: `A student left a ${r}⭐ review on your course: ${course.title}`,
+          },
+        }).catch(() => {});
+      }
+    }
+
+    return res.status(201).json({
+      message: existing ? "Review updated" : "Review submitted",
+      review,
+    });
   } catch (err) {
     return res.status(500).json({ message: "Failed to save review", error: err.message });
   }
