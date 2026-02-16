@@ -3,6 +3,7 @@
 const router = require("express").Router();
 const prisma = require("../prisma");
 const { requireAuth } = require("../middleware/auth");
+const { validate } = require("../middleware/validate"); // Day 7
 
 function calcLevel(totalPoints) {
   return Math.floor((Number(totalPoints) || 0) / 100) + 1;
@@ -65,49 +66,58 @@ router.get("/course/:courseId", requireAuth, async (req, res) => {
 // =========================================
 // POST /api/lessons/:courseId
 // Instructor only: create a lesson
+// UPDATED Day 7: validate middleware added
 // =========================================
-router.post("/:courseId", requireAuth, async (req, res) => {
-  try {
-    if (req.user.role !== "INSTRUCTOR") {
-      return res.status(403).json({ message: "Instructor only" });
-    }
+router.post(
+  "/:courseId",
+  requireAuth,
+  validate({
+    title:   "required|min:3|max:200",
+    content: "required|min:10",
+  }),
+  async (req, res) => {
+    try {
+      if (req.user.role !== "INSTRUCTOR") {
+        return res.status(403).json({ message: "Instructor only" });
+      }
 
-    const { courseId } = req.params;
-    const { title, content, orderNo, points } = req.body;
+      const { courseId } = req.params;
+      const { title, content, orderNo, points } = req.body;
 
-    if (!title || !content || orderNo == null) {
-      return res.status(400).json({ message: "title, content, orderNo required" });
-    }
+      if (orderNo == null) {
+        return res.status(400).json({ message: "orderNo is required" });
+      }
 
-    const exists = await prisma.lesson.findFirst({
-      where: { courseId, orderNo: Number(orderNo) },
-    });
+      const exists = await prisma.lesson.findFirst({
+        where: { courseId, orderNo: Number(orderNo) },
+      });
 
-    if (exists) {
-      return res.status(409).json({
-        message: "orderNo already used for this course",
-        hint: "Use a different orderNo (e.g. 2, 3, 4...)",
+      if (exists) {
+        return res.status(409).json({
+          message: "orderNo already used for this course",
+          hint: "Use a different orderNo (e.g. 2, 3, 4...)",
+        });
+      }
+
+      const lesson = await prisma.lesson.create({
+        data: {
+          courseId,
+          title,
+          content,
+          orderNo: Number(orderNo),
+          points: points != null ? Number(points) : 10,
+        },
+      });
+
+      return res.status(201).json(lesson);
+    } catch (err) {
+      return res.status(500).json({
+        message: "Failed to create lesson",
+        error: err.message,
       });
     }
-
-    const lesson = await prisma.lesson.create({
-      data: {
-        courseId,
-        title,
-        content,
-        orderNo: Number(orderNo),
-        points: points != null ? Number(points) : 10,
-      },
-    });
-
-    return res.status(201).json(lesson);
-  } catch (err) {
-    return res.status(500).json({
-      message: "Failed to create lesson",
-      error: err.message,
-    });
   }
-});
+);
 
 // =========================================
 // POST /api/lessons/:lessonId/complete
@@ -161,20 +171,14 @@ router.post("/:lessonId/complete", requireAuth, async (req, res) => {
         : Math.round((completedInCourse / totalLessons) * 100);
 
     await prisma.enrollment.update({
-      where: {
-        userId_courseId: { userId: req.user.sub, courseId: lesson.courseId },
-      },
+      where: { userId_courseId: { userId: req.user.sub, courseId: lesson.courseId } },
       data: { progress },
     });
 
     // Course completion notification + certificate
     if (progress === 100) {
       const existing = await prisma.notification.findFirst({
-        where: {
-          userId: req.user.sub,
-          courseId: lesson.courseId,
-          type: "COURSE_COMPLETED",
-        },
+        where: { userId: req.user.sub, courseId: lesson.courseId, type: "COURSE_COMPLETED" },
         select: { id: true },
       });
 
@@ -191,7 +195,6 @@ router.post("/:lessonId/complete", requireAuth, async (req, res) => {
         });
       }
 
-      // Create certificate if not exists
       const existingCert = await prisma.certificate.findFirst({
         where: { userId: req.user.sub, courseId: lesson.courseId },
         select: { id: true },
@@ -229,7 +232,6 @@ router.post("/:lessonId/complete", requireAuth, async (req, res) => {
       select: { id: true, fullName: true, totalPoints: true, level: true },
     });
 
-    // Update level
     const newLevel = calcLevel(updatedUser.totalPoints);
     let finalUser = updatedUser;
     if (updatedUser.level !== newLevel) {
@@ -298,7 +300,7 @@ router.post("/:lessonId/complete", requireAuth, async (req, res) => {
 
 // =========================================
 // PATCH /api/lessons/:lessonId
-// NEW: Instructor only — update a lesson
+// Instructor only: update a lesson
 // =========================================
 router.patch("/:lessonId", requireAuth, async (req, res) => {
   const { lessonId } = req.params;
@@ -341,7 +343,7 @@ router.patch("/:lessonId", requireAuth, async (req, res) => {
 
 // =========================================
 // DELETE /api/lessons/:lessonId
-// NEW: Instructor only — delete a lesson
+// Instructor only: delete a lesson
 // =========================================
 router.delete("/:lessonId", requireAuth, async (req, res) => {
   const { lessonId } = req.params;
@@ -362,7 +364,6 @@ router.delete("/:lessonId", requireAuth, async (req, res) => {
       return res.status(403).json({ message: "You do not own this lesson" });
     }
 
-    // Delete progress records first
     await prisma.lessonProgress.deleteMany({ where: { lessonId } });
     await prisma.lesson.delete({ where: { id: lessonId } });
 

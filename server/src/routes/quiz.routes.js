@@ -3,6 +3,7 @@
 const router = require("express").Router();
 const prisma = require("../prisma");
 const { requireAuth } = require("../middleware/auth");
+const { validate } = require("../middleware/validate"); // NEW Day 7
 
 // Level rule: every 100 totalPoints => next level (Level 1 starts at 0)
 function calcLevel(totalPoints) {
@@ -145,35 +146,57 @@ router.get("/course/:courseId", async (req, res) => {
 // =========================================
 // POST /api/quizzes/:courseId
 // Instructor only: create quiz under a course
+// UPDATED Day 7: validate middleware added
 // =========================================
-router.post("/:courseId", requireAuth, async (req, res) => {
-  const { courseId } = req.params;
-  const { title, timeLimit, passScore } = req.body;
+router.post(
+  "/:courseId",
+  requireAuth,
+  validate({
+    title: "required|min:3|max:200",
+  }),
+  async (req, res) => {
+    const { courseId } = req.params;
+    const { title, timeLimit, passScore } = req.body;
 
-  try {
-    if (req.user.role !== "INSTRUCTOR") {
-      return res.status(403).json({ message: "Access denied" });
+    try {
+      if (req.user.role !== "INSTRUCTOR") {
+        return res.status(403).json({ message: "Access denied" });
+      }
+
+      const course = await prisma.course.findUnique({ where: { id: courseId } });
+      if (!course) return res.status(404).json({ message: "Course not found" });
+
+      // Validate passScore range if provided
+      if (passScore != null) {
+        const ps = Number(passScore);
+        if (isNaN(ps) || ps < 0 || ps > 100) {
+          return res.status(400).json({ message: "passScore must be between 0 and 100" });
+        }
+      }
+
+      // Validate timeLimit if provided
+      if (timeLimit != null) {
+        const tl = Number(timeLimit);
+        if (isNaN(tl) || tl < 1) {
+          return res.status(400).json({ message: "timeLimit must be a positive number (minutes)" });
+        }
+      }
+
+      const quiz = await prisma.quiz.create({
+        data: {
+          title,
+          timeLimit: timeLimit != null ? Number(timeLimit) : null,
+          passScore: passScore != null ? Number(passScore) : 50,
+          courseId,
+        },
+      });
+
+      return res.status(201).json(quiz);
+    } catch (err) {
+      return res.status(500).json({ message: "Error creating quiz", error: err.message });
     }
-
-    if (!title) return res.status(400).json({ message: "title is required" });
-
-    const course = await prisma.course.findUnique({ where: { id: courseId } });
-    if (!course) return res.status(404).json({ message: "Course not found" });
-
-    const quiz = await prisma.quiz.create({
-      data: {
-        title,
-        timeLimit: timeLimit != null ? Number(timeLimit) : null,
-        passScore: passScore != null ? Number(passScore) : 50,
-        courseId,
-      },
-    });
-
-    return res.status(201).json(quiz);
-  } catch (err) {
-    return res.status(500).json({ message: "Error creating quiz", error: err.message });
   }
-});
+);
 
 // =========================================
 // POST /api/quizzes/:id/attempt
@@ -225,7 +248,6 @@ router.post("/:id/attempt", requireAuth, async (req, res) => {
     const userId = req.user.sub;
 
     // ── Check if this is user's first ever quiz attempt ────
-    // Do this BEFORE creating the attempt so count === 0 means first
     const previousAttemptCount = await prisma.quizAttempt.count({
       where: { userId },
     });
@@ -233,14 +255,7 @@ router.post("/:id/attempt", requireAuth, async (req, res) => {
 
     // ── Create attempt record ──────────────────────────────
     const attempt = await prisma.quizAttempt.create({
-      data: {
-        userId,
-        quizId: id,
-        score,
-        percent,
-        passed,
-        earnedPoints,
-      },
+      data: { userId, quizId: id, score, percent, passed, earnedPoints },
       select: {
         id: true,
         userId: true,
@@ -257,12 +272,7 @@ router.post("/:id/attempt", requireAuth, async (req, res) => {
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: { totalPoints: { increment: earnedPoints } },
-      select: {
-        id: true,
-        fullName: true,
-        totalPoints: true,
-        level: true,
-      },
+      select: { id: true, fullName: true, totalPoints: true, level: true },
     });
 
     // ── Update level if needed ─────────────────────────────
@@ -273,12 +283,7 @@ router.post("/:id/attempt", requireAuth, async (req, res) => {
       finalUser = await prisma.user.update({
         where: { id: userId },
         data: { level: newLevel },
-        select: {
-          id: true,
-          fullName: true,
-          totalPoints: true,
-          level: true,
-        },
+        select: { id: true, fullName: true, totalPoints: true, level: true },
       });
     }
 
@@ -287,9 +292,7 @@ router.post("/:id/attempt", requireAuth, async (req, res) => {
 
     // FIRST_QUIZ — only on their very first attempt ever
     if (isFirstAttempt) {
-      const badge = await prisma.badge.findUnique({
-        where: { code: "FIRST_QUIZ" },
-      });
+      const badge = await prisma.badge.findUnique({ where: { code: "FIRST_QUIZ" } });
       if (badge) {
         await prisma.userBadge
           .upsert({
@@ -300,7 +303,6 @@ router.post("/:id/attempt", requireAuth, async (req, res) => {
           .catch(() => {});
         badgesAwarded.push("FIRST_QUIZ");
 
-        // Notify student
         await prisma.notification.create({
           data: {
             userId,
@@ -312,26 +314,22 @@ router.post("/:id/attempt", requireAuth, async (req, res) => {
       }
     }
 
-    // PERFECT_SCORE — awarded once per user (not once per quiz)
+    // PERFECT_SCORE — awarded once per user
     if (percent === 100) {
-      const badge = await prisma.badge.findUnique({
-        where: { code: "PERFECT_SCORE" },
-      });
+      const badge = await prisma.badge.findUnique({ where: { code: "PERFECT_SCORE" } });
       if (badge) {
-        // upsert so it only saves once even if they score 100 again
-        const { count } = await prisma.userBadge
+        await prisma.userBadge
           .upsert({
             where: { userId_badgeId: { userId, badgeId: badge.id } },
             update: {},
             create: { userId, badgeId: badge.id },
           })
-          .then(() => ({ count: 1 }))
-          .catch(() => ({ count: 0 }));
+          .then(() => {})
+          .catch(() => {});
 
         if (!badgesAwarded.includes("PERFECT_SCORE")) {
           badgesAwarded.push("PERFECT_SCORE");
 
-          // Notify student
           await prisma.notification.create({
             data: {
               userId,
@@ -347,7 +345,7 @@ router.post("/:id/attempt", requireAuth, async (req, res) => {
     return res.status(201).json({
       attempt,
       userProgress: finalUser,
-      badgesAwarded, // array e.g. ["FIRST_QUIZ"] or ["PERFECT_SCORE"] or both
+      badgesAwarded,
     });
   } catch (err) {
     return res.status(500).json({
