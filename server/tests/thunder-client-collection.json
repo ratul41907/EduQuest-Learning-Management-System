@@ -1,0 +1,182 @@
+{
+  "client": "Thunder Client",
+  "collectionName": "EduQuest API - Complete Test Suite",
+  "dateExported": "2026-02-20",
+  "version": "1.2",
+  "folders": [
+    {
+      "name": "1. Authentication",
+      "requests": [
+        {
+          "name": "Register Student",
+          "method": "POST",
+          "url": "http://localhost:5000/api/auth/register",
+          "headers": [{ "name": "Content-Type", "value": "application/json" }],
+          "body": {
+            "type": "json",
+            "raw": "{\n  \"fullName\": \"Test Student\",\n  \"email\": \"student@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"STUDENT\"\n}"
+          }
+        },
+        {
+          "name": "Register Instructor",
+          "method": "POST",
+          "url": "http://localhost:5000/api/auth/register",
+          "headers": [{ "name": "Content-Type", "value": "application/json" }],
+          "body": {
+            "type": "json",
+            "raw": "{\n  \"fullName\": \"Test Instructor\",\n  \"email\": \"instructor@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"INSTRUCTOR\"\n}"
+          }
+        },
+        {
+          "name": "Register Admin",
+          "method": "POST",
+          "url": "http://localhost:5000/api/auth/register",
+          "headers": [{ "name": "Content-Type", "value": "application/json" }],
+          "body": {
+            "type": "json",
+            "raw": "{\n  \"fullName\": \"Test Admin\",\n  \"email\": \"admin@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"ADMIN\"\n}"
+          }
+        },
+        {
+          "name": "Login Student",
+          "method": "POST",
+          "url": "http://localhost:5000/api/auth/login",
+          "headers": [{ "name": "Content-Type", "value": "application/json" }],
+          "body": {
+            "type": "json",
+            "raw": "{\n  \"email\": \"student@example.com\",\n  \"password\": \"password123\"\n}"
+          },
+          "tests": [
+            {
+              "type": "set-env-var",
+              "action": "setenv",
+              "value": "{{student_token}}",
+              "varName": "student_token"
+            }
+          ]
+        },
+        {
+          "name": "Login Instructor",
+          "method": "POST",
+          "url": "http://localhost:5000/api/auth/login",
+          "headers": [{ "name": "Content-Type", "value": "application/json" }],
+          "body": {
+            "type": "json",
+            "raw": "{\n  \"email\": \"instructor@example.com\",\n  \"password\": \"password123\"\n}"
+          }
+        },
+        {
+          "name": "Login Admin",
+          "method": "POST",
+          "url": "http://localhost:5000/api/auth/login",
+          "headers": [{ "name": "Content-Type", "value": "application/json" }],
+          "body": {
+            "type": "json",
+            "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"password123\"\n}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Courses",
+      "requests": [
+        {
+          "name": "List All Courses",
+          "method": "GET",
+          "url": "http://localhost:5000/api/courses"
+        },
+        {
+          "name": "Search Courses",
+          "method": "GET",
+          "url": "http://localhost:5000/api/courses?search=react&level=1&page=1&limit=5"
+        },
+        {
+          "name": "Create Course (Instructor)",
+          "method": "POST",
+          "url": "http://localhost:5000/api/courses",
+          "headers": [
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "Authorization", "value": "Bearer {{instructor_token}}" }
+          ],
+          "body": {
+            "type": "json",
+            "raw": "{\n  \"title\": \"React Fundamentals\",\n  \"description\": \"Learn React from scratch with hands-on examples\",\n  \"price\": 0,\n  \"level\": 1\n}"
+          }
+        },
+        {
+          "name": "Get Course Detail",
+          "method": "GET",
+          "url": "http://localhost:5000/api/courses/{{course_id}}"
+        },
+        {
+          "name": "Enroll in Course (Student)",
+          "method": "POST",
+          "url": "http://localhost:5000/api/courses/{{course_id}}/enroll",
+          "headers": [
+            { "name": "Authorization", "value": "Bearer {{student_token}}" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3. Admin",
+      "requests": [
+        {
+          "name": "Admin Stats",
+          "method": "GET",
+          "url": "http://localhost:5000/api/admin/stats",
+          "headers": [
+            { "name": "Authorization", "value": "Bearer {{admin_token}}" }
+          ]
+        },
+        {
+          "name": "List All Users",
+          "method": "GET",
+          "url": "http://localhost:5000/api/admin/users",
+          "headers": [
+            { "name": "Authorization", "value": "Bearer {{admin_token}}" }
+          ]
+        },
+        {
+          "name": "Filter Users by Role",
+          "method": "GET",
+          "url": "http://localhost:5000/api/admin/users?role=STUDENT",
+          "headers": [
+            { "name": "Authorization", "value": "Bearer {{admin_token}}" }
+          ]
+        },
+        {
+          "name": "User Growth Report",
+          "method": "GET",
+          "url": "http://localhost:5000/api/admin/reports/users",
+          "headers": [
+            { "name": "Authorization", "value": "Bearer {{admin_token}}" }
+          ]
+        },
+        {
+          "name": "Enrollment Trends",
+          "method": "GET",
+          "url": "http://localhost:5000/api/admin/reports/enrollments",
+          "headers": [
+            { "name": "Authorization", "value": "Bearer {{admin_token}}" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4. Health & Docs",
+      "requests": [
+        {
+          "name": "Health Check",
+          "method": "GET",
+          "url": "http://localhost:5000/health"
+        },
+        {
+          "name": "API Documentation",
+          "method": "GET",
+          "url": "http://localhost:5000/api/docs"
+        }
+      ]
+    }
+  ]
+}

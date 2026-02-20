@@ -6,9 +6,7 @@ function LinkItem({ to, label }) {
       to={to}
       className={({ isActive }) =>
         `px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-          isActive
-            ? "bg-gray-900 text-white"
-            : "text-gray-700 hover:bg-gray-200"
+          isActive ? "bg-gray-900 text-white" : "text-gray-700 hover:bg-gray-200"
         }`
       }
     >
@@ -22,14 +20,19 @@ export default function Navbar() {
     <header className="bg-white border-b sticky top-0 z-50">
       <div className="max-w-5xl mx-auto p-4 flex items-center justify-between">
         <div className="font-bold text-lg tracking-tight">EduQuest</div>
-        <nav className="flex gap-2">
+
+        <nav className="flex gap-2 flex-wrap">
           <LinkItem to="/" label="Home" />
           <LinkItem to="/courses" label="Courses" />
           <LinkItem to="/leaderboard" label="Leaderboard" />
-          {/* Day 23 NEW Links */}
+
+          {/* Day 23 */}
           <LinkItem to="/badges" label="Badges" />
+
+          {/* ✅ Day 28 */}
+          <LinkItem to="/notifications" label="Notifications" />
+
           <LinkItem to="/profile" label="Profile" />
-          
           <LinkItem to="/login" label="Login" />
           <LinkItem to="/register" label="Register" />
         </nav>

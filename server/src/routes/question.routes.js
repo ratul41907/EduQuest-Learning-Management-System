@@ -3,71 +3,75 @@
 const router = require("express").Router();
 const prisma = require("../prisma");
 const { requireAuth } = require("../middleware/auth");
+const { validate } = require("../middleware/validate"); // NEW Day 7
 
 // =====================================================
 // POST /api/questions/:quizId
 // Instructor only: create a question under a quiz
+// UPDATED Day 7: validate middleware added
 // =====================================================
-router.post("/:quizId", requireAuth, async (req, res) => {
-  const { quizId } = req.params;
-  const { prompt, optionA, optionB, optionC, optionD, correct, points } = req.body;
+router.post(
+  "/:quizId",
+  requireAuth,
+  validate({
+    prompt: "required|min:5|max:500",
+    optionA: "required|max:200",
+    optionB: "required|max:200",
+    optionC: "required|max:200",
+    optionD: "required|max:200",
+    correct: "required",
+  }),
+  async (req, res) => {
+    const { quizId } = req.params;
+    const { prompt, optionA, optionB, optionC, optionD, correct, points } = req.body;
 
-  try {
-    if (req.user.role !== "INSTRUCTOR") {
-      return res.status(403).json({ message: "Access denied" });
-    }
+    try {
+      if (req.user.role !== "INSTRUCTOR") {
+        return res.status(403).json({ message: "Access denied" });
+      }
 
-    // basic validation
-    if (!prompt || !optionA || !optionB || !optionC || !optionD || !correct) {
-      return res.status(400).json({
-        message: "prompt, optionA, optionB, optionC, optionD, correct are required",
+      const normalizedCorrect = String(correct).toUpperCase();
+      if (!["A", "B", "C", "D"].includes(normalizedCorrect)) {
+        return res.status(400).json({ message: 'correct must be one of "A","B","C","D"' });
+      }
+
+      const quiz = await prisma.quiz.findUnique({ where: { id: quizId } });
+      if (!quiz) return res.status(404).json({ message: "Quiz not found" });
+
+      const created = await prisma.question.create({
+        data: {
+          quizId,
+          prompt,
+          optionA,
+          optionB,
+          optionC,
+          optionD,
+          correct: normalizedCorrect,
+          points: points != null ? Number(points) : 10,
+        },
+        select: {
+          id: true,
+          quizId: true,
+          prompt: true,
+          optionA: true,
+          optionB: true,
+          optionC: true,
+          optionD: true,
+          correct: true,
+          points: true,
+        },
       });
+
+      return res.status(201).json(created);
+    } catch (err) {
+      return res.status(500).json({ message: "Error creating question", error: err.message });
     }
-
-    const normalizedCorrect = String(correct).toUpperCase();
-    if (!["A", "B", "C", "D"].includes(normalizedCorrect)) {
-      return res.status(400).json({ message: 'correct must be one of "A","B","C","D"' });
-    }
-
-    // check quiz exists
-    const quiz = await prisma.quiz.findUnique({ where: { id: quizId } });
-    if (!quiz) return res.status(404).json({ message: "Quiz not found" });
-
-    const created = await prisma.question.create({
-      data: {
-        quizId,
-        prompt,
-        optionA,
-        optionB,
-        optionC,
-        optionD,
-        correct: normalizedCorrect,
-        points: points != null ? Number(points) : 10,
-      },
-      select: {
-        id: true,
-        quizId: true,
-        prompt: true,
-        optionA: true,
-        optionB: true,
-        optionC: true,
-        optionD: true,
-        correct: true,
-        points: true,
-      },
-    });
-
-    return res.status(201).json(created);
-  } catch (err) {
-    return res.status(500).json({ message: "Error creating question", error: err.message });
   }
-});
+);
 
 // =====================================================
 // GET /api/questions/quiz/:quizId
 // Public: list questions for a quiz
-// (Includes correct by default; if you want to hide it later,
-// we can create a student-safe endpoint.)
 // =====================================================
 router.get("/quiz/:quizId", async (req, res) => {
   const { quizId } = req.params;
