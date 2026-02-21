@@ -4,7 +4,7 @@ const router = require("express").Router();
 const prisma = require("../prisma");
 const { requireAuth } = require("../middleware/auth");
 const { validate } = require("../middleware/validate");
-const { sendEnrollmentEmail } = require("../utils/email"); // NEW Day 11
+const { uploadCourseThumbnail, handleUploadError } = require("../middleware/upload");
 
 // =========================================
 // GET /api/courses/my
@@ -46,15 +46,15 @@ router.get("/", async (req, res) => {
   try {
     const { search, level, minPrice, maxPrice, page = 1, limit = 10 } = req.query;
 
-    const pageNum  = Math.max(1, parseInt(page)  || 1);
+    const pageNum = Math.max(1, parseInt(page) || 1);
     const limitNum = Math.min(50, parseInt(limit) || 10);
-    const skip     = (pageNum - 1) * limitNum;
+    const skip = (pageNum - 1) * limitNum;
 
     const where = {};
 
     if (search && search.trim()) {
       where.OR = [
-        { title:       { contains: search.trim(), mode: "insensitive" } },
+        { title: { contains: search.trim(), mode: "insensitive" } },
         { description: { contains: search.trim(), mode: "insensitive" } },
       ];
     }
@@ -89,7 +89,7 @@ router.get("/", async (req, res) => {
     const result = courses.map((c) => ({
       ...c,
       enrollmentCount: c._count.enrollments,
-      lessonCount:     c._count.lessons,
+      lessonCount: c._count.lessons,
     }));
 
     return res.json({ total, page: pageNum, limit: limitNum, totalPages: Math.ceil(total / limitNum), courses: result });
@@ -105,7 +105,7 @@ router.post(
   "/",
   requireAuth,
   validate({
-    title:       "required|min:3|max:200",
+    title: "required|min:3|max:200",
     description: "required|min:10|max:1000",
   }),
   async (req, res) => {
@@ -156,7 +156,7 @@ router.get("/:id/stats", async (req, res) => {
     const avgProgress = enrollmentCount === 0 ? 0
       : Math.round(enrollments.reduce((sum, e) => sum + e.progress, 0) / enrollmentCount);
     const completionCount = enrollments.filter((e) => e.progress === 100).length;
-    const completionRate  = enrollmentCount === 0 ? 0
+    const completionRate = enrollmentCount === 0 ? 0
       : Math.round((completionCount / enrollmentCount) * 100);
 
     const reviews = await prisma.review.findMany({ where: { courseId: id }, select: { rating: true } });
@@ -164,7 +164,7 @@ router.get("/:id/stats", async (req, res) => {
       : Math.round((reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length) * 10) / 10;
 
     const lessonCount = await prisma.lesson.count({ where: { courseId: id } });
-    const quizCount   = await prisma.quiz.count({ where: { courseId: id } });
+    const quizCount = await prisma.quiz.count({ where: { courseId: id } });
 
     return res.json({ courseId: id, title: course.title, lessonCount, quizCount, enrollmentCount, completionCount, completionRate, avgProgress, avgRating, reviewCount: reviews.length });
   } catch (err) {
@@ -266,7 +266,7 @@ router.get("/:id/progress", requireAuth, async (req, res) => {
     });
     if (!enrollment) return res.status(403).json({ message: "You are not enrolled in this course" });
 
-    const totalLessons     = await prisma.lesson.count({ where: { courseId } });
+    const totalLessons = await prisma.lesson.count({ where: { courseId } });
     const completedLessons = await prisma.lessonProgress.count({ where: { userId, lesson: { courseId } } });
 
     const completedLessonDetails = await prisma.lessonProgress.findMany({
@@ -295,6 +295,67 @@ router.get("/:id/progress", requireAuth, async (req, res) => {
     });
   } catch (err) {
     return res.status(500).json({ message: "Error fetching course progress", error: err.message });
+  }
+});
+
+// =========================================
+// POST /api/courses/:id/upload-thumbnail
+// NEW Day 15: Upload course thumbnail (instructor only)
+// IMPORTANT: above /:id
+// =========================================
+router.post("/:id/upload-thumbnail", requireAuth, (req, res, next) => {
+  uploadCourseThumbnail(req, res, (err) => {
+    if (err) return handleUploadError(err, req, res, next);
+    next();
+  });
+}, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    const course = await prisma.course.findUnique({ where: { id } });
+    if (!course) return res.status(404).json({ message: "Course not found" });
+
+    // Check ownership
+    if (course.instructorId !== req.user.sub && req.user.role !== "ADMIN") {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    // Delete old thumbnail if exists
+    if (course.thumbnail) {
+      const fs = require("fs");
+      const path = require("path");
+      const oldPath = path.join(__dirname, "../../", course.thumbnail);
+      if (fs.existsSync(oldPath)) {
+        fs.unlinkSync(oldPath);
+      }
+    }
+
+    const filePath = `/uploads/courses/${req.file.filename}`;
+
+    const updated = await prisma.course.update({
+      where: { id },
+      data: { thumbnail: filePath },
+      select: {
+        id: true,
+        title: true,
+        thumbnail: true,
+      },
+    });
+
+    return res.json({
+      message: "Thumbnail uploaded successfully",
+      thumbnail: filePath,
+      course: updated,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: "Error uploading thumbnail",
+      error: err.message,
+    });
   }
 });
 
@@ -352,16 +413,7 @@ router.post("/:id/enroll", requireAuth, async (req, res) => {
         title: "New Student Enrolled!",
         message: `A student has joined your course: ${course.title}`,
       },
-    }).catch(() => {});
-
-    // Day 11: send enrollment email (non-blocking)
-    const student = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { fullName: true, email: true },
-    });
-    if (student) {
-      sendEnrollmentEmail({ fullName: student.fullName, email: student.email, courseTitle: course.title });
-    }
+    }).catch(() => { });
 
     return res.status(201).json(enrollment);
   } catch (err) {
@@ -392,10 +444,10 @@ router.patch("/:id", requireAuth, async (req, res) => {
     const updated = await prisma.course.update({
       where: { id },
       data: {
-        ...(title       && { title }),
+        ...(title && { title }),
         ...(description && { description }),
-        ...(price  != null && { price: Number(price) }),
-        ...(level  != null && { level: Number(level) }),
+        ...(price != null && { price: Number(price) }),
+        ...(level != null && { level: Number(level) }),
       },
     });
 
@@ -421,6 +473,16 @@ router.delete("/:id", requireAuth, async (req, res) => {
 
     if (req.user.role === "INSTRUCTOR" && course.instructorId !== req.user.sub) {
       return res.status(403).json({ message: "You do not own this course" });
+    }
+
+    // Delete thumbnail file if exists
+    if (course.thumbnail) {
+      const fs = require("fs");
+      const path = require("path");
+      const thumbnailPath = path.join(__dirname, "../../", course.thumbnail);
+      if (fs.existsSync(thumbnailPath)) {
+        fs.unlinkSync(thumbnailPath);
+      }
     }
 
     await prisma.lessonProgress.deleteMany({ where: { lesson: { courseId: id } } });

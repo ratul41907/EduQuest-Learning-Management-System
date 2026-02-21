@@ -5,6 +5,7 @@ const express = require("express");
 const cors = require("cors");
 const compression = require("compression");
 const helmet = require("helmet");
+const path = require("path");
 const prisma = require("./prisma");
 
 // ── Middleware imports ─────────────────────────────────────
@@ -68,6 +69,11 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 // Request logger
 app.use(logger);
+
+// ══════════════════════════════════════════════════════════════
+// SERVE STATIC FILES (uploads)
+// ══════════════════════════════════════════════════════════════
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 // ══════════════════════════════════════════════════════════════
 // HEALTH CHECK

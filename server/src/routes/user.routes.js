@@ -4,6 +4,7 @@ const router = require("express").Router();
 const prisma = require("../prisma");
 const bcrypt = require("bcrypt");
 const { requireAuth } = require("../middleware/auth");
+const { uploadProfilePicture, handleUploadError } = require("../middleware/upload");
 
 // =========================================
 // GET /api/user/me
@@ -19,6 +20,7 @@ router.get("/me", requireAuth, async (req, res) => {
         role: true,
         totalPoints: true,
         level: true,
+        profilePicture: true,
         createdAt: true,
       },
     });
@@ -81,6 +83,7 @@ router.patch("/me", requireAuth, async (req, res) => {
         role: true,
         totalPoints: true,
         level: true,
+        profilePicture: true,
         updatedAt: true,
       },
     });
@@ -103,7 +106,8 @@ router.get("/me/dashboard", requireAuth, async (req, res) => {
       where: { id: userId },
       select: {
         id: true, fullName: true, email: true,
-        role: true, totalPoints: true, level: true, createdAt: true,
+        role: true, totalPoints: true, level: true,
+        profilePicture: true, createdAt: true,
       },
     });
     if (!user) return res.status(404).json({ message: "User not found" });
@@ -114,6 +118,7 @@ router.get("/me/dashboard", requireAuth, async (req, res) => {
         course: {
           select: {
             id: true, title: true, description: true, level: true,
+            thumbnail: true,
             instructor: { select: { fullName: true } },
             _count: { select: { lessons: true } },
           },
@@ -127,6 +132,7 @@ router.get("/me/dashboard", requireAuth, async (req, res) => {
       title: e.course.title,
       description: e.course.description,
       level: e.course.level,
+      thumbnail: e.course.thumbnail,
       instructor: e.course.instructor.fullName,
       progress: e.progress,
       totalLessons: e.course._count.lessons,
@@ -185,9 +191,7 @@ router.get("/me/dashboard", requireAuth, async (req, res) => {
 
 // =========================================
 // GET /api/user/me/badges
-// NEW Day 8: Student — earned badges only
-// Cleaner than dashboard when you just need badges
-// IMPORTANT: must stay above /:id routes
+// Day 8: Student — earned badges only
 // =========================================
 router.get("/me/badges", requireAuth, async (req, res) => {
   try {
@@ -209,7 +213,6 @@ router.get("/me/badges", requireAuth, async (req, res) => {
       orderBy: { awardedAt: "desc" },
     });
 
-    // All available badges so frontend can show locked ones too
     const allBadges = await prisma.badge.findMany({
       select: { code: true, name: true, description: true, pointsBonus: true },
     });
@@ -238,9 +241,7 @@ router.get("/me/badges", requireAuth, async (req, res) => {
 
 // =========================================
 // GET /api/user/me/certificates
-// NEW Day 8: Student — certificates only
-// Cleaner than dashboard when you just need certs
-// IMPORTANT: must stay above /:id routes
+// Day 8: Student — certificates only
 // =========================================
 router.get("/me/certificates", requireAuth, async (req, res) => {
   try {
@@ -286,6 +287,98 @@ router.get("/me/certificates", requireAuth, async (req, res) => {
 });
 
 // =========================================
+// POST /api/user/me/upload-picture
+// NEW Day 15: Upload profile picture
+// =========================================
+router.post("/me/upload-picture", requireAuth, (req, res, next) => {
+  uploadProfilePicture(req, res, (err) => {
+    if (err) return handleUploadError(err, req, res, next);
+    next();
+  });
+}, async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    // Delete old profile picture if exists
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.sub },
+      select: { profilePicture: true },
+    });
+
+    if (user.profilePicture) {
+      const fs = require("fs");
+      const path = require("path");
+      const oldPath = path.join(__dirname, "../../", user.profilePicture);
+      if (fs.existsSync(oldPath)) {
+        fs.unlinkSync(oldPath);
+      }
+    }
+
+    const filePath = `/uploads/profiles/${req.file.filename}`;
+
+    const updated = await prisma.user.update({
+      where: { id: req.user.sub },
+      data: { profilePicture: filePath },
+      select: {
+        id: true,
+        fullName: true,
+        email: true,
+        role: true,
+        profilePicture: true,
+      },
+    });
+
+    return res.json({
+      message: "Profile picture uploaded successfully",
+      profilePicture: filePath,
+      user: updated,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: "Error uploading profile picture",
+      error: err.message,
+    });
+  }
+});
+
+// =========================================
+// DELETE /api/user/me/delete-picture
+// NEW Day 15: Delete profile picture
+// =========================================
+router.delete("/me/delete-picture", requireAuth, async (req, res) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.sub },
+      select: { profilePicture: true },
+    });
+
+    if (user.profilePicture) {
+      const fs = require("fs");
+      const path = require("path");
+      const filePath = path.join(__dirname, "../../", user.profilePicture);
+      
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    }
+
+    await prisma.user.update({
+      where: { id: req.user.sub },
+      data: { profilePicture: null },
+    });
+
+    return res.json({ message: "Profile picture deleted successfully" });
+  } catch (err) {
+    return res.status(500).json({
+      message: "Error deleting profile picture",
+      error: err.message,
+    });
+  }
+});
+
+// =========================================
 // GET /api/user/:id/stats
 // Public: any user's public stats
 // IMPORTANT: must stay below all /me routes
@@ -298,7 +391,8 @@ router.get("/:id/stats", async (req, res) => {
       where: { id },
       select: {
         id: true, fullName: true, role: true,
-        totalPoints: true, level: true, createdAt: true,
+        totalPoints: true, level: true,
+        profilePicture: true, createdAt: true,
       },
     });
     if (!user) return res.status(404).json({ message: "User not found" });
@@ -320,6 +414,7 @@ router.get("/:id/stats", async (req, res) => {
       id: user.id,
       fullName: user.fullName,
       role: user.role,
+      profilePicture: user.profilePicture,
       totalPoints: user.totalPoints,
       level: user.level,
       memberSince: user.createdAt,

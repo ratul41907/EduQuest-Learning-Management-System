@@ -16,11 +16,12 @@ enum Role {
 }
 
 model User {
-  id           String @id @default(cuid())
+  id           String  @id @default(cuid())
   fullName     String
-  email        String @unique
+  email        String  @unique
   passwordHash String
-  role         Role   @default(STUDENT)
+  role         Role    @default(STUDENT)
+  profilePicture String? // NEW - profile image path
 
   totalPoints Int @default(0)
   level       Int @default(1)
@@ -43,11 +44,12 @@ model User {
 }
 
 model Course {
-  id          String @id @default(cuid())
+  id          String  @id @default(cuid())
   title       String
   description String
   price       Float
   level       Int
+  thumbnail   String? // NEW - course cover image path
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -67,12 +69,13 @@ model Course {
 }
 
 model Lesson {
-  id       String @id @default(cuid())
+  id       String  @id @default(cuid())
   courseId String
   title    String
   content  String
   orderNo  Int
-  points   Int    @default(10)
+  points   Int     @default(10)
+  image    String? // NEW - lesson image path
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
