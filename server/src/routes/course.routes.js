@@ -5,6 +5,7 @@ const prisma = require("../prisma");
 const { requireAuth } = require("../middleware/auth");
 const { validate } = require("../middleware/validate");
 const { uploadCourseThumbnail, handleUploadError } = require("../middleware/upload");
+const { sendEnrollmentEmail, sendInstructorEnrollmentEmail } = require("../utils/email");
 
 // =========================================
 // GET /api/courses/my
@@ -300,7 +301,7 @@ router.get("/:id/progress", requireAuth, async (req, res) => {
 
 // =========================================
 // POST /api/courses/:id/upload-thumbnail
-// NEW Day 15: Upload course thumbnail (instructor only)
+// Day 15: Upload course thumbnail (instructor only)
 // IMPORTANT: above /:id
 // =========================================
 router.post("/:id/upload-thumbnail", requireAuth, (req, res, next) => {
@@ -319,12 +320,10 @@ router.post("/:id/upload-thumbnail", requireAuth, (req, res, next) => {
     const course = await prisma.course.findUnique({ where: { id } });
     if (!course) return res.status(404).json({ message: "Course not found" });
 
-    // Check ownership
     if (course.instructorId !== req.user.sub && req.user.role !== "ADMIN") {
       return res.status(403).json({ message: "Not authorized" });
     }
 
-    // Delete old thumbnail if exists
     if (course.thumbnail) {
       const fs = require("fs");
       const path = require("path");
@@ -382,6 +381,7 @@ router.get("/:id", async (req, res) => {
 
 // =========================================
 // POST /api/courses/:id/enroll
+// Day 16: Added enrollment emails
 // =========================================
 router.post("/:id/enroll", requireAuth, async (req, res) => {
   const { id: courseId } = req.params;
@@ -393,7 +393,10 @@ router.post("/:id/enroll", requireAuth, async (req, res) => {
 
     const userId = req.user.sub;
 
-    const course = await prisma.course.findUnique({ where: { id: courseId } });
+    const course = await prisma.course.findUnique({
+      where: { id: courseId },
+      include: { instructor: { select: { fullName: true, email: true } } },
+    });
     if (!course) return res.status(404).json({ message: "Course not found" });
 
     const existing = await prisma.enrollment.findUnique({
@@ -405,6 +408,7 @@ router.post("/:id/enroll", requireAuth, async (req, res) => {
       data: { userId, courseId, progress: 0 },
     });
 
+    // Notify instructor
     await prisma.notification.create({
       data: {
         userId: course.instructorId,
@@ -413,7 +417,30 @@ router.post("/:id/enroll", requireAuth, async (req, res) => {
         title: "New Student Enrolled!",
         message: `A student has joined your course: ${course.title}`,
       },
-    }).catch(() => { });
+    }).catch(() => {});
+
+    // Day 16: Send enrollment emails (non-blocking)
+    const student = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { fullName: true, email: true },
+    });
+
+    if (student) {
+      // Email to student
+      sendEnrollmentEmail(student.email, student.fullName, course.title).catch(err =>
+        console.error("Student enrollment email failed:", err)
+      );
+
+      // Email to instructor
+      sendInstructorEnrollmentEmail(
+        course.instructor.email,
+        course.instructor.fullName,
+        student.fullName,
+        course.title
+      ).catch(err =>
+        console.error("Instructor enrollment email failed:", err)
+      );
+    }
 
     return res.status(201).json(enrollment);
   } catch (err) {
@@ -475,7 +502,6 @@ router.delete("/:id", requireAuth, async (req, res) => {
       return res.status(403).json({ message: "You do not own this course" });
     }
 
-    // Delete thumbnail file if exists
     if (course.thumbnail) {
       const fs = require("fs");
       const path = require("path");
