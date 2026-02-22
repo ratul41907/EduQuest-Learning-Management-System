@@ -2,168 +2,226 @@
 
 const nodemailer = require("nodemailer");
 
+// ══════════════════════════════════════════════════════════════
+// EMAIL TRANSPORTER CONFIGURATION
+// ══════════════════════════════════════════════════════════════
+
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: process.env.EMAIL_HOST || "smtp.gmail.com",
+  port: process.env.EMAIL_PORT || 587,
+  secure: false, // true for 465, false for other ports
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    pass: process.env.EMAIL_PASSWORD,
   },
 });
 
-/**
- * Core send — never crashes the app
- */
-async function sendEmail({ to, subject, html }) {
-  try {
-    await transporter.sendMail({
-      from: `"EduQuest" <${process.env.EMAIL_USER}>`,
-      to,
-      subject,
-      html,
-    });
-    console.log(`[Email] Sent: "${subject}" → ${to}`);
-  } catch (err) {
-    console.error(`[Email] Failed to send to ${to}:`, err.message);
-  }
-}
+// ══════════════════════════════════════════════════════════════
+// EMAIL TEMPLATES
+// ══════════════════════════════════════════════════════════════
 
-// ─────────────────────────────────────────────────────────
-// Welcome email — sent on register
-// ─────────────────────────────────────────────────────────
-async function sendWelcomeEmail({ fullName, email }) {
-  await sendEmail({
-    to: email,
+const emailTemplates = {
+  welcome: (fullName) => ({
     subject: "Welcome to EduQuest! 🎓",
     html: `
-      <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:32px">
-        <h1 style="color:#1A56DB;margin-bottom:8px">Welcome, ${fullName}!</h1>
-        <p style="color:#374151;font-size:16px;line-height:1.6">
-          Your EduQuest account is ready. Start exploring courses, earn badges, and level up your skills.
-        </p>
-        <div style="margin:32px 0">
-          <a href="http://localhost:5000/api/courses"
-             style="background:#1A56DB;color:#fff;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:15px">
-            Browse Courses →
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h1 style="color: #1E3A5F;">Welcome to EduQuest, ${fullName}!</h1>
+        <p>Thank you for joining our learning platform. We're excited to have you on board!</p>
+        <p>Start your learning journey by:</p>
+        <ul>
+          <li>Browsing our course catalog</li>
+          <li>Enrolling in your first course</li>
+          <li>Earning badges and certificates</li>
+        </ul>
+        <p style="margin-top: 30px;">
+          <a href="${process.env.FRONTEND_URL || "http://localhost:3000"}" 
+             style="background-color: #1E3A5F; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">
+            Explore Courses
           </a>
-        </div>
-        <p style="color:#9CA3AF;font-size:13px">EduQuest — Learn. Grow. Achieve.</p>
+        </p>
+        <p style="color: #666; margin-top: 40px; font-size: 12px;">
+          If you didn't create an account, please ignore this email.
+        </p>
       </div>
     `,
-  });
-}
+  }),
 
-// ─────────────────────────────────────────────────────────
-// Enrollment confirmation — sent on enroll
-// ─────────────────────────────────────────────────────────
-async function sendEnrollmentEmail({ fullName, email, courseTitle }) {
-  await sendEmail({
-    to: email,
-    subject: `You're enrolled in "${courseTitle}" 📚`,
+  enrollment: (fullName, courseTitle) => ({
+    subject: `You're enrolled in ${courseTitle}! 📚`,
     html: `
-      <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:32px">
-        <h1 style="color:#1A56DB">Enrollment Confirmed!</h1>
-        <p style="color:#374151;font-size:16px;line-height:1.6">
-          Hi <strong>${fullName}</strong>, you're now enrolled in:
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h1 style="color: #1E3A5F;">Enrollment Confirmed!</h1>
+        <p>Hi ${fullName},</p>
+        <p>You've successfully enrolled in <strong>${courseTitle}</strong>.</p>
+        <p>Here's what to do next:</p>
+        <ol>
+          <li>Start with the first lesson</li>
+          <li>Complete quizzes to earn points</li>
+          <li>Track your progress on the dashboard</li>
+        </ol>
+        <p style="margin-top: 30px;">
+          <a href="${process.env.FRONTEND_URL || "http://localhost:3000"}/courses" 
+             style="background-color: #2E6DA4; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">
+            Start Learning
+          </a>
         </p>
-        <div style="background:#F3F4F6;border-left:4px solid #1A56DB;padding:16px 20px;margin:24px 0;border-radius:4px">
-          <p style="margin:0;font-size:18px;font-weight:bold;color:#111827">${courseTitle}</p>
-        </div>
-        <p style="color:#374151;font-size:15px">Head over and start your first lesson. Good luck! 🚀</p>
-        <p style="color:#9CA3AF;font-size:13px;margin-top:32px">EduQuest — Learn. Grow. Achieve.</p>
       </div>
     `,
-  });
-}
+  }),
 
-// ─────────────────────────────────────────────────────────
-// Certificate email — sent on course completion
-// ─────────────────────────────────────────────────────────
-async function sendCertificateEmail({ fullName, email, courseTitle, certCode }) {
-  await sendEmail({
-    to: email,
-    subject: `You completed "${courseTitle}" — Certificate Ready! 🏆`,
+  badgeEarned: (fullName, badgeName, badgeDescription) => ({
+    subject: `🏆 You earned the "${badgeName}" badge!`,
     html: `
-      <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:32px">
-        <h1 style="color:#1A56DB">Congratulations, ${fullName}! 🎉</h1>
-        <p style="color:#374151;font-size:16px;line-height:1.6">
-          You've successfully completed <strong>${courseTitle}</strong>. Your certificate has been issued!
-        </p>
-        <div style="background:#F0FDF4;border:1px solid #86EFAC;padding:20px;border-radius:8px;margin:24px 0">
-          <p style="margin:0 0 8px 0;color:#166534;font-size:13px;font-weight:bold">CERTIFICATE CODE</p>
-          <p style="margin:0;font-size:20px;font-weight:bold;color:#111827;letter-spacing:2px">${certCode}</p>
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h1 style="color: #1E3A5F;">Congratulations! 🎉</h1>
+        <p>Hi ${fullName},</p>
+        <p>You've earned a new badge: <strong>${badgeName}</strong></p>
+        <div style="background-color: #E8F4FD; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h2 style="color: #2E6DA4; margin-top: 0;">🏅 ${badgeName}</h2>
+          <p style="margin-bottom: 0;">${badgeDescription}</p>
         </div>
-        <p style="color:#374151;font-size:15px">
-          Verify your certificate at:<br/>
-          <code style="background:#F3F4F6;padding:4px 8px;border-radius:4px;font-size:13px">
-            GET /api/certificates/verify/${certCode}
-          </code>
+        <p>Keep up the great work and collect all badges!</p>
+        <p style="margin-top: 30px;">
+          <a href="${process.env.FRONTEND_URL || "http://localhost:3000"}/dashboard" 
+             style="background-color: #1A7A1A; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">
+            View My Badges
+          </a>
         </p>
-        <p style="color:#9CA3AF;font-size:13px;margin-top:32px">EduQuest — Learn. Grow. Achieve.</p>
       </div>
     `,
-  });
-}
+  }),
 
-// ─────────────────────────────────────────────────────────
-// Badge email — sent when any badge is earned
-// ─────────────────────────────────────────────────────────
-async function sendBadgeEmail({ fullName, email, badgeName, pointsBonus }) {
-  await sendEmail({
-    to: email,
-    subject: `Badge Earned: ${badgeName} 🎖️`,
+  certificate: (fullName, courseTitle, certificateCode) => ({
+    subject: `🎓 Certificate Earned: ${courseTitle}`,
     html: `
-      <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:32px">
-        <h1 style="color:#1A56DB">New Badge Unlocked!</h1>
-        <p style="color:#374151;font-size:16px;line-height:1.6">
-          Great work, <strong>${fullName}</strong>! You just earned:
-        </p>
-        <div style="background:#FFF7ED;border:1px solid #FED7AA;padding:20px;border-radius:8px;margin:24px 0;text-align:center">
-          <p style="margin:0 0 8px 0;font-size:32px">🎖️</p>
-          <p style="margin:0;font-size:22px;font-weight:bold;color:#111827">${badgeName}</p>
-          ${pointsBonus > 0
-            ? `<p style="margin:8px 0 0 0;color:#92400E;font-size:14px">+${pointsBonus} bonus points awarded!</p>`
-            : ""}
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h1 style="color: #1E3A5F;">Congratulations on Completing the Course! 🎓</h1>
+        <p>Hi ${fullName},</p>
+        <p>You've successfully completed <strong>${courseTitle}</strong>!</p>
+        <div style="background-color: #FFF3CD; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #FFD700;">
+          <h3 style="margin-top: 0;">📜 Certificate Details</h3>
+          <p><strong>Course:</strong> ${courseTitle}</p>
+          <p><strong>Certificate Code:</strong> ${certificateCode}</p>
         </div>
-        <p style="color:#374151;font-size:15px">Keep learning to unlock more badges. You're on a roll! 🚀</p>
-        <p style="color:#9CA3AF;font-size:13px;margin-top:32px">EduQuest — Learn. Grow. Achieve.</p>
+        <p>Download your certificate and share it on LinkedIn!</p>
+        <p style="margin-top: 30px;">
+          <a href="${process.env.FRONTEND_URL || "http://localhost:3000"}/certificates" 
+             style="background-color: #1E3A5F; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; margin-right: 10px;">
+            Download Certificate
+          </a>
+          <a href="${process.env.FRONTEND_URL || "http://localhost:3000"}/api/certificates/verify/${certificateCode}" 
+             style="background-color: #2E6DA4; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">
+            Verify Certificate
+          </a>
+        </p>
       </div>
     `,
-  });
-}
+  }),
 
-// ─────────────────────────────────────────────────────────
-// Password reset email — used in Day 12
-// ─────────────────────────────────────────────────────────
-async function sendPasswordResetEmail({ email, token }) {
-  await sendEmail({
-    to: email,
-    subject: "EduQuest — Reset Your Password 🔑",
+  passwordReset: (fullName, resetToken) => ({
+    subject: "Reset Your EduQuest Password 🔒",
     html: `
-      <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:32px">
-        <h1 style="color:#1A56DB">Password Reset Request</h1>
-        <p style="color:#374151;font-size:16px;line-height:1.6">
-          We received a request to reset your password. Use the token below:
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h1 style="color: #1E3A5F;">Password Reset Request</h1>
+        <p>Hi ${fullName},</p>
+        <p>We received a request to reset your password. Click the button below to create a new password:</p>
+        <p style="margin-top: 30px;">
+          <a href="${process.env.FRONTEND_URL || "http://localhost:3000"}/reset-password?token=${resetToken}" 
+             style="background-color: #D32F2F; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">
+            Reset Password
+          </a>
         </p>
-        <div style="background:#F3F4F6;padding:20px;border-radius:8px;margin:24px 0;text-align:center">
-          <p style="margin:0 0 8px 0;color:#6B7280;font-size:13px;font-weight:bold">RESET TOKEN</p>
-          <p style="margin:0;font-size:14px;font-weight:bold;color:#111827;word-break:break-all;letter-spacing:1px">${token}</p>
-        </div>
-        <p style="color:#374151;font-size:15px">
-          Send a POST request to <code style="background:#F3F4F6;padding:2px 6px;border-radius:4px">/api/auth/reset-password</code>
-          with this token and your new password.
+        <p style="color: #666; margin-top: 30px;">
+          This link will expire in 1 hour for security reasons.
         </p>
-        <p style="color:#EF4444;font-size:14px">⚠️ This token expires in <strong>1 hour</strong>.</p>
-        <p style="color:#9CA3AF;font-size:13px">If you didn't request this, ignore this email. Your password won't change.</p>
-        <p style="color:#9CA3AF;font-size:13px;margin-top:32px">EduQuest — Learn. Grow. Achieve.</p>
+        <p style="color: #D32F2F; font-weight: bold;">
+          If you didn't request this, please ignore this email and your password will remain unchanged.
+        </p>
       </div>
     `,
-  });
-}
+  }),
+
+  instructorNewEnrollment: (instructorName, studentName, courseTitle) => ({
+    subject: `New student enrolled in ${courseTitle}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h1 style="color: #1E3A5F;">New Enrollment! 🎉</h1>
+        <p>Hi ${instructorName},</p>
+        <p><strong>${studentName}</strong> just enrolled in your course: <strong>${courseTitle}</strong></p>
+        <p>Your course is growing! Keep creating great content.</p>
+        <p style="margin-top: 30px;">
+          <a href="${process.env.FRONTEND_URL || "http://localhost:3000"}/instructor/dashboard" 
+             style="background-color: #2E6DA4; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">
+            View Dashboard
+          </a>
+        </p>
+      </div>
+    `,
+  }),
+};
+
+// ══════════════════════════════════════════════════════════════
+// EMAIL SENDING FUNCTIONS
+// ══════════════════════════════════════════════════════════════
+
+const sendEmail = async (to, template) => {
+  try {
+    // Skip sending in test/development if EMAIL_USER not configured
+    if (!process.env.EMAIL_USER) {
+      console.log(`📧 [EMAIL SKIPPED - No EMAIL_USER configured]`);
+      console.log(`   To: ${to}`);
+      console.log(`   Subject: ${template.subject}`);
+      return { skipped: true };
+    }
+
+    const info = await transporter.sendMail({
+      from: `"EduQuest" <${process.env.EMAIL_USER}>`,
+      to,
+      subject: template.subject,
+      html: template.html,
+    });
+
+    console.log(`✅ Email sent to ${to}: ${template.subject}`);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error(`❌ Email error (${to}):`, error.message);
+    return { success: false, error: error.message };
+  }
+};
+
+// ══════════════════════════════════════════════════════════════
+// EXPORTED EMAIL FUNCTIONS
+// ══════════════════════════════════════════════════════════════
+
+const sendWelcomeEmail = async (email, fullName) => {
+  return sendEmail(email, emailTemplates.welcome(fullName));
+};
+
+const sendEnrollmentEmail = async (email, fullName, courseTitle) => {
+  return sendEmail(email, emailTemplates.enrollment(fullName, courseTitle));
+};
+
+const sendBadgeEmail = async (email, fullName, badgeName, badgeDescription) => {
+  return sendEmail(email, emailTemplates.badgeEarned(fullName, badgeName, badgeDescription));
+};
+
+const sendCertificateEmail = async (email, fullName, courseTitle, certificateCode) => {
+  return sendEmail(email, emailTemplates.certificate(fullName, courseTitle, certificateCode));
+};
+
+const sendPasswordResetEmail = async (email, fullName, resetToken) => {
+  return sendEmail(email, emailTemplates.passwordReset(fullName, resetToken));
+};
+
+const sendInstructorEnrollmentEmail = async (email, instructorName, studentName, courseTitle) => {
+  return sendEmail(email, emailTemplates.instructorNewEnrollment(instructorName, studentName, courseTitle));
+};
 
 module.exports = {
   sendWelcomeEmail,
   sendEnrollmentEmail,
-  sendCertificateEmail,
   sendBadgeEmail,
+  sendCertificateEmail,
   sendPasswordResetEmail,
+  sendInstructorEnrollmentEmail,
 };

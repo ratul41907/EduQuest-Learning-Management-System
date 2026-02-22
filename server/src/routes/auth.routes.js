@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 const prisma = require("../prisma");
 const { requireAuth } = require("../middleware/auth");
 const { validate } = require("../middleware/validate");
-const { sendWelcomeEmail } = require("../utils/email"); // NEW Day 11
+const { sendWelcomeEmail } = require("../utils/email");
 
 function signToken(user) {
   return jwt.sign(
@@ -54,8 +54,10 @@ router.post(
         },
       });
 
-      // Day 11: send welcome email (non-blocking)
-      sendWelcomeEmail({ fullName: user.fullName, email: user.email });
+      // Day 16: send welcome email (non-blocking)
+      sendWelcomeEmail(user.email, user.fullName).catch(err => 
+        console.error("Welcome email failed:", err)
+      );
 
       const token = signToken(user);
       res.status(201).json({ user, token });
@@ -121,5 +123,94 @@ router.get("/me", requireAuth, async (req, res) => {
   });
   res.json({ user: me });
 });
+
+// =========================================
+// POST /api/auth/forgot-password
+// NEW Day 16: Request password reset
+// =========================================
+router.post(
+  "/forgot-password",
+  validate({ email: "required|email" }),
+  async (req, res) => {
+    try {
+      const { email } = req.body;
+
+      const user = await prisma.user.findUnique({ where: { email } });
+      
+      // Always return success to prevent email enumeration
+      if (!user) {
+        return res.json({ 
+          message: "If that email exists, a password reset link has been sent." 
+        });
+      }
+
+      // Generate reset token (valid for 1 hour)
+      const resetToken = jwt.sign(
+        { sub: user.id, type: "password-reset" },
+        process.env.JWT_SECRET,
+        { expiresIn: "1h" }
+      );
+
+      // Send password reset email
+      const { sendPasswordResetEmail } = require("../utils/email");
+      sendPasswordResetEmail(user.email, user.fullName, resetToken).catch(err =>
+        console.error("Password reset email failed:", err)
+      );
+
+      return res.json({ 
+        message: "If that email exists, a password reset link has been sent." 
+      });
+    } catch (err) {
+      return res.status(500).json({ 
+        message: "Server error", 
+        error: String(err) 
+      });
+    }
+  }
+);
+
+// =========================================
+// POST /api/auth/reset-password
+// NEW Day 16: Reset password with token
+// =========================================
+router.post(
+  "/reset-password",
+  validate({ 
+    token: "required",
+    newPassword: "required|min:6" 
+  }),
+  async (req, res) => {
+    try {
+      const { token, newPassword } = req.body;
+
+      // Verify token
+      let decoded;
+      try {
+        decoded = jwt.verify(token, process.env.JWT_SECRET);
+        if (decoded.type !== "password-reset") {
+          return res.status(400).json({ message: "Invalid reset token" });
+        }
+      } catch (err) {
+        return res.status(400).json({ message: "Invalid or expired reset token" });
+      }
+
+      // Hash new password
+      const passwordHash = await bcrypt.hash(newPassword, 10);
+
+      // Update password
+      await prisma.user.update({
+        where: { id: decoded.sub },
+        data: { passwordHash },
+      });
+
+      return res.json({ message: "Password reset successful. You can now login." });
+    } catch (err) {
+      return res.status(500).json({ 
+        message: "Server error", 
+        error: String(err) 
+      });
+    }
+  }
+);
 
 module.exports = router;
