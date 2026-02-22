@@ -4,7 +4,7 @@ const router = require("express").Router();
 const prisma = require("../prisma");
 const { requireAuth } = require("../middleware/auth");
 const { validate } = require("../middleware/validate");
-const { sendCertificateEmail, sendBadgeEmail } = require("../utils/email"); // NEW Day 11
+const { sendCertificateEmail, sendBadgeEmail } = require("../utils/email");
 
 function calcLevel(totalPoints) {
   return Math.floor((Number(totalPoints) || 0) / 100) + 1;
@@ -75,6 +75,7 @@ router.post(
 
 // =========================================
 // POST /api/lessons/:lessonId/complete
+// Day 16: Enhanced with badge and certificate emails
 // =========================================
 router.post("/:lessonId/complete", requireAuth, async (req, res) => {
   try {
@@ -148,18 +149,18 @@ router.post("/:lessonId/complete", requireAuth, async (req, res) => {
           },
         });
 
-        // Day 11: certificate email (non-blocking)
+        // Day 16: certificate email (non-blocking)
         const [certUser, certCourse] = await Promise.all([
           prisma.user.findUnique({ where: { id: userId }, select: { fullName: true, email: true } }),
           prisma.course.findUnique({ where: { id: lesson.courseId }, select: { title: true } }),
         ]);
         if (certUser && certCourse) {
-          sendCertificateEmail({
-            fullName: certUser.fullName,
-            email: certUser.email,
-            courseTitle: certCourse.title,
-            certCode: newCert.code,
-          });
+          sendCertificateEmail(
+            certUser.email,
+            certUser.fullName,
+            certCourse.title,
+            newCert.code
+          ).catch(err => console.error("Certificate email failed:", err));
         }
       }
     }
@@ -201,8 +202,13 @@ router.post("/:lessonId/complete", requireAuth, async (req, res) => {
           data: { userId, type: "BADGE_EARNED", title: "Badge Earned: First Step!", message: "You completed your first lesson. Keep going!" },
         }).catch(() => {});
 
-        // Day 11: badge email (non-blocking)
-        sendBadgeEmail({ fullName: finalUser.fullName, email: finalUser.email, badgeName: "First Step", pointsBonus: 20 });
+        // Day 16: badge email (non-blocking)
+        sendBadgeEmail(
+          finalUser.email,
+          finalUser.fullName,
+          badge.name,
+          badge.description
+        ).catch(err => console.error("Badge email failed:", err));
       }
     }
 
@@ -213,8 +219,13 @@ router.post("/:lessonId/complete", requireAuth, async (req, res) => {
         await prisma.userBadge.create({ data: { userId, badgeId: badge.id } }).catch(() => {});
         badgeAwarded = badgeAwarded ? `${badgeAwarded},COURSE_FINISHER` : "COURSE_FINISHER";
 
-        // Day 11: badge email (non-blocking)
-        sendBadgeEmail({ fullName: finalUser.fullName, email: finalUser.email, badgeName: "Course Finisher", pointsBonus: 50 });
+        // Day 16: badge email (non-blocking)
+        sendBadgeEmail(
+          finalUser.email,
+          finalUser.fullName,
+          badge.name,
+          badge.description
+        ).catch(err => console.error("Badge email failed:", err));
       }
     }
 

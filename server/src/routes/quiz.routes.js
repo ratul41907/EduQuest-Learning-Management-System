@@ -4,7 +4,7 @@ const router = require("express").Router();
 const prisma = require("../prisma");
 const { requireAuth } = require("../middleware/auth");
 const { validate } = require("../middleware/validate");
-const { sendBadgeEmail } = require("../utils/email"); // NEW Day 11
+const { sendBadgeEmail } = require("../utils/email");
 
 function calcLevel(totalPoints) {
   return Math.floor((Number(totalPoints) || 0) / 100) + 1;
@@ -140,6 +140,7 @@ router.post("/:courseId", requireAuth, validate({ title: "required|min:3|max:200
 
 // =========================================
 // POST /api/quizzes/:id/attempt
+// Day 16: Enhanced with badge emails
 // =========================================
 router.post("/:id/attempt", requireAuth, async (req, res) => {
   const { id } = req.params;
@@ -204,8 +205,13 @@ router.post("/:id/attempt", requireAuth, async (req, res) => {
           data: { userId, type: "BADGE_EARNED", title: "Badge Earned: Quiz Starter!", message: "You completed your first quiz. Keep it up!" },
         }).catch(() => {});
 
-        // Day 11: badge email (non-blocking)
-        sendBadgeEmail({ fullName: finalUser.fullName, email: finalUser.email, badgeName: "Quiz Starter", pointsBonus: 0 });
+        // Day 16: badge email (non-blocking)
+        sendBadgeEmail(
+          finalUser.email,
+          finalUser.fullName,
+          badge.name,
+          badge.description
+        ).catch(err => console.error("Badge email failed:", err));
       }
     }
 
@@ -222,8 +228,13 @@ router.post("/:id/attempt", requireAuth, async (req, res) => {
             data: { userId, type: "BADGE_EARNED", title: "Badge Earned: Perfect Score!", message: `You scored 100% on "${quiz.title}". Incredible!` },
           }).catch(() => {});
 
-          // Day 11: badge email (non-blocking)
-          sendBadgeEmail({ fullName: finalUser.fullName, email: finalUser.email, badgeName: "Perfect Score", pointsBonus: 25 });
+          // Day 16: badge email (non-blocking)
+          sendBadgeEmail(
+            finalUser.email,
+            finalUser.fullName,
+            badge.name,
+            badge.description
+          ).catch(err => console.error("Badge email failed:", err));
         }
       }
     }
