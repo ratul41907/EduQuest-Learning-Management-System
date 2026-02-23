@@ -1,55 +1,169 @@
 // Path: E:\EduQuest\server\src\middleware\rateLimiter.js
 
-/**
- * Simple in-memory rate limiter
- * No external packages needed
- *
- * Usage: app.use("/api/auth", rateLimiter(10, 15))
- * → max 10 requests per 15 minutes per IP
- *
- * @param {number} maxRequests - max allowed requests in window
- * @param {number} windowMinutes - time window in minutes
- */
-function rateLimiter(maxRequests = 100, windowMinutes = 15) {
-  const store = new Map(); // ip -> { count, resetAt }
+const rateLimit = require("express-rate-limit");
+const slowDown = require("express-slow-down");
 
-  return (req, res, next) => {
-    const ip =
-      req.headers["x-forwarded-for"]?.split(",")[0].trim() ||
-      req.socket.remoteAddress ||
-      "unknown";
+// ══════════════════════════════════════════════════════════════
+// MEMORY STORE FOR BLOCKED IPS
+// ══════════════════════════════════════════════════════════════
+const blockedIPs = new Map();
 
-    const now = Date.now();
-    const windowMs = windowMinutes * 60 * 1000;
+const isIPBlocked = (ip) => {
+  const blockInfo = blockedIPs.get(ip);
+  if (!blockInfo) return false;
+  
+  // Check if block has expired
+  if (Date.now() > blockInfo.until) {
+    blockedIPs.delete(ip);
+    return false;
+  }
+  
+  return true;
+};
 
-    const record = store.get(ip);
+const blockIP = (ip, minutes = 15) => {
+  const until = Date.now() + (minutes * 60 * 1000);
+  blockedIPs.set(ip, { until, blockedAt: new Date() });
+  console.log(`🚫 IP blocked: ${ip} until ${new Date(until).toISOString()}`);
+};
 
-    // First request or window expired
-    if (!record || now > record.resetAt) {
-      store.set(ip, { count: 1, resetAt: now + windowMs });
+// ══════════════════════════════════════════════════════════════
+// IP BLOCKING MIDDLEWARE
+// ══════════════════════════════════════════════════════════════
+const checkBlockedIP = (req, res, next) => {
+  const ip = req.ip || req.connection.remoteAddress;
+  
+  const blockInfo = blockedIPs.get(ip);
+  if (blockInfo) {
+    if (Date.now() > blockInfo.until) {
+      blockedIPs.delete(ip);
       return next();
     }
+    
+    const minutesLeft = Math.ceil((blockInfo.until - Date.now()) / (1000 * 60));
+    
+    return res.status(403).json({
+      success: false,
+      message: "Your IP has been temporarily blocked due to suspicious activity",
+      retryAfter: `${minutesLeft} minutes`,
+      blockedUntil: new Date(blockInfo.until).toISOString(),
+      timestamp: new Date().toISOString(),
+    });
+  }
+  
+  next();
+};
+// ══════════════════════════════════════════════════════════════
+// RATE LIMITERS
+// ══════════════════════════════════════════════════════════════
 
-    // Within window — increment count
-    record.count += 1;
-
-    if (record.count > maxRequests) {
-      const retryAfterSec = Math.ceil((record.resetAt - now) / 1000);
-      res.setHeader("Retry-After", retryAfterSec);
-      return res.status(429).json({
-        message: `Too many requests. Try again in ${Math.ceil(retryAfterSec / 60)} minute(s).`,
-        retryAfterSeconds: retryAfterSec,
-      });
+// Global rate limiter - 100 requests per 15 minutes per IP
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: {
+    success: false,
+    message: "Too many requests from this IP, please try again later",
+    retryAfter: "15 minutes",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: (req, res) => {
+    const ip = req.ip || req.connection.remoteAddress;
+    console.log(`⚠️  Rate limit exceeded: ${ip} on ${req.path}`);
+    
+    // Block IP after 3 rate limit hits
+    const key = `ratelimit:${ip}`;
+    const hits = (req.rateLimit?.current || 0);
+    
+    if (hits > 120) {
+      blockIP(ip, 30); // Block for 30 minutes
     }
+    
+    res.status(429).json({
+      success: false,
+      message: "Too many requests, please slow down",
+      retryAfter: "15 minutes",
+      timestamp: new Date().toISOString(),
+    });
+  },
+});
 
-    next();
-  };
+// Strict rate limiter for auth endpoints - 10 requests per 15 minutes
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message: {
+    success: false,
+    message: "Too many authentication attempts, please try again later",
+    retryAfter: "15 minutes",
+  },
+  skipSuccessfulRequests: false,
+  handler: (req, res) => {
+    const ip = req.ip || req.connection.remoteAddress;
+    console.log(`🚨 Auth rate limit: ${ip} on ${req.path}`);
+    blockIP(ip, 60); // Block for 1 hour on auth abuse
+    
+    res.status(429).json({
+      success: false,
+      message: "Too many login/registration attempts. IP temporarily blocked.",
+      retryAfter: "1 hour",
+      timestamp: new Date().toISOString(),
+    });
+  },
+});
+
+// Speed limiter - slows down requests after threshold
+const speedLimiter = slowDown({
+  windowMs: 15 * 60 * 1000,
+  delayAfter: 50,
+  delayMs: 500,
+  maxDelayMs: 5000,
+});
+
+// File upload rate limiter - 20 uploads per hour
+const uploadLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 20,
+  message: {
+    success: false,
+    message: "Too many file uploads, please try again later",
+    retryAfter: "1 hour",
+  },
+});
+
+// Admin actions rate limiter - 200 per 15 minutes
+const adminLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 200,
+  message: {
+    success: false,
+    message: "Too many admin actions, please slow down",
+  },
+});
+
+// ══════════════════════════════════════════════════════════════
+// LEGACY EXPORT (for backwards compatibility)
+// ══════════════════════════════════════════════════════════════
+function rateLimiter(maxRequests, windowMinutes) {
+  return rateLimit({
+    windowMs: windowMinutes * 60 * 1000,
+    max: maxRequests,
+    message: {
+      success: false,
+      message: "Too many requests, please try again later",
+    },
+  });
 }
 
-// Cleanup old entries every 5 minutes to prevent memory leak
-setInterval(() => {
-  const now = Date.now();
-  // This runs in background — no action needed from caller
-}, 5 * 60 * 1000);
-
-module.exports = { rateLimiter };
+module.exports = {
+  rateLimiter, // Legacy function
+  globalLimiter,
+  authLimiter,
+  speedLimiter,
+  uploadLimiter,
+  adminLimiter,
+  checkBlockedIP,
+  blockIP,
+  isIPBlocked,
+};

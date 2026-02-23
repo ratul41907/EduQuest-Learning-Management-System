@@ -9,8 +9,23 @@ const path = require("path");
 const prisma = require("./prisma");
 
 // ── Middleware imports ─────────────────────────────────────
-const { logger }      = require("./middleware/logger");
-const { rateLimiter } = require("./middleware/rateLimiter");
+const { logger } = require("./middleware/logger");
+const { 
+  globalLimiter, 
+  authLimiter, 
+  speedLimiter, 
+  uploadLimiter, 
+  adminLimiter,
+  checkBlockedIP 
+} = require("./middleware/rateLimiter");
+const { 
+  xssProtection, 
+  noSqlInjectionProtection, 
+  removeNullBytes, 
+  sqlInjectionDetection, 
+  trimInputs 
+} = require("./middleware/sanitize");
+const { trackRequest, getAnalytics } = require("./middleware/analytics");
 
 // ── Route imports ──────────────────────────────────────────
 const authRoutes         = require("./routes/auth.routes");
@@ -33,6 +48,9 @@ const app = express();
 // ══════════════════════════════════════════════════════════════
 // SECURITY & PERFORMANCE MIDDLEWARE
 // ══════════════════════════════════════════════════════════════
+
+// Trust proxy (for rate limiting behind reverse proxy)
+app.set("trust proxy", 1);
 
 // Security headers
 app.use(helmet({
@@ -66,6 +84,27 @@ app.use(compression());
 // Body size limits
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+
+// ══════════════════════════════════════════════════════════════
+// DAY 17: ENHANCED SECURITY & ANALYTICS
+// ══════════════════════════════════════════════════════════════
+
+// Check for blocked IPs first
+app.use(checkBlockedIP);
+
+// Input sanitization (correct order)
+app.use(noSqlInjectionProtection);
+app.use(xssProtection);
+app.use(trimInputs);
+app.use(removeNullBytes);
+app.use(sqlInjectionDetection);
+
+// Global rate limiting & speed control
+app.use(globalLimiter);
+app.use(speedLimiter);
+
+// Request tracking
+app.use(trackRequest);
 
 // Request logger
 app.use(logger);
@@ -101,9 +140,14 @@ app.get("/health", async (req, res) => {
 });
 
 // ══════════════════════════════════════════════════════════════
+// ANALYTICS ENDPOINT (Admin only in production)
+// ══════════════════════════════════════════════════════════════
+app.get("/analytics", getAnalytics);
+
+// ══════════════════════════════════════════════════════════════
 // API ROUTES
 // ══════════════════════════════════════════════════════════════
-app.use("/api/auth",          rateLimiter(10, 15), authRoutes);
+app.use("/api/auth",          authLimiter, authRoutes);
 app.use("/api/user",          userRoutes);
 app.use("/api/courses",       courseRoutes);
 app.use("/api/lessons",       lessonRoutes);
@@ -115,7 +159,7 @@ app.use("/api/leaderboard",   leaderboardRoutes);
 app.use("/api/reviews",       reviewRoutes);
 app.use("/api/certificates",  certificateRoutes);
 app.use("/api/instructor",    instructorRoutes);
-app.use("/api/admin",         adminRoutes);
+app.use("/api/admin",         adminLimiter, adminRoutes);
 app.use("/api/docs",          docsRoutes);
 
 // ══════════════════════════════════════════════════════════════

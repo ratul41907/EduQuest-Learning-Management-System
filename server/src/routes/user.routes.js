@@ -5,6 +5,7 @@ const prisma = require("../prisma");
 const bcrypt = require("bcrypt");
 const { requireAuth } = require("../middleware/auth");
 const { uploadProfilePicture, handleUploadError } = require("../middleware/upload");
+const { uploadLimiter } = require("../middleware/rateLimiter");
 
 // =========================================
 // GET /api/user/me
@@ -288,9 +289,10 @@ router.get("/me/certificates", requireAuth, async (req, res) => {
 
 // =========================================
 // POST /api/user/me/upload-picture
-// NEW Day 15: Upload profile picture
+// Day 15: Upload profile picture
+// Day 17: Added upload rate limiting
 // =========================================
-router.post("/me/upload-picture", requireAuth, (req, res, next) => {
+router.post("/me/upload-picture", requireAuth, uploadLimiter, (req, res, next) => {
   uploadProfilePicture(req, res, (err) => {
     if (err) return handleUploadError(err, req, res, next);
     next();
@@ -345,7 +347,7 @@ router.post("/me/upload-picture", requireAuth, (req, res, next) => {
 
 // =========================================
 // DELETE /api/user/me/delete-picture
-// NEW Day 15: Delete profile picture
+// Day 15: Delete profile picture
 // =========================================
 router.delete("/me/delete-picture", requireAuth, async (req, res) => {
   try {
