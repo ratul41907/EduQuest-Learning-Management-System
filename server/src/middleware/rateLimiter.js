@@ -2,6 +2,7 @@
 
 const rateLimit = require("express-rate-limit");
 const slowDown = require("express-slow-down");
+const logger = require("../config/logger");
 
 // ══════════════════════════════════════════════════════════════
 // MEMORY STORE FOR BLOCKED IPS
@@ -24,7 +25,12 @@ const isIPBlocked = (ip) => {
 const blockIP = (ip, minutes = 15) => {
   const until = Date.now() + (minutes * 60 * 1000);
   blockedIPs.set(ip, { until, blockedAt: new Date() });
-  console.log(`🚫 IP blocked: ${ip} until ${new Date(until).toISOString()}`);
+  
+  logger.logSecurity("IP_BLOCKED", {
+    ip,
+    duration: `${minutes} minutes`,
+    until: new Date(until).toISOString(),
+  });
 };
 
 // ══════════════════════════════════════════════════════════════
@@ -53,6 +59,7 @@ const checkBlockedIP = (req, res, next) => {
   
   next();
 };
+
 // ══════════════════════════════════════════════════════════════
 // RATE LIMITERS
 // ══════════════════════════════════════════════════════════════
@@ -70,10 +77,14 @@ const globalLimiter = rateLimit({
   legacyHeaders: false,
   handler: (req, res) => {
     const ip = req.ip || req.connection.remoteAddress;
-    console.log(`⚠️  Rate limit exceeded: ${ip} on ${req.path}`);
+    
+    logger.logSecurity("RATE_LIMIT_EXCEEDED", {
+      ip,
+      path: req.path,
+      limit: "100 requests per 15 minutes",
+    });
     
     // Block IP after 3 rate limit hits
-    const key = `ratelimit:${ip}`;
     const hits = (req.rateLimit?.current || 0);
     
     if (hits > 120) {
@@ -101,7 +112,13 @@ const authLimiter = rateLimit({
   skipSuccessfulRequests: false,
   handler: (req, res) => {
     const ip = req.ip || req.connection.remoteAddress;
-    console.log(`🚨 Auth rate limit: ${ip} on ${req.path}`);
+    
+    logger.logSecurity("AUTH_RATE_LIMIT_EXCEEDED", {
+      ip,
+      path: req.path,
+      limit: "10 requests per 15 minutes",
+    });
+    
     blockIP(ip, 60); // Block for 1 hour on auth abuse
     
     res.status(429).json({

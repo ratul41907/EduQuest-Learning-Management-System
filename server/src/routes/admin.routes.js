@@ -1083,4 +1083,69 @@ router.get("/reports/users", requireAuth, requireAdmin, async (req, res) => {
   }
 });
 
+const fs = require("fs").promises;
+const path = require("path");
+
+// =========================================
+// GET /api/admin/logs
+// NEW Day 18: View recent logs (Admin only)
+// =========================================
+router.get("/logs", requireAuth, requireAdmin, async (req, res) => {
+  try {
+    const { type = "application", lines = 100 } = req.query;
+    const logDir = path.join(__dirname, "../../logs");
+    
+    // Get today's log file
+    const today = new Date().toISOString().split("T")[0];
+    let filename;
+    
+    switch (type) {
+      case "error":
+        filename = `error-${today}.log`;
+        break;
+      case "http":
+        filename = `http-${today}.log`;
+        break;
+      default:
+        filename = `application-${today}.log`;
+    }
+    
+    const filePath = path.join(logDir, filename);
+    
+    try {
+      const content = await fs.readFile(filePath, "utf-8");
+      const allLines = content.split("\n").filter(Boolean);
+      const recentLines = allLines.slice(-Math.min(lines, 1000)); // Max 1000 lines
+      
+      const logs = recentLines.map(line => {
+        try {
+          return JSON.parse(line);
+        } catch {
+          return { raw: line };
+        }
+      });
+      
+      return res.json({
+        type,
+        date: today,
+        totalLines: allLines.length,
+        showing: logs.length,
+        logs,
+      });
+    } catch (err) {
+      return res.status(404).json({
+        message: "Log file not found",
+        date: today,
+        type,
+      });
+    }
+  } catch (err) {
+    return res.status(500).json({
+      message: "Error reading logs",
+      error: err.message,
+    });
+  }
+});
+
+
 module.exports = router;

@@ -1,5 +1,7 @@
 // Path: E:\EduQuest\server\src\middleware\sanitize.js
 
+const logger = require("../config/logger");
+
 // ══════════════════════════════════════════════════════════════
 // XSS PROTECTION (Manual Implementation)
 // ══════════════════════════════════════════════════════════════
@@ -50,7 +52,11 @@ const noSqlInjectionProtection = (req, res, next) => {
       Object.keys(obj).forEach((key) => {
         // Remove keys starting with $ or containing .
         if (key.startsWith("$") || key.includes(".")) {
-          console.warn(`⚠️  NoSQL injection attempt detected: ${key} from ${req.ip}`);
+          logger.logSecurity("NOSQL_INJECTION_ATTEMPT", {
+            ip: req.ip,
+            key,
+            path: req.path,
+          });
           delete obj[key];
         } else if (typeof obj[key] === "object" && obj[key] !== null) {
           sanitize(obj[key]);
@@ -123,7 +129,12 @@ const sqlInjectionDetection = (req, res, next) => {
   };
 
   if (scanObject(req.body) || scanObject(req.query)) {
-    console.error(`🚨 SQL injection attempt from ${req.ip} on ${req.path}`);
+    logger.logSecurity("SQL_INJECTION_ATTEMPT", {
+      ip: req.ip,
+      path: req.path,
+      body: req.body,
+    });
+    
     return res.status(400).json({
       success: false,
       message: "Invalid input detected",

@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 30
+    },
+    "auditLog": "E:\\EduQuest\\server\\logs\\.3cba4b9f3d866093e118a2f91ce7b94f06ffc3b3-audit.json",
+    "files": [
+        {
+            "date": 1771890521622,
+            "name": "E:\\EduQuest\\server\\logs\\rejections-2026-02-24.log",
+            "hash": "288075c3c23f60b5ec4d521932d8d5b44befe4e16f5b2842ea3812962caf4950"
+        }
+    ],
+    "hashType": "sha256"
+}

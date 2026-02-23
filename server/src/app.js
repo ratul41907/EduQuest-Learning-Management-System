@@ -177,7 +177,9 @@ app.use((req, res) => {
 
 // Global error handler
 app.use((err, req, res, next) => {
-  console.error("❌ Unhandled error:", err);
+  // Day 18: Log error with context
+  const winstonLogger = require("./config/logger");
+  winstonLogger.logError(err, req);
 
   // CORS errors
   if (err.message === "Not allowed by CORS") {

@@ -1,34 +1,45 @@
 // Path: E:\EduQuest\server\src\middleware\logger.js
 
-/**
- * Global request logger
- * Logs: METHOD /path STATUS Xms
- * Example: POST /api/auth/login 200 45ms
- */
-function logger(req, res, next) {
-  const start = Date.now();
+const logger = require("../config/logger");
 
-  // Run after response is sent
+function loggerMiddleware(req, res, next) {
+  const startTime = Date.now();
+
+  // Log request
+  logger.http("Incoming Request", {
+    method: req.method,
+    url: req.originalUrl,
+    ip: req.ip,
+    userAgent: req.get("user-agent"),
+  });
+
+  // Capture response
   res.on("finish", () => {
-    const duration = Date.now() - start;
-    const status = res.statusCode;
+    const duration = Date.now() - startTime;
+    
+    logger.logRequest(req, res, duration);
 
-    // Color code by status
-    const color =
-      status >= 500 ? "\x1b[31m" : // red
-      status >= 400 ? "\x1b[33m" : // yellow
-      status >= 200 ? "\x1b[32m" : // green
-      "\x1b[0m";                    // reset
+    // Log slow requests
+    if (duration > 1000) {
+      logger.warn("Slow Request Detected", {
+        method: req.method,
+        url: req.originalUrl,
+        duration: `${duration}ms`,
+      });
+    }
 
-    const reset = "\x1b[0m";
-    const time = new Date().toISOString().slice(11, 19); // HH:MM:SS
-
-    console.log(
-      `${color}[${time}] ${req.method} ${req.originalUrl} → ${status} (${duration}ms)${reset}`
-    );
+    // Log errors
+    if (res.statusCode >= 400) {
+      logger.warn("Error Response", {
+        method: req.method,
+        url: req.originalUrl,
+        statusCode: res.statusCode,
+        duration: `${duration}ms`,
+      });
+    }
   });
 
   next();
 }
 
-module.exports = { logger };
+module.exports = { logger: loggerMiddleware };

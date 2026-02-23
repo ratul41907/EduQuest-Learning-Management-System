@@ -7,7 +7,8 @@ const jwt = require("jsonwebtoken");
 const prisma = require("../prisma");
 const { requireAuth } = require("../middleware/auth");
 const { validate } = require("../middleware/validate");
-const { sendWelcomeEmail } = require("../utils/email");
+const { sendWelcomeEmail, sendPasswordResetEmail } = require("../utils/email");
+const logger = require("../config/logger");
 
 function signToken(user) {
   return jwt.sign(
@@ -32,7 +33,10 @@ router.post(
       const { fullName, email, password, role } = req.body;
 
       const existing = await prisma.user.findUnique({ where: { email } });
-      if (existing) return res.status(409).json({ message: "Email already exists" });
+      if (existing) {
+        logger.logAuth("REGISTER_FAILED", null, email, false, req.ip);
+        return res.status(409).json({ message: "Email already exists" });
+      }
 
       const passwordHash = await bcrypt.hash(password, 10);
 
@@ -54,6 +58,9 @@ router.post(
         },
       });
 
+      // Day 18: Log successful registration
+      logger.logAuth("REGISTER", user.id, user.email, true, req.ip);
+
       // Day 16: send welcome email (non-blocking)
       sendWelcomeEmail(user.email, user.fullName).catch(err => 
         console.error("Welcome email failed:", err)
@@ -62,6 +69,7 @@ router.post(
       const token = signToken(user);
       res.status(201).json({ user, token });
     } catch (err) {
+      logger.logError(err, req);
       res.status(500).json({ message: "Server error", error: String(err) });
     }
   }
@@ -81,10 +89,19 @@ router.post(
       const { email, password } = req.body;
 
       const user = await prisma.user.findUnique({ where: { email } });
-      if (!user) return res.status(401).json({ message: "Invalid credentials" });
+      if (!user) {
+        logger.logAuth("LOGIN_FAILED", null, email, false, req.ip);
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
 
       const ok = await bcrypt.compare(password, user.passwordHash);
-      if (!ok) return res.status(401).json({ message: "Invalid credentials" });
+      if (!ok) {
+        logger.logAuth("LOGIN_FAILED", user.id, email, false, req.ip);
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+
+      // Day 18: Log successful login
+      logger.logAuth("LOGIN", user.id, user.email, true, req.ip);
 
       const token = signToken(user);
 
@@ -100,6 +117,7 @@ router.post(
         token,
       });
     } catch (err) {
+      logger.logError(err, req);
       res.status(500).json({ message: "Server error", error: String(err) });
     }
   }
@@ -126,7 +144,7 @@ router.get("/me", requireAuth, async (req, res) => {
 
 // =========================================
 // POST /api/auth/forgot-password
-// NEW Day 16: Request password reset
+// Day 16: Request password reset
 // =========================================
 router.post(
   "/forgot-password",
@@ -139,6 +157,7 @@ router.post(
       
       // Always return success to prevent email enumeration
       if (!user) {
+        logger.info("Password reset requested for non-existent email", { email, ip: req.ip });
         return res.json({ 
           message: "If that email exists, a password reset link has been sent." 
         });
@@ -151,8 +170,10 @@ router.post(
         { expiresIn: "1h" }
       );
 
+      // Day 18: Log password reset request
+      logger.logAuth("PASSWORD_RESET_REQUESTED", user.id, user.email, true, req.ip);
+
       // Send password reset email
-      const { sendPasswordResetEmail } = require("../utils/email");
       sendPasswordResetEmail(user.email, user.fullName, resetToken).catch(err =>
         console.error("Password reset email failed:", err)
       );
@@ -161,6 +182,7 @@ router.post(
         message: "If that email exists, a password reset link has been sent." 
       });
     } catch (err) {
+      logger.logError(err, req);
       return res.status(500).json({ 
         message: "Server error", 
         error: String(err) 
@@ -171,7 +193,7 @@ router.post(
 
 // =========================================
 // POST /api/auth/reset-password
-// NEW Day 16: Reset password with token
+// Day 16: Reset password with token
 // =========================================
 router.post(
   "/reset-password",
@@ -203,8 +225,12 @@ router.post(
         data: { passwordHash },
       });
 
+      // Day 18: Log password reset completion
+      logger.logAuth("PASSWORD_RESET_COMPLETED", decoded.sub, "N/A", true, req.ip);
+
       return res.json({ message: "Password reset successful. You can now login." });
     } catch (err) {
+      logger.logError(err, req);
       return res.status(500).json({ 
         message: "Server error", 
         error: String(err) 
