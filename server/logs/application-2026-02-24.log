@@ -1,0 +1,19 @@
+{"email":"student@test.com","event":"LOGIN","ip":"::ffff:127.0.0.1","level":"info","message":"Authentication Event","service":"eduquest-api","success":true,"timestamp":"2026-02-24 18:28:15","userId":"cml5hht780001wpwoi7nt3kru"}
+{"email":"student@test.com","event":"LOGIN_FAILED","ip":"::ffff:127.0.0.1","level":"info","message":"Authentication Event","service":"eduquest-api","success":false,"timestamp":"2026-02-24 18:29:00","userId":"cml5hht780001wpwoi7nt3kru"}
+{"duration":"67ms","level":"warn","message":"Error Response","method":"POST","service":"eduquest-api","statusCode":401,"timestamp":"2026-02-24 18:29:00","url":"/api/auth/login"}
+{"duration":"1ms","level":"warn","message":"Error Response","method":"GET","service":"eduquest-api","statusCode":404,"timestamp":"2026-02-24 18:30:39","url":"/api/nonexistent"}
+{"event":"NOSQL_INJECTION_ATTEMPT","ip":"::ffff:127.0.0.1","key":"$ne","level":"warn","message":"Security Event","path":"/api/auth/login","service":"eduquest-api","timestamp":"2026-02-24 18:31:20"}
+{"duration":"1ms","level":"warn","message":"Error Response","method":"POST","service":"eduquest-api","statusCode":400,"timestamp":"2026-02-24 18:31:20","url":"/api/auth/login"}
+{"duration":"1ms","level":"warn","message":"Error Response","method":"GET","service":"eduquest-api","statusCode":404,"timestamp":"2026-02-24 18:33:49","url":"/api/auth/login"}
+{"email":"instructor@test.com","event":"LOGIN","ip":"::ffff:127.0.0.1","level":"info","message":"Authentication Event","service":"eduquest-api","success":true,"timestamp":"2026-02-24 18:33:56","userId":"cml5hgqsn0000wpwo7gc7365j"}
+{"event":"NOSQL_INJECTION_ATTEMPT","ip":"::ffff:127.0.0.1","key":"$ne","level":"warn","message":"Security Event","path":"/api/courses","service":"eduquest-api","timestamp":"2026-02-24 18:34:35"}
+{"duration":"4ms","level":"warn","message":"Error Response","method":"POST","service":"eduquest-api","statusCode":400,"timestamp":"2026-02-24 18:34:35","url":"/api/courses"}
+{"body":{"description":"This should trigger SQL injection detection","title":"Test'; DROP TABLE users;--"},"event":"SQL_INJECTION_ATTEMPT","ip":"::ffff:127.0.0.1","level":"warn","message":"Security Event","path":"/api/courses","service":"eduquest-api","timestamp":"2026-02-24 18:34:58"}
+{"duration":"1ms","level":"warn","message":"Error Response","method":"GET","service":"eduquest-api","statusCode":404,"timestamp":"2026-02-24 18:38:49","url":"/api/auth/login"}
+{"duration":"3ms","level":"warn","message":"Error Response","method":"GET","service":"eduquest-api","statusCode":404,"timestamp":"2026-02-24 18:38:49","url":"/api/auth/login"}
+{"duration":"9ms","level":"warn","message":"Error Response","method":"GET","service":"eduquest-api","statusCode":404,"timestamp":"2026-02-24 18:38:50","url":"/api/auth/login"}
+{"duration":"1ms","level":"warn","message":"Error Response","method":"GET","service":"eduquest-api","statusCode":404,"timestamp":"2026-02-24 18:38:50","url":"/api/auth/login"}
+{"duration":"1ms","level":"warn","message":"Error Response","method":"GET","service":"eduquest-api","statusCode":404,"timestamp":"2026-02-24 18:38:50","url":"/api/auth/login"}
+{"event":"AUTH_RATE_LIMIT_EXCEEDED","ip":"::ffff:127.0.0.1","level":"warn","limit":"10 requests per 15 minutes","message":"Security Event","path":"/login","service":"eduquest-api","timestamp":"2026-02-24 18:38:50"}
+{"duration":"60 minutes","event":"IP_BLOCKED","ip":"::ffff:127.0.0.1","level":"warn","message":"Security Event","service":"eduquest-api","timestamp":"2026-02-24 18:38:50","until":"2026-02-24T13:38:50.717Z"}
+{"duration":"5ms","level":"warn","message":"Error Response","method":"GET","service":"eduquest-api","statusCode":429,"timestamp":"2026-02-24 18:38:50","url":"/api/auth/login"}
