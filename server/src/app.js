@@ -42,6 +42,7 @@ const certificateRoutes  = require("./routes/certificate.routes");
 const instructorRoutes   = require("./routes/instructor.routes");
 const adminRoutes        = require("./routes/admin.routes");
 const docsRoutes         = require("./routes/docs.routes");
+const cacheRoutes        = require("./routes/cache.routes"); // Day 19
 
 const app = express();
 
@@ -161,6 +162,7 @@ app.use("/api/certificates",  certificateRoutes);
 app.use("/api/instructor",    instructorRoutes);
 app.use("/api/admin",         adminLimiter, adminRoutes);
 app.use("/api/docs",          docsRoutes);
+app.use("/api/cache",         cacheRoutes); // Day 19: Cache management
 
 // ══════════════════════════════════════════════════════════════
 // ERROR HANDLERS

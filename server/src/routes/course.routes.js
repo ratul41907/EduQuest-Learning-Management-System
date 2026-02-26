@@ -7,6 +7,8 @@ const { validate } = require("../middleware/validate");
 const { uploadCourseThumbnail, handleUploadError } = require("../middleware/upload");
 const { sendEnrollmentEmail, sendInstructorEnrollmentEmail } = require("../utils/email");
 const { uploadLimiter } = require("../middleware/rateLimiter");
+const { cacheMiddleware } = require("../middleware/cache");
+const { deleteCache, deleteCachePattern } = require("../config/redis");
 
 // =========================================
 // GET /api/courses/my
@@ -43,8 +45,9 @@ router.get("/my", requireAuth, async (req, res) => {
 
 // =========================================
 // GET /api/courses
+// Day 19: Added caching (5 minutes)
 // =========================================
-router.get("/", async (req, res) => {
+router.get("/", cacheMiddleware(300), async (req, res) => {
   try {
     const { search, level, minPrice, maxPrice, page = 1, limit = 10 } = req.query;
 
@@ -102,6 +105,7 @@ router.get("/", async (req, res) => {
 
 // =========================================
 // POST /api/courses
+// Day 19: Added cache invalidation
 // =========================================
 router.post(
   "/",
@@ -128,6 +132,9 @@ router.post(
         },
       });
 
+      // Day 19: Invalidate courses cache
+      await deleteCachePattern("cache:/api/courses*");
+
       return res.status(201).json(course);
     } catch (err) {
       return res.status(500).json({ message: "Error creating course", error: err.message });
@@ -137,9 +144,10 @@ router.post(
 
 // =========================================
 // GET /api/courses/:id/stats
+// Day 19: Added caching (5 minutes)
 // IMPORTANT: above /:id
 // =========================================
-router.get("/:id/stats", async (req, res) => {
+router.get("/:id/stats", cacheMiddleware(300), async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -176,9 +184,10 @@ router.get("/:id/stats", async (req, res) => {
 
 // =========================================
 // GET /api/courses/:id/leaderboard
+// Day 19: Added caching (2 minutes)
 // IMPORTANT: above /:id
 // =========================================
-router.get("/:id/leaderboard", async (req, res) => {
+router.get("/:id/leaderboard", cacheMiddleware(120), async (req, res) => {
   try {
     const { id: courseId } = req.params;
 
@@ -226,9 +235,10 @@ router.get("/:id/leaderboard", async (req, res) => {
 
 // =========================================
 // GET /api/courses/:id/quizzes
+// Day 19: Added caching (5 minutes)
 // IMPORTANT: above /:id
 // =========================================
-router.get("/:id/quizzes", async (req, res) => {
+router.get("/:id/quizzes", cacheMiddleware(300), async (req, res) => {
   try {
     const { id: courseId } = req.params;
 
@@ -304,6 +314,7 @@ router.get("/:id/progress", requireAuth, async (req, res) => {
 // POST /api/courses/:id/upload-thumbnail
 // Day 15: Upload course thumbnail (instructor only)
 // Day 17: Added upload rate limiting
+// Day 19: Added cache invalidation
 // IMPORTANT: above /:id
 // =========================================
 router.post("/:id/upload-thumbnail", requireAuth, uploadLimiter, (req, res, next) => {
@@ -347,6 +358,13 @@ router.post("/:id/upload-thumbnail", requireAuth, uploadLimiter, (req, res, next
       },
     });
 
+    // Day 19: Invalidate course caches
+    await deleteCache([
+      `cache:/api/courses/${id}`,
+      `cache:/api/courses/${id}/stats`,
+    ]);
+    await deleteCachePattern("cache:/api/courses?*");
+
     return res.json({
       message: "Thumbnail uploaded successfully",
       thumbnail: filePath,
@@ -362,8 +380,9 @@ router.post("/:id/upload-thumbnail", requireAuth, uploadLimiter, (req, res, next
 
 // =========================================
 // GET /api/courses/:id
+// Day 19: Added caching (10 minutes)
 // =========================================
-router.get("/:id", async (req, res) => {
+router.get("/:id", cacheMiddleware(600), async (req, res) => {
   try {
     const course = await prisma.course.findUnique({
       where: { id: req.params.id },
@@ -384,6 +403,7 @@ router.get("/:id", async (req, res) => {
 // =========================================
 // POST /api/courses/:id/enroll
 // Day 16: Added enrollment emails
+// Day 19: Added cache invalidation
 // =========================================
 router.post("/:id/enroll", requireAuth, async (req, res) => {
   const { id: courseId } = req.params;
@@ -440,6 +460,12 @@ router.post("/:id/enroll", requireAuth, async (req, res) => {
       );
     }
 
+    // Day 19: Invalidate course stats cache
+    await deleteCache([
+      `cache:/api/courses/${courseId}/stats`,
+      `cache:/api/courses/${courseId}/leaderboard`,
+    ]);
+
     return res.status(201).json(enrollment);
   } catch (err) {
     return res.status(500).json({ message: "Enrollment error", error: err.message });
@@ -448,6 +474,7 @@ router.post("/:id/enroll", requireAuth, async (req, res) => {
 
 // =========================================
 // PATCH /api/courses/:id
+// Day 19: Added cache invalidation
 // =========================================
 router.patch("/:id", requireAuth, async (req, res) => {
   const { id } = req.params;
@@ -476,6 +503,15 @@ router.patch("/:id", requireAuth, async (req, res) => {
       },
     });
 
+    // Day 19: Invalidate course caches
+    await deleteCache([
+      `cache:/api/courses/${id}`,
+      `cache:/api/courses/${id}/stats`,
+      `cache:/api/courses/${id}/leaderboard`,
+      `cache:/api/courses/${id}/quizzes`,
+    ]);
+    await deleteCachePattern("cache:/api/courses?*");
+
     return res.json({ message: "Course updated", course: updated });
   } catch (err) {
     return res.status(500).json({ message: "Error updating course", error: err.message });
@@ -484,6 +520,7 @@ router.patch("/:id", requireAuth, async (req, res) => {
 
 // =========================================
 // DELETE /api/courses/:id
+// Day 19: Added cache invalidation
 // =========================================
 router.delete("/:id", requireAuth, async (req, res) => {
   const { id } = req.params;
@@ -519,6 +556,9 @@ router.delete("/:id", requireAuth, async (req, res) => {
     await prisma.certificate.deleteMany({ where: { courseId: id } });
     await prisma.notification.deleteMany({ where: { courseId: id } });
     await prisma.course.delete({ where: { id } });
+
+    // Day 19: Invalidate all course caches
+    await deleteCachePattern("cache:/api/courses*");
 
     return res.json({ message: "Course deleted successfully" });
   } catch (err) {

@@ -1,1 +1,13 @@
 
+#redis-server --bind 127.0.0.1 --port 6380
+cd E:\EduQuest\server
+npm run dev
+# Terminal 1: Redis
+redis-server --bind 127.0.0.1 --port 6380
+
+# Terminal 2: Server
+cd E:\EduQuest\server
+npm run dev
+
+# Check Redis
+redis-cli -p 6380 keys *
