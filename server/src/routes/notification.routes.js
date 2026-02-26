@@ -3,122 +3,226 @@
 const router = require("express").Router();
 const prisma = require("../prisma");
 const { requireAuth } = require("../middleware/auth");
+const { validate } = require("../middleware/validate");
+const { sendNotificationToUser } = require("../config/socket"); // Day 20
 
 // =========================================
-// GET /api/notifications
-// Student: get my notifications
+// GET /api/notifications/my
+// Get current user's notifications
 // =========================================
-router.get("/", requireAuth, async (req, res) => {
+router.get("/my", requireAuth, async (req, res) => {
   try {
-    const userId = req.user.sub;
+    const { unreadOnly } = req.query;
 
-    if (!userId) {
-      return res.status(400).json({ message: "User ID missing from token." });
+    const where = { userId: req.user.sub };
+    if (unreadOnly === "true") {
+      where.isRead = false;
     }
 
     const notifications = await prisma.notification.findMany({
-      where: { userId: String(userId) },
+      where,
       orderBy: { createdAt: "desc" },
       take: 50,
     });
 
     const unreadCount = await prisma.notification.count({
-      where: { userId: String(userId), isRead: false },
+      where: { userId: req.user.sub, isRead: false },
     });
 
-    res.json({ unreadCount, notifications });
+    return res.json({
+      notifications,
+      unreadCount,
+      total: notifications.length,
+    });
   } catch (err) {
-    res.status(500).json({ message: "Failed to load notifications", error: err.message });
+    return res.status(500).json({
+      message: "Error fetching notifications",
+      error: err.message,
+    });
   }
 });
 
 // =========================================
-// PATCH /api/notifications/read-all
-// Mark all notifications as read
-// IMPORTANT: must stay above /:id routes
+// POST /api/notifications
+// Create a notification (Admin/Instructor)
+// Day 20: Added WebSocket real-time delivery
 // =========================================
-router.patch("/read-all", requireAuth, async (req, res) => {
-  try {
-    const userId = req.user.sub;
+router.post(
+  "/",
+  requireAuth,
+  validate({
+    userId: "required",
+    title: "required|min:3|max:200",
+    message: "required|min:3|max:500",
+  }),
+  async (req, res) => {
+    try {
+      if (req.user.role !== "ADMIN" && req.user.role !== "INSTRUCTOR") {
+        return res.status(403).json({ message: "Access denied" });
+      }
 
-    await prisma.notification.updateMany({
-      where: { userId: String(userId), isRead: false },
-      data: { isRead: true },
-    });
+      const { userId, courseId, type, title, message } = req.body;
 
-    res.json({ message: "All notifications marked as read" });
-  } catch (err) {
-    res.status(500).json({ message: "Error marking as read", error: err.message });
+      const notification = await prisma.notification.create({
+        data: {
+          userId,
+          courseId: courseId || null,
+          type: type || "INFO",
+          title,
+          message,
+          isRead: false,
+        },
+      });
+
+      // Day 20: Send real-time notification via WebSocket
+      sendNotificationToUser(notification.userId, {
+        id: notification.id,
+        type: notification.type,
+        title: notification.title,
+        message: notification.message,
+        courseId: notification.courseId,
+        timestamp: notification.createdAt,
+        isRead: false,
+      });
+
+      return res.status(201).json(notification);
+    } catch (err) {
+      return res.status(500).json({
+        message: "Error creating notification",
+        error: err.message,
+      });
+    }
   }
-});
+);
 
 // =========================================
 // PATCH /api/notifications/:id/read
-// Mark single notification as read
+// Mark notification as read
 // =========================================
 router.patch("/:id/read", requireAuth, async (req, res) => {
   try {
-    const userId = req.user.sub;
     const { id } = req.params;
 
-    const updated = await prisma.notification.updateMany({
-      where: { id, userId: String(userId) },
-      data: { isRead: true },
+    const notification = await prisma.notification.findUnique({
+      where: { id },
     });
 
-    if (updated.count === 0) {
+    if (!notification) {
       return res.status(404).json({ message: "Notification not found" });
     }
 
-    res.json({ message: "Notification marked as read" });
+    if (notification.userId !== req.user.sub) {
+      return res.status(403).json({ message: "Not your notification" });
+    }
+
+    const updated = await prisma.notification.update({
+      where: { id },
+      data: { isRead: true },
+    });
+
+    return res.json(updated);
   } catch (err) {
-    res.status(500).json({ message: "Error", error: err.message });
+    return res.status(500).json({
+      message: "Error updating notification",
+      error: err.message,
+    });
+  }
+});
+
+// =========================================
+// PATCH /api/notifications/mark-all-read
+// Mark all notifications as read
+// =========================================
+router.patch("/mark-all-read", requireAuth, async (req, res) => {
+  try {
+    const result = await prisma.notification.updateMany({
+      where: {
+        userId: req.user.sub,
+        isRead: false,
+      },
+      data: { isRead: true },
+    });
+
+    return res.json({
+      message: "All notifications marked as read",
+      count: result.count,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: "Error marking notifications as read",
+      error: err.message,
+    });
   }
 });
 
 // =========================================
 // DELETE /api/notifications/:id
-// NEW: Delete a single notification (owner only)
+// Delete a notification
 // =========================================
 router.delete("/:id", requireAuth, async (req, res) => {
   try {
-    const userId = req.user.sub;
     const { id } = req.params;
 
-    // Only delete if it belongs to this user
-    const deleted = await prisma.notification.deleteMany({
-      where: { id, userId: String(userId) },
+    const notification = await prisma.notification.findUnique({
+      where: { id },
     });
 
-    if (deleted.count === 0) {
+    if (!notification) {
       return res.status(404).json({ message: "Notification not found" });
     }
 
-    res.json({ message: "Notification deleted" });
+    if (notification.userId !== req.user.sub && req.user.role !== "ADMIN") {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    await prisma.notification.delete({ where: { id } });
+
+    return res.json({ message: "Notification deleted" });
   } catch (err) {
-    res.status(500).json({ message: "Error deleting notification", error: err.message });
+    return res.status(500).json({
+      message: "Error deleting notification",
+      error: err.message,
+    });
   }
 });
 
 // =========================================
-// DEBUG: POST /api/notifications/seed
-// Manual test — creates a test notification
-// Remove this in production
+// GET /api/notifications (Admin only)
+// Get all notifications
 // =========================================
-router.post("/seed", requireAuth, async (req, res) => {
+router.get("/", requireAuth, async (req, res) => {
   try {
-    const userId = req.user.sub;
-    const noti = await prisma.notification.create({
-      data: {
-        userId: String(userId),
-        type: "WELCOME",
-        title: "Hello!",
-        message: "Your notification system is working.",
+    if (req.user.role !== "ADMIN") {
+      return res.status(403).json({ message: "Admin only" });
+    }
+
+    const { userId, type, isRead, limit = 100 } = req.query;
+
+    const where = {};
+    if (userId) where.userId = userId;
+    if (type) where.type = type;
+    if (isRead !== undefined) where.isRead = isRead === "true";
+
+    const notifications = await prisma.notification.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      take: Math.min(parseInt(limit), 500),
+      include: {
+        user: {
+          select: { id: true, fullName: true, email: true },
+        },
       },
     });
-    res.json(noti);
-  } catch (e) {
-    res.status(500).json({ error: e.message });
+
+    return res.json({
+      notifications,
+      total: notifications.length,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: "Error fetching notifications",
+      error: err.message,
+    });
   }
 });
 

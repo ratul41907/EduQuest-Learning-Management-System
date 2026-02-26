@@ -1,0 +1,352 @@
+{"level":"info","message":"Socket.io server initialized","service":"eduquest-api","timestamp":"2026-02-27 03:16:20"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:21"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:21"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:21"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:21"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:21"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:21"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:21"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:21"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:21"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:21"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:21"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:21"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:21"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:21"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:21"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:21"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:21"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:21"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:22"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:22"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:22"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:22"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:22"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:22"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:22"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:22"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:22"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:23"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:23"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:23"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:23"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:23"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:23"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:24"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:24"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:24"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:25"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:25"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:25"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:25"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:25"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:25"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:26"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:26"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:26"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:27"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:27"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:27"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:28"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:28"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:28"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:28"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:28"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:28"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:29"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:29"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:29"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:30"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:30"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:30"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:31"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:31"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:31"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:32"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:32"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:32"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:33"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:33"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:33"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:35"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:35"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:35"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:36"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:36"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:36"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:37"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:37"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:37"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:38"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:38"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:38"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:40"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:40"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:40"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:41"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:41"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:41"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:43"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:43"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:43"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:44"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:44"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:44"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:46"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:46"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:46"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:47"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:47"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:47"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:49"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:49"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:49"}
+{"level":"info","message":"Socket.io server initialized","service":"eduquest-api","timestamp":"2026-02-27 03:16:51"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:51"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:51"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:51"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:51"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:51"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:51"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:51"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:51"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:51"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:51"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:51"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:51"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:51"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:51"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:51"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:52"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:52"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:52"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:52"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:52"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:52"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:52"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:52"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:52"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:53"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:53"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:53"}
+{"level":"info","message":"Socket.io server initialized","service":"eduquest-api","timestamp":"2026-02-27 03:16:54"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:54"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:54"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:54"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:54"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:54"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:54"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:54"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:54"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:54"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:54"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:54"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:54"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:54"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:54"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:54"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:55"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:55"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:55"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:55"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:55"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:55"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:55"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:55"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:55"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:56"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:56"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:56"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:56"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:56"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:56"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:57"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:57"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:57"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:57"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:57"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:57"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:58"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:58"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:58"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:59"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:59"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:59"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:16:59"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:16:59"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:16:59"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:17:00"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:17:00"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:17:00"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:17:01"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:17:01"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:17:01"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:17:02"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:17:02"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:17:02"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:17:03"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:17:03"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:17:03"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:17:04"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:17:04"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:17:04"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:17:05"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:17:05"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:17:05"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:17:06"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:17:06"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:17:06"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:17:07"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:17:07"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:17:07"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:17:08"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:17:08"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:17:08"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:17:09"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:17:09"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:17:09"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:17:10"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:17:10"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:17:10"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:17:12"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:17:12"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:17:12"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:17:13"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:17:13"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:17:13"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:17:14"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:17:14"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:17:14"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:17:16"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:17:16"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:17:16"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:17:17"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:17:17"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:17:17"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:17:19"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:17:19"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:17:19"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:17:21"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:17:21"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:17:21"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:17:22"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:17:22"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:17:22"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:17:24"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:17:24"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:17:24"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:17:26"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:17:26"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:17:26"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:17:27"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:17:27"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:17:27"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:17:29"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:17:29"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:17:29"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:17:31"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:17:31"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:17:31"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:17:33"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:17:33"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:17:33"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:17:35"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:17:35"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:17:35"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 03:17:37"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 03:17:37"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 03:17:37"}
+{"level":"info","message":"Redis client connected","service":"eduquest-api","timestamp":"2026-02-27 03:17:39"}
+{"level":"info","message":"Redis client ready","service":"eduquest-api","timestamp":"2026-02-27 03:17:39"}
+{"level":"info","message":"Socket.io server initialized","service":"eduquest-api","timestamp":"2026-02-27 03:18:49"}
+{"level":"info","message":"Redis client connected","service":"eduquest-api","timestamp":"2026-02-27 03:18:49"}
+{"level":"info","message":"Redis client ready","service":"eduquest-api","timestamp":"2026-02-27 03:18:49"}
+{"level":"info","message":"Socket.io server initialized","service":"eduquest-api","timestamp":"2026-02-27 03:19:40"}
+{"level":"info","message":"Redis client connected","service":"eduquest-api","timestamp":"2026-02-27 03:19:40"}
+{"level":"info","message":"Redis client ready","service":"eduquest-api","timestamp":"2026-02-27 03:19:40"}
+{"level":"info","message":"Socket.io server initialized","service":"eduquest-api","timestamp":"2026-02-27 03:19:51"}
+{"level":"info","message":"Redis client connected","service":"eduquest-api","timestamp":"2026-02-27 03:19:51"}
+{"level":"info","message":"Redis client ready","service":"eduquest-api","timestamp":"2026-02-27 03:19:51"}
+{"level":"info","message":"Socket.io server initialized","service":"eduquest-api","timestamp":"2026-02-27 03:20:08"}
+{"level":"info","message":"Redis client connected","service":"eduquest-api","timestamp":"2026-02-27 03:20:08"}
+{"level":"info","message":"Redis client ready","service":"eduquest-api","timestamp":"2026-02-27 03:20:08"}
+{"level":"info","message":"Socket.io server initialized","service":"eduquest-api","timestamp":"2026-02-27 03:22:16"}
+{"level":"info","message":"Redis client connected","service":"eduquest-api","timestamp":"2026-02-27 03:22:16"}
+{"level":"info","message":"Redis client ready","service":"eduquest-api","timestamp":"2026-02-27 03:22:16"}
+{"ip":"::1","level":"http","message":"Incoming Request","method":"GET","service":"eduquest-api","timestamp":"2026-02-27 03:23:55","url":"/socket-test.html","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+{"duration":"3ms","ip":"::1","level":"http","message":"HTTP Request","method":"GET","service":"eduquest-api","statusCode":404,"timestamp":"2026-02-27 03:23:55","url":"/socket-test.html","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36","userId":"anonymous"}
+{"duration":"3ms","level":"warn","message":"Error Response","method":"GET","service":"eduquest-api","statusCode":404,"timestamp":"2026-02-27 03:23:55","url":"/socket-test.html"}
+{"ip":"::1","level":"http","message":"Incoming Request","method":"GET","service":"eduquest-api","timestamp":"2026-02-27 03:23:55","url":"/favicon.ico","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+{"duration":"3ms","ip":"::1","level":"http","message":"HTTP Request","method":"GET","service":"eduquest-api","statusCode":404,"timestamp":"2026-02-27 03:23:55","url":"/favicon.ico","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36","userId":"anonymous"}
+{"duration":"3ms","level":"warn","message":"Error Response","method":"GET","service":"eduquest-api","statusCode":404,"timestamp":"2026-02-27 03:23:55","url":"/favicon.ico"}
+{"level":"info","message":"Socket.io server initialized","service":"eduquest-api","timestamp":"2026-02-27 03:26:17"}
+{"level":"info","message":"Redis client connected","service":"eduquest-api","timestamp":"2026-02-27 03:26:17"}
+{"level":"info","message":"Redis client ready","service":"eduquest-api","timestamp":"2026-02-27 03:26:17"}
+{"level":"info","message":"Socket.io server initialized","service":"eduquest-api","timestamp":"2026-02-27 03:26:31"}
+{"level":"info","message":"Redis client connected","service":"eduquest-api","timestamp":"2026-02-27 03:26:31"}
+{"level":"info","message":"Redis client ready","service":"eduquest-api","timestamp":"2026-02-27 03:26:31"}
+{"ip":"::1","level":"http","message":"Incoming Request","method":"GET","service":"eduquest-api","timestamp":"2026-02-27 03:26:48","url":"/socket-test.html","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+{"duration":"46ms","ip":"::1","level":"http","message":"HTTP Request","method":"GET","service":"eduquest-api","statusCode":200,"timestamp":"2026-02-27 03:26:48","url":"/socket-test.html","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36","userId":"anonymous"}
+{"ip":"::ffff:127.0.0.1","level":"error","message":"Expected ',' or '}' after property value in JSON at position 35","method":"GET","service":"eduquest-api","stack":"SyntaxError: Expected ',' or '}' after property value in JSON at position 35\n    at JSON.parse (<anonymous>)\n    at parse (E:\\EduQuest\\server\\node_modules\\body-parser\\lib\\types\\json.js:72:19)\n    at E:\\EduQuest\\server\\node_modules\\body-parser\\lib\\read.js:162:18\n    at AsyncResource.runInAsyncScope (node:async_hooks:206:9)\n    at invokeCallback (E:\\EduQuest\\server\\node_modules\\raw-body\\index.js:238:16)\n    at done (E:\\EduQuest\\server\\node_modules\\raw-body\\index.js:227:7)\n    at IncomingMessage.onEnd (E:\\EduQuest\\server\\node_modules\\raw-body\\index.js:287:7)\n    at IncomingMessage.emit (node:events:524:28)\n    at endReadableNT (node:internal/streams/readable:1698:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)","timestamp":"2026-02-27 03:28:16","url":"/api/auth/login","userId":"anonymous"}
+{"ip":"::ffff:127.0.0.1","level":"http","message":"Incoming Request","method":"GET","service":"eduquest-api","timestamp":"2026-02-27 03:28:23","url":"/api/auth/login","userAgent":"Thunder Client (https://www.thunderclient.com)"}
+{"duration":"2ms","ip":"::ffff:127.0.0.1","level":"http","message":"HTTP Request","method":"GET","service":"eduquest-api","statusCode":404,"timestamp":"2026-02-27 03:28:23","url":"/api/auth/login","userAgent":"Thunder Client (https://www.thunderclient.com)","userId":"anonymous"}
+{"duration":"2ms","level":"warn","message":"Error Response","method":"GET","service":"eduquest-api","statusCode":404,"timestamp":"2026-02-27 03:28:23","url":"/api/auth/login"}
+{"ip":"::ffff:127.0.0.1","level":"http","message":"Incoming Request","method":"POST","service":"eduquest-api","timestamp":"2026-02-27 03:28:30","url":"/api/auth/login","userAgent":"Thunder Client (https://www.thunderclient.com)"}
+{"email":"admin@test.com","event":"LOGIN","ip":"::ffff:127.0.0.1","level":"info","message":"Authentication Event","service":"eduquest-api","success":true,"timestamp":"2026-02-27 03:28:30","userId":"cmlqo1zfs0000wppo8d44oet5"}
+{"duration":"304ms","ip":"::ffff:127.0.0.1","level":"http","message":"HTTP Request","method":"POST","service":"eduquest-api","statusCode":200,"timestamp":"2026-02-27 03:28:30","url":"/api/auth/login","userAgent":"Thunder Client (https://www.thunderclient.com)","userId":"anonymous"}
+{"level":"info","message":"Socket authenticated","role":"ADMIN","service":"eduquest-api","socketId":"95ESI-pmOGQyb1MBAAAB","timestamp":"2026-02-27 03:28:45","userId":"cmlqo1zfs0000wppo8d44oet5"}
+{"level":"info","message":"User connected","service":"eduquest-api","socketId":"95ESI-pmOGQyb1MBAAAB","timestamp":"2026-02-27 03:28:45","totalOnline":1,"userId":"cmlqo1zfs0000wppo8d44oet5"}
+{"ip":"::ffff:127.0.0.1","level":"http","message":"Incoming Request","method":"POST","service":"eduquest-api","timestamp":"2026-02-27 03:29:52","url":"/api/auth/login","userAgent":"Thunder Client (https://www.thunderclient.com)"}
+{"email":"instructor@test.com","event":"LOGIN","ip":"::ffff:127.0.0.1","level":"info","message":"Authentication Event","service":"eduquest-api","success":true,"timestamp":"2026-02-27 03:29:52","userId":"cml5hgqsn0000wpwo7gc7365j"}
+{"duration":"77ms","ip":"::ffff:127.0.0.1","level":"http","message":"HTTP Request","method":"POST","service":"eduquest-api","statusCode":200,"timestamp":"2026-02-27 03:29:52","url":"/api/auth/login","userAgent":"Thunder Client (https://www.thunderclient.com)","userId":"anonymous"}
+{"ip":"::ffff:127.0.0.1","level":"http","message":"Incoming Request","method":"POST","service":"eduquest-api","timestamp":"2026-02-27 03:31:00","url":"/api/notifications","userAgent":"Thunder Client (https://www.thunderclient.com)"}
+{"duration":"2ms","ip":"::ffff:127.0.0.1","level":"http","message":"HTTP Request","method":"POST","service":"eduquest-api","statusCode":401,"timestamp":"2026-02-27 03:31:00","url":"/api/notifications","userAgent":"Thunder Client (https://www.thunderclient.com)","userId":"anonymous"}
+{"duration":"2ms","level":"warn","message":"Error Response","method":"POST","service":"eduquest-api","statusCode":401,"timestamp":"2026-02-27 03:31:00","url":"/api/notifications"}
+{"ip":"::ffff:127.0.0.1","level":"http","message":"Incoming Request","method":"POST","service":"eduquest-api","timestamp":"2026-02-27 03:31:07","url":"/api/notifications","userAgent":"Thunder Client (https://www.thunderclient.com)"}
+{"duration":"1ms","ip":"::ffff:127.0.0.1","level":"http","message":"HTTP Request","method":"POST","service":"eduquest-api","statusCode":401,"timestamp":"2026-02-27 03:31:07","url":"/api/notifications","userAgent":"Thunder Client (https://www.thunderclient.com)","userId":"anonymous"}
+{"duration":"1ms","level":"warn","message":"Error Response","method":"POST","service":"eduquest-api","statusCode":401,"timestamp":"2026-02-27 03:31:07","url":"/api/notifications"}
+{"ip":"::ffff:127.0.0.1","level":"http","message":"Incoming Request","method":"POST","service":"eduquest-api","timestamp":"2026-02-27 03:31:14","url":"/api/notifications","userAgent":"Thunder Client (https://www.thunderclient.com)"}
+{"duration":"1ms","ip":"::ffff:127.0.0.1","level":"http","message":"HTTP Request","method":"POST","service":"eduquest-api","statusCode":401,"timestamp":"2026-02-27 03:31:14","url":"/api/notifications","userAgent":"Thunder Client (https://www.thunderclient.com)","userId":"anonymous"}
+{"duration":"1ms","level":"warn","message":"Error Response","method":"POST","service":"eduquest-api","statusCode":401,"timestamp":"2026-02-27 03:31:14","url":"/api/notifications"}
+{"ip":"::ffff:127.0.0.1","level":"http","message":"Incoming Request","method":"POST","service":"eduquest-api","timestamp":"2026-02-27 03:31:15","url":"/api/notifications","userAgent":"Thunder Client (https://www.thunderclient.com)"}
+{"duration":"1ms","ip":"::ffff:127.0.0.1","level":"http","message":"HTTP Request","method":"POST","service":"eduquest-api","statusCode":401,"timestamp":"2026-02-27 03:31:15","url":"/api/notifications","userAgent":"Thunder Client (https://www.thunderclient.com)","userId":"anonymous"}
+{"duration":"1ms","level":"warn","message":"Error Response","method":"POST","service":"eduquest-api","statusCode":401,"timestamp":"2026-02-27 03:31:15","url":"/api/notifications"}
+{"ip":"::ffff:127.0.0.1","level":"http","message":"Incoming Request","method":"POST","service":"eduquest-api","timestamp":"2026-02-27 03:31:28","url":"/api/auth/login","userAgent":"Thunder Client (https://www.thunderclient.com)"}
+{"email":"instructor@test.com","event":"LOGIN","ip":"::ffff:127.0.0.1","level":"info","message":"Authentication Event","service":"eduquest-api","success":true,"timestamp":"2026-02-27 03:31:28","userId":"cml5hgqsn0000wpwo7gc7365j"}
+{"duration":"73ms","ip":"::ffff:127.0.0.1","level":"http","message":"HTTP Request","method":"POST","service":"eduquest-api","statusCode":200,"timestamp":"2026-02-27 03:31:28","url":"/api/auth/login","userAgent":"Thunder Client (https://www.thunderclient.com)","userId":"anonymous"}
+{"ip":"::ffff:127.0.0.1","level":"http","message":"Incoming Request","method":"POST","service":"eduquest-api","timestamp":"2026-02-27 03:33:22","url":"/api/notifications","userAgent":"Thunder Client (https://www.thunderclient.com)"}
+{"duration":"1ms","ip":"::ffff:127.0.0.1","level":"http","message":"HTTP Request","method":"POST","service":"eduquest-api","statusCode":401,"timestamp":"2026-02-27 03:33:22","url":"/api/notifications","userAgent":"Thunder Client (https://www.thunderclient.com)","userId":"anonymous"}
+{"duration":"1ms","level":"warn","message":"Error Response","method":"POST","service":"eduquest-api","statusCode":401,"timestamp":"2026-02-27 03:33:22","url":"/api/notifications"}
+{"ip":"::ffff:127.0.0.1","level":"http","message":"Incoming Request","method":"POST","service":"eduquest-api","timestamp":"2026-02-27 03:33:47","url":"/api/login","userAgent":"Thunder Client (https://www.thunderclient.com)"}
+{"duration":"1ms","ip":"::ffff:127.0.0.1","level":"http","message":"HTTP Request","method":"POST","service":"eduquest-api","statusCode":404,"timestamp":"2026-02-27 03:33:47","url":"/api/login","userAgent":"Thunder Client (https://www.thunderclient.com)","userId":"anonymous"}
+{"duration":"1ms","level":"warn","message":"Error Response","method":"POST","service":"eduquest-api","statusCode":404,"timestamp":"2026-02-27 03:33:47","url":"/api/login"}
+{"ip":"::ffff:127.0.0.1","level":"http","message":"Incoming Request","method":"POST","service":"eduquest-api","timestamp":"2026-02-27 03:33:48","url":"/api/login","userAgent":"Thunder Client (https://www.thunderclient.com)"}
+{"duration":"1ms","ip":"::ffff:127.0.0.1","level":"http","message":"HTTP Request","method":"POST","service":"eduquest-api","statusCode":404,"timestamp":"2026-02-27 03:33:48","url":"/api/login","userAgent":"Thunder Client (https://www.thunderclient.com)","userId":"anonymous"}
+{"duration":"1ms","level":"warn","message":"Error Response","method":"POST","service":"eduquest-api","statusCode":404,"timestamp":"2026-02-27 03:33:48","url":"/api/login"}
+{"ip":"::ffff:127.0.0.1","level":"http","message":"Incoming Request","method":"POST","service":"eduquest-api","timestamp":"2026-02-27 03:34:01","url":"/api/auth/login","userAgent":"Thunder Client (https://www.thunderclient.com)"}
+{"email":"instructor@test.com","event":"LOGIN","ip":"::ffff:127.0.0.1","level":"info","message":"Authentication Event","service":"eduquest-api","success":true,"timestamp":"2026-02-27 03:34:01","userId":"cml5hgqsn0000wpwo7gc7365j"}
+{"duration":"125ms","ip":"::ffff:127.0.0.1","level":"http","message":"HTTP Request","method":"POST","service":"eduquest-api","statusCode":200,"timestamp":"2026-02-27 03:34:01","url":"/api/auth/login","userAgent":"Thunder Client (https://www.thunderclient.com)","userId":"anonymous"}
+{"ip":"::ffff:127.0.0.1","level":"http","message":"Incoming Request","method":"POST","service":"eduquest-api","timestamp":"2026-02-27 03:34:28","url":"/api/notifications","userAgent":"Thunder Client (https://www.thunderclient.com)"}
+{"duration":"1ms","ip":"::ffff:127.0.0.1","level":"http","message":"HTTP Request","method":"POST","service":"eduquest-api","statusCode":401,"timestamp":"2026-02-27 03:34:28","url":"/api/notifications","userAgent":"Thunder Client (https://www.thunderclient.com)","userId":"anonymous"}
+{"duration":"1ms","level":"warn","message":"Error Response","method":"POST","service":"eduquest-api","statusCode":401,"timestamp":"2026-02-27 03:34:28","url":"/api/notifications"}
+{"ip":"::ffff:127.0.0.1","level":"http","message":"Incoming Request","method":"POST","service":"eduquest-api","timestamp":"2026-02-27 03:34:29","url":"/api/notifications","userAgent":"Thunder Client (https://www.thunderclient.com)"}
+{"duration":"1ms","ip":"::ffff:127.0.0.1","level":"http","message":"HTTP Request","method":"POST","service":"eduquest-api","statusCode":401,"timestamp":"2026-02-27 03:34:29","url":"/api/notifications","userAgent":"Thunder Client (https://www.thunderclient.com)","userId":"anonymous"}
+{"duration":"1ms","level":"warn","message":"Error Response","method":"POST","service":"eduquest-api","statusCode":401,"timestamp":"2026-02-27 03:34:29","url":"/api/notifications"}
+{"ip":"::ffff:127.0.0.1","level":"http","message":"Incoming Request","method":"POST","service":"eduquest-api","timestamp":"2026-02-27 03:34:29","url":"/api/notifications","userAgent":"Thunder Client (https://www.thunderclient.com)"}
+{"duration":"1ms","ip":"::ffff:127.0.0.1","level":"http","message":"HTTP Request","method":"POST","service":"eduquest-api","statusCode":401,"timestamp":"2026-02-27 03:34:29","url":"/api/notifications","userAgent":"Thunder Client (https://www.thunderclient.com)","userId":"anonymous"}
+{"duration":"1ms","level":"warn","message":"Error Response","method":"POST","service":"eduquest-api","statusCode":401,"timestamp":"2026-02-27 03:34:29","url":"/api/notifications"}
+{"ip":"::ffff:127.0.0.1","level":"http","message":"Incoming Request","method":"POST","service":"eduquest-api","timestamp":"2026-02-27 03:34:29","url":"/api/notifications","userAgent":"Thunder Client (https://www.thunderclient.com)"}
+{"duration":"1ms","ip":"::ffff:127.0.0.1","level":"http","message":"HTTP Request","method":"POST","service":"eduquest-api","statusCode":401,"timestamp":"2026-02-27 03:34:29","url":"/api/notifications","userAgent":"Thunder Client (https://www.thunderclient.com)","userId":"anonymous"}
+{"duration":"1ms","level":"warn","message":"Error Response","method":"POST","service":"eduquest-api","statusCode":401,"timestamp":"2026-02-27 03:34:29","url":"/api/notifications"}
+{"ip":"::ffff:127.0.0.1","level":"http","message":"Incoming Request","method":"POST","service":"eduquest-api","timestamp":"2026-02-27 03:34:29","url":"/api/notifications","userAgent":"Thunder Client (https://www.thunderclient.com)"}
+{"duration":"2ms","ip":"::ffff:127.0.0.1","level":"http","message":"HTTP Request","method":"POST","service":"eduquest-api","statusCode":401,"timestamp":"2026-02-27 03:34:29","url":"/api/notifications","userAgent":"Thunder Client (https://www.thunderclient.com)","userId":"anonymous"}
+{"duration":"2ms","level":"warn","message":"Error Response","method":"POST","service":"eduquest-api","statusCode":401,"timestamp":"2026-02-27 03:34:29","url":"/api/notifications"}
+{"ip":"::ffff:127.0.0.1","level":"http","message":"Incoming Request","method":"POST","service":"eduquest-api","timestamp":"2026-02-27 03:42:49","url":"/api/auth/login","userAgent":"Thunder Client (https://www.thunderclient.com)"}
+{"email":"instructor@test.com","event":"LOGIN","ip":"::ffff:127.0.0.1","level":"info","message":"Authentication Event","service":"eduquest-api","success":true,"timestamp":"2026-02-27 03:42:50","userId":"cml5hgqsn0000wpwo7gc7365j"}
+{"duration":"398ms","ip":"::ffff:127.0.0.1","level":"http","message":"HTTP Request","method":"POST","service":"eduquest-api","statusCode":200,"timestamp":"2026-02-27 03:42:50","url":"/api/auth/login","userAgent":"Thunder Client (https://www.thunderclient.com)","userId":"anonymous"}
+{"courseId":"cmllv8a2h0003wpmwlfpot1jj","level":"info","message":"User joined course room","service":"eduquest-api","socketId":"95ESI-pmOGQyb1MBAAAB","timestamp":"2026-02-27 03:43:58","userId":"cmlqo1zfs0000wppo8d44oet5"}
+{"courseId":"cmllv8a2h0003wpmwlfpot1jj","level":"info","message":"Course message sent","messageLength":5,"service":"eduquest-api","timestamp":"2026-02-27 03:44:04","userId":"cmlqo1zfs0000wppo8d44oet5"}
+{"ip":"::ffff:127.0.0.1","level":"http","message":"Incoming Request","method":"POST","service":"eduquest-api","timestamp":"2026-02-27 03:44:29","url":"/api/auth/login","userAgent":"Thunder Client (https://www.thunderclient.com)"}
+{"email":"admin@test.com","event":"LOGIN","ip":"::ffff:127.0.0.1","level":"info","message":"Authentication Event","service":"eduquest-api","success":true,"timestamp":"2026-02-27 03:44:30","userId":"cmlqo1zfs0000wppo8d44oet5"}
+{"duration":"223ms","ip":"::ffff:127.0.0.1","level":"http","message":"HTTP Request","method":"POST","service":"eduquest-api","statusCode":200,"timestamp":"2026-02-27 03:44:30","url":"/api/auth/login","userAgent":"Thunder Client (https://www.thunderclient.com)","userId":"anonymous"}
+{"level":"info","message":"Notification sent to user","notificationType":"TEST","service":"eduquest-api","timestamp":"2026-02-27 03:45:35","userId":"cmlqo1zfs0000wppo8d44oet5"}

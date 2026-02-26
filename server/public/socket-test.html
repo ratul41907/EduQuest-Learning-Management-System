@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebSocket Test - EduQuest</title>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+      .container {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #1e3a5f;
+      }
+      .status {
+        padding: 15px;
+        border-radius: 5px;
+        margin: 15px 0;
+        font-weight: bold;
+      }
+      .connected {
+        background: #d4edda;
+        color: #155724;
+      }
+      .disconnected {
+        background: #f8d7da;
+        color: #721c24;
+      }
+      button {
+        padding: 10px 20px;
+        margin: 5px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+      .btn-primary {
+        background: #1e3a5f;
+        color: white;
+      }
+      .btn-success {
+        background: #28a745;
+        color: white;
+      }
+      .btn-danger {
+        background: #dc3545;
+        color: white;
+      }
+      input {
+        padding: 10px;
+        margin: 5px 0;
+        width: 100%;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+      }
+      .messages {
+        background: #f8f9fa;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 5px;
+        max-height: 300px;
+        overflow-y: auto;
+      }
+      .message {
+        padding: 8px;
+        margin: 5px 0;
+        background: white;
+        border-left: 3px solid #1e3a5f;
+        border-radius: 3px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🔌 WebSocket Test - EduQuest</h1>
+
+      <div id="status" class="status disconnected">❌ Disconnected</div>
+
+      <div>
+        <h3>1. Enter Your JWT Token:</h3>
+        <input
+          type="text"
+          id="token"
+          placeholder="Paste your JWT token here..."
+        />
+        <button class="btn-primary" onclick="connect()">Connect</button>
+        <button class="btn-danger" onclick="disconnect()">Disconnect</button>
+      </div>
+
+      <div>
+        <h3>2. Join Course Room:</h3>
+        <input type="text" id="courseId" placeholder="Enter course ID..." />
+        <button class="btn-success" onclick="joinCourse()">Join Course</button>
+        <button class="btn-danger" onclick="leaveCourse()">Leave Course</button>
+      </div>
+
+      <div>
+        <h3>3. Send Message:</h3>
+        <input type="text" id="message" placeholder="Type a message..." />
+        <button class="btn-success" onclick="sendMessage()">Send</button>
+      </div>
+
+      <div>
+        <h3>4. Online Users:</h3>
+        <div id="onlineUsers" class="messages">
+          <p>Connect to see online users...</p>
+        </div>
+      </div>
+
+      <div>
+        <h3>5. Messages:</h3>
+        <div id="messages" class="messages">
+          <p>No messages yet...</p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let socket = null;
+      let currentCourseId = null;
+
+      function connect() {
+        const token = document.getElementById("token").value;
+        if (!token) {
+          alert("Please enter a JWT token");
+          return;
+        }
+
+        socket = io("http://localhost:5000", {
+          auth: { token },
+        });
+
+        socket.on("connect", () => {
+          document.getElementById("status").className = "status connected";
+          document.getElementById("status").textContent = "✅ Connected";
+          addMessage("System", "Connected to server!");
+        });
+
+        socket.on("disconnect", () => {
+          document.getElementById("status").className = "status disconnected";
+          document.getElementById("status").textContent = "❌ Disconnected";
+          addMessage("System", "Disconnected from server");
+        });
+
+        socket.on("online-users", (users) => {
+          document.getElementById("onlineUsers").innerHTML =
+            `<p><strong>Online (${users.length}):</strong><br>${users.join("<br>")}</p>`;
+        });
+
+        socket.on("notification", (data) => {
+          addMessage("Notification", `${data.title}: ${data.message}`);
+        });
+
+        socket.on("course-message", (data) => {
+          addMessage(`User ${data.userId}`, data.message);
+        });
+
+        socket.on("user-joined-course", (data) => {
+          addMessage("System", `User ${data.userId} joined the course`);
+        });
+
+        socket.on("user-left-course", (data) => {
+          addMessage("System", `User ${data.userId} left the course`);
+        });
+
+        socket.on("error", (error) => {
+          addMessage("Error", error.message);
+        });
+      }
+
+      function disconnect() {
+        if (socket) {
+          socket.disconnect();
+          socket = null;
+        }
+      }
+
+      function joinCourse() {
+        const courseId = document.getElementById("courseId").value;
+        if (!courseId || !socket) {
+          alert("Enter course ID and connect first");
+          return;
+        }
+        currentCourseId = courseId;
+        socket.emit("join-course", courseId);
+        addMessage("System", `Joining course: ${courseId}`);
+      }
+
+      function leaveCourse() {
+        if (!currentCourseId || !socket) return;
+        socket.emit("leave-course", currentCourseId);
+        addMessage("System", `Left course: ${currentCourseId}`);
+        currentCourseId = null;
+      }
+
+      function sendMessage() {
+        const message = document.getElementById("message").value;
+        if (!message || !currentCourseId || !socket) {
+          alert("Connect, join a course, and enter a message first");
+          return;
+        }
+        socket.emit("course-message", { courseId: currentCourseId, message });
+        document.getElementById("message").value = "";
+      }
+
+      function addMessage(sender, text) {
+        const messages = document.getElementById("messages");
+        const msg = document.createElement("div");
+        msg.className = "message";
+        msg.innerHTML = `<strong>${sender}:</strong> ${text}`;
+        messages.appendChild(msg);
+        messages.scrollTop = messages.scrollHeight;
+      }
+    </script>
+  </body>
+</html>

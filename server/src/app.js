@@ -43,7 +43,7 @@ const instructorRoutes   = require("./routes/instructor.routes");
 const adminRoutes        = require("./routes/admin.routes");
 const docsRoutes         = require("./routes/docs.routes");
 const cacheRoutes        = require("./routes/cache.routes"); // Day 19
-
+const socketRoutes       = require("./routes/socket.routes");
 const app = express();
 
 // ══════════════════════════════════════════════════════════════
@@ -106,6 +106,7 @@ app.use(speedLimiter);
 
 // Request tracking
 app.use(trackRequest);
+app.use("/api/socket", socketRoutes);
 
 // Request logger
 app.use(logger);
@@ -114,6 +115,8 @@ app.use(logger);
 // SERVE STATIC FILES (uploads)
 // ══════════════════════════════════════════════════════════════
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+// Day 20: Serve WebSocket test page
+app.use(express.static(path.join(__dirname, "../public")));
 
 // ══════════════════════════════════════════════════════════════
 // HEALTH CHECK
