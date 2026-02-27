@@ -27,24 +27,6 @@ const {
 } = require("./middleware/sanitize");
 const { trackRequest, getAnalytics } = require("./middleware/analytics");
 
-// ── Route imports ──────────────────────────────────────────
-const authRoutes         = require("./routes/auth.routes");
-const userRoutes         = require("./routes/user.routes");
-const courseRoutes       = require("./routes/course.routes");
-const lessonRoutes       = require("./routes/lesson.routes");
-const quizRoutes         = require("./routes/quiz.routes");
-const questionRoutes     = require("./routes/question.routes");
-const badgeRoutes        = require("./routes/badge.routes");
-const notificationRoutes = require("./routes/notification.routes");
-const leaderboardRoutes  = require("./routes/leaderboard.routes");
-const reviewRoutes       = require("./routes/review.routes");
-const certificateRoutes  = require("./routes/certificate.routes");
-const instructorRoutes   = require("./routes/instructor.routes");
-const adminRoutes        = require("./routes/admin.routes");
-const docsRoutes         = require("./routes/docs.routes");
-const cacheRoutes        = require("./routes/cache.routes"); // Day 19
-const socketRoutes       = require("./routes/socket.routes");
-const searchRoutes       = require("./routes/search.routes");
 const app = express();
 
 // ══════════════════════════════════════════════════════════════
@@ -100,14 +82,13 @@ app.use(xssProtection);
 app.use(trimInputs);
 app.use(removeNullBytes);
 app.use(sqlInjectionDetection);
-app.use("/api/search", searchRoutes);
+
 // Global rate limiting & speed control
 app.use(globalLimiter);
 app.use(speedLimiter);
 
 // Request tracking
 app.use(trackRequest);
-app.use("/api/socket", socketRoutes);
 
 // Request logger
 app.use(logger);
@@ -116,6 +97,7 @@ app.use(logger);
 // SERVE STATIC FILES (uploads)
 // ══════════════════════════════════════════════════════════════
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+
 // Day 20: Serve WebSocket test page
 app.use(express.static(path.join(__dirname, "../public")));
 
@@ -132,7 +114,7 @@ app.get("/health", async (req, res) => {
       uptime: process.uptime(),
       database: "connected",
       environment: process.env.NODE_ENV || "development",
-      version: "1.0.0",
+      version: "2.0.0",
     });
   } catch (err) {
     return res.status(503).json({
@@ -150,23 +132,23 @@ app.get("/health", async (req, res) => {
 app.get("/analytics", getAnalytics);
 
 // ══════════════════════════════════════════════════════════════
-// API ROUTES
+// DAY 22: VERSION INFO
 // ══════════════════════════════════════════════════════════════
-app.use("/api/auth",          authLimiter, authRoutes);
-app.use("/api/user",          userRoutes);
-app.use("/api/courses",       courseRoutes);
-app.use("/api/lessons",       lessonRoutes);
-app.use("/api/quizzes",       quizRoutes);
-app.use("/api/questions",     questionRoutes);
-app.use("/api/badges",        badgeRoutes);
-app.use("/api/notifications", notificationRoutes);
-app.use("/api/leaderboard",   leaderboardRoutes);
-app.use("/api/reviews",       reviewRoutes);
-app.use("/api/certificates",  certificateRoutes);
-app.use("/api/instructor",    instructorRoutes);
-app.use("/api/admin",         adminLimiter, adminRoutes);
-app.use("/api/docs",          docsRoutes);
-app.use("/api/cache",         cacheRoutes); // Day 19: Cache management
+const versionInfoRoutes = require("./routes/version-info.routes");
+app.use("/api/version", versionInfoRoutes);
+
+// ══════════════════════════════════════════════════════════════
+// DAY 22: API ROUTES - VERSIONED
+// ══════════════════════════════════════════════════════════════
+const v1Routes = require("./routes/v1");
+const v2Routes = require("./routes/v2");
+
+// Mount versioned routes
+app.use("/api/v1", v1Routes);
+app.use("/api/v2", v2Routes);
+
+// Default version (v2 is now default)
+app.use("/api", v2Routes);
 
 // ══════════════════════════════════════════════════════════════
 // ERROR HANDLERS

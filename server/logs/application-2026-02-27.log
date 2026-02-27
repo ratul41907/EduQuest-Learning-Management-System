@@ -323,3 +323,95 @@
 {"count":1,"level":"info","message":"Search tracked","query":"student","service":"eduquest-api","timestamp":"2026-02-27 14:31:08"}
 {"count":4,"level":"info","message":"Search tracked","query":"react","service":"eduquest-api","timestamp":"2026-02-27 14:31:34"}
 {"count":5,"level":"info","message":"Search tracked","query":"react","service":"eduquest-api","timestamp":"2026-02-27 14:32:14"}
+{"level":"info","message":"Socket.io server initialized","service":"eduquest-api","timestamp":"2026-02-27 18:29:44"}
+{"level":"info","message":"Redis client connected","service":"eduquest-api","timestamp":"2026-02-27 18:29:44"}
+{"level":"info","message":"Redis client ready","service":"eduquest-api","timestamp":"2026-02-27 18:29:44"}
+{"level":"info","message":"Socket.io server initialized","service":"eduquest-api","timestamp":"2026-02-27 19:32:49"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 19:32:49"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 19:32:49"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 19:32:49"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 19:32:49"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 19:32:49"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 19:32:49"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 19:32:49"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 19:32:49"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 19:32:49"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 19:32:49"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 19:32:49"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 19:32:49"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 19:32:50"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 19:32:50"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 19:32:50"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 19:32:50"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 19:32:50"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 19:32:50"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 19:32:50"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 19:32:50"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 19:32:50"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 19:32:50"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 19:32:50"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 19:32:50"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 19:32:51"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 19:32:51"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 19:32:51"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 19:32:51"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 19:32:51"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 19:32:51"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 19:32:52"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 19:32:52"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 19:32:52"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 19:32:52"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 19:32:52"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 19:32:52"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 19:32:53"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 19:32:53"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 19:32:53"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 19:32:54"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 19:32:54"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 19:32:54"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 19:32:54"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 19:32:54"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 19:32:54"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 19:32:55"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 19:32:55"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 19:32:55"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 19:32:56"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 19:32:56"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 19:32:56"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 19:32:57"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 19:32:57"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 19:32:57"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 19:32:58"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 19:32:58"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 19:32:58"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 19:32:59"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 19:32:59"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 19:32:59"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 19:33:00"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 19:33:00"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 19:33:00"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 19:33:01"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 19:33:01"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 19:33:01"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-27 19:33:02"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-27 19:33:02"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-27 19:33:02"}
+{"level":"info","message":"Redis client connected","service":"eduquest-api","timestamp":"2026-02-27 19:33:03"}
+{"level":"info","message":"Redis client ready","service":"eduquest-api","timestamp":"2026-02-27 19:33:03"}
+{"ip":"::ffff:127.0.0.1","level":"warn","message":"API v1 will be sunset on 2027-01-01. Please migrate to v2.","path":"/auth/login","service":"eduquest-api","sunset":"Wed, 01 Jan 2027 00:00:00 GMT","timestamp":"2026-02-27 19:35:23"}
+{"email":"student@test.com","event":"LOGIN","ip":"::ffff:127.0.0.1","level":"info","message":"Authentication Event","service":"eduquest-api","success":true,"timestamp":"2026-02-27 19:35:23","userId":"cml5hht780001wpwoi7nt3kru"}
+{"email":"student@test.com","event":"LOGIN","ip":"::ffff:127.0.0.1","level":"info","message":"Authentication Event","service":"eduquest-api","success":true,"timestamp":"2026-02-27 19:36:04","userId":"cml5hht780001wpwoi7nt3kru"}
+{"email":"student@test.com","event":"LOGIN","ip":"::ffff:127.0.0.1","level":"info","message":"Authentication Event","service":"eduquest-api","success":true,"timestamp":"2026-02-27 19:36:26","userId":"cml5hht780001wpwoi7nt3kru"}
+{"ip":"::ffff:127.0.0.1","level":"error","message":"\nInvalid `prisma.user.findUnique()` invocation in\nE:\\EduQuest\\server\\src\\routes\\v2\\auth.routes.js:213:37\n\n  210 }\n  211 \n  212 // V2: Include additional stats\n→ 213 const stats = await prisma.user.findUnique({\n        where: {\n          id: \"cml5hht780001wpwoi7nt3kru\"\n        },\n        select: {\n          _count: {\n            select: {\n              enrollments: true,\n              lessonProgress: true,\n              quizAttempts: true,\n              badges: true,\n              ~~~~~~\n      ?       coursesCreated?: true,\n      ?       userBadges?: true,\n      ?       reviews?: true,\n      ?       notifications?: true,\n      ?       certificates?: true\n            }\n          }\n        }\n      })\n\nUnknown field `badges` for select statement on model `UserCountOutputType`. Available options are marked with ?.","method":"GET","service":"eduquest-api","stack":"PrismaClientValidationError: \nInvalid `prisma.user.findUnique()` invocation in\nE:\\EduQuest\\server\\src\\routes\\v2\\auth.routes.js:213:37\n\n  210 }\n  211 \n  212 // V2: Include additional stats\n→ 213 const stats = await prisma.user.findUnique({\n        where: {\n          id: \"cml5hht780001wpwoi7nt3kru\"\n        },\n        select: {\n          _count: {\n            select: {\n              enrollments: true,\n              lessonProgress: true,\n              quizAttempts: true,\n              badges: true,\n              ~~~~~~\n      ?       coursesCreated?: true,\n      ?       userBadges?: true,\n      ?       reviews?: true,\n      ?       notifications?: true,\n      ?       certificates?: true\n            }\n          }\n        }\n      })\n\nUnknown field `badges` for select statement on model `UserCountOutputType`. Available options are marked with ?.\n    at Nn (E:\\EduQuest\\server\\node_modules\\@prisma\\client\\runtime\\library.js:29:1363)\n    at ei.handleRequestError (E:\\EduQuest\\server\\node_modules\\@prisma\\client\\runtime\\library.js:121:6911)\n    at ei.handleAndLogRequestError (E:\\EduQuest\\server\\node_modules\\@prisma\\client\\runtime\\library.js:121:6593)\n    at ei.request (E:\\EduQuest\\server\\node_modules\\@prisma\\client\\runtime\\library.js:121:6300)\n    at async a (E:\\EduQuest\\server\\node_modules\\@prisma\\client\\runtime\\library.js:130:9551)\n    at async E:\\EduQuest\\server\\src\\routes\\v2\\auth.routes.js:213:19","timestamp":"2026-02-27 19:37:28","url":"/api/v2/auth/me","userId":"cml5hht780001wpwoi7nt3kru"}
+{"duration":"31ms","level":"warn","message":"Error Response","method":"GET","service":"eduquest-api","statusCode":500,"timestamp":"2026-02-27 19:37:28","url":"/api/v2/auth/me"}
+{"ip":"::ffff:127.0.0.1","level":"error","message":"\nInvalid `prisma.user.findUnique()` invocation in\nE:\\EduQuest\\server\\src\\routes\\v2\\auth.routes.js:213:37\n\n  210 }\n  211 \n  212 // V2: Include additional stats\n→ 213 const stats = await prisma.user.findUnique({\n        where: {\n          id: \"cml5hht780001wpwoi7nt3kru\"\n        },\n        select: {\n          _count: {\n            select: {\n              enrollments: true,\n              lessonProgress: true,\n              quizAttempts: true,\n              badges: true,\n              ~~~~~~\n      ?       coursesCreated?: true,\n      ?       userBadges?: true,\n      ?       reviews?: true,\n      ?       notifications?: true,\n      ?       certificates?: true\n            }\n          }\n        }\n      })\n\nUnknown field `badges` for select statement on model `UserCountOutputType`. Available options are marked with ?.","method":"GET","service":"eduquest-api","stack":"PrismaClientValidationError: \nInvalid `prisma.user.findUnique()` invocation in\nE:\\EduQuest\\server\\src\\routes\\v2\\auth.routes.js:213:37\n\n  210 }\n  211 \n  212 // V2: Include additional stats\n→ 213 const stats = await prisma.user.findUnique({\n        where: {\n          id: \"cml5hht780001wpwoi7nt3kru\"\n        },\n        select: {\n          _count: {\n            select: {\n              enrollments: true,\n              lessonProgress: true,\n              quizAttempts: true,\n              badges: true,\n              ~~~~~~\n      ?       coursesCreated?: true,\n      ?       userBadges?: true,\n      ?       reviews?: true,\n      ?       notifications?: true,\n      ?       certificates?: true\n            }\n          }\n        }\n      })\n\nUnknown field `badges` for select statement on model `UserCountOutputType`. Available options are marked with ?.\n    at Nn (E:\\EduQuest\\server\\node_modules\\@prisma\\client\\runtime\\library.js:29:1363)\n    at ei.handleRequestError (E:\\EduQuest\\server\\node_modules\\@prisma\\client\\runtime\\library.js:121:6911)\n    at ei.handleAndLogRequestError (E:\\EduQuest\\server\\node_modules\\@prisma\\client\\runtime\\library.js:121:6593)\n    at ei.request (E:\\EduQuest\\server\\node_modules\\@prisma\\client\\runtime\\library.js:121:6300)\n    at async a (E:\\EduQuest\\server\\node_modules\\@prisma\\client\\runtime\\library.js:130:9551)\n    at async E:\\EduQuest\\server\\src\\routes\\v2\\auth.routes.js:213:19","timestamp":"2026-02-27 19:38:02","url":"/api/v2/auth/me","userId":"cml5hht780001wpwoi7nt3kru"}
+{"duration":"11ms","level":"warn","message":"Error Response","method":"GET","service":"eduquest-api","statusCode":500,"timestamp":"2026-02-27 19:38:02","url":"/api/v2/auth/me"}
+{"level":"info","message":"Socket.io server initialized","service":"eduquest-api","timestamp":"2026-02-27 19:46:08"}
+{"level":"info","message":"Redis client connected","service":"eduquest-api","timestamp":"2026-02-27 19:46:08"}
+{"level":"info","message":"Redis client ready","service":"eduquest-api","timestamp":"2026-02-27 19:46:08"}
+{"level":"info","message":"Socket.io server initialized","service":"eduquest-api","timestamp":"2026-02-27 19:47:02"}
+{"level":"info","message":"Redis client connected","service":"eduquest-api","timestamp":"2026-02-27 19:47:02"}
+{"level":"info","message":"Redis client ready","service":"eduquest-api","timestamp":"2026-02-27 19:47:02"}
+{"duration":"3ms","level":"warn","message":"Error Response","method":"GET","service":"eduquest-api","statusCode":404,"timestamp":"2026-02-27 19:48:55","url":"/api/v2/auth/register"}
+{"email":"student1@test.com","event":"REGISTER","ip":"::ffff:127.0.0.1","level":"info","message":"Authentication Event","service":"eduquest-api","success":true,"timestamp":"2026-02-27 19:51:51","userId":"cmm4yb47v0000wpm4xa3q3u8n"}
+{"level":"info","message":"Redis connection closed","service":"eduquest-api","timestamp":"2026-02-27 19:52:39"}

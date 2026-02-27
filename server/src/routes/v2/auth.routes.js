@@ -218,7 +218,7 @@ router.get("/me", requireAuth, async (req, res) => {
             enrollments: true,
             lessonProgress: true,
             quizAttempts: true,
-            badges: true,
+            userBadges: true,
           },
         },
       },
@@ -232,7 +232,7 @@ router.get("/me", requireAuth, async (req, res) => {
           enrollments: stats._count.enrollments,
           lessonsCompleted: stats._count.lessonProgress,
           quizzesAttempted: stats._count.quizAttempts,
-          badgesEarned: stats._count.badges,
+          badgesEarned: stats._count.userBadges,
         },
       },
       meta: {
@@ -254,6 +254,146 @@ router.get("/me", requireAuth, async (req, res) => {
   }
 });
 
-// Copy other routes from v1 auth.routes.js with v2 format...
+// =========================================
+// POST /api/v2/auth/forgot-password
+// V2: Request password reset
+// =========================================
+router.post(
+  "/forgot-password",
+  validate({ email: "required|email" }),
+  async (req, res) => {
+    try {
+      const { email } = req.body;
+
+      const user = await prisma.user.findUnique({ where: { email } });
+
+      // Always return success to prevent email enumeration
+      if (!user) {
+        logger.info("Password reset requested for non-existent email", { email, ip: req.ip });
+        return res.json({
+          success: true,
+          data: {
+            message: "If that email exists, a password reset link has been sent.",
+          },
+          meta: {
+            version: "2.0.0",
+            timestamp: new Date().toISOString(),
+          },
+        });
+      }
+
+      // Generate reset token (valid for 1 hour)
+      const resetToken = jwt.sign(
+        { sub: user.id, type: "password-reset" },
+        process.env.JWT_SECRET,
+        { expiresIn: "1h" }
+      );
+
+      logger.logAuth("PASSWORD_RESET_REQUESTED", user.id, user.email, true, req.ip);
+
+      // Send password reset email
+      sendPasswordResetEmail(user.email, user.fullName, resetToken).catch(err =>
+        console.error("Password reset email failed:", err)
+      );
+
+      return res.json({
+        success: true,
+        data: {
+          message: "If that email exists, a password reset link has been sent.",
+        },
+        meta: {
+          version: "2.0.0",
+          timestamp: new Date().toISOString(),
+        },
+      });
+    } catch (err) {
+      logger.logError(err, req);
+      return res.status(500).json({
+        success: false,
+        error: {
+          code: "SERVER_ERROR",
+          message: "Server error",
+          details: err.message,
+        },
+        timestamp: new Date().toISOString(),
+      });
+    }
+  }
+);
+
+// =========================================
+// POST /api/v2/auth/reset-password
+// V2: Reset password with token
+// =========================================
+router.post(
+  "/reset-password",
+  validate({
+    token: "required",
+    newPassword: "required|min:6",
+  }),
+  async (req, res) => {
+    try {
+      const { token, newPassword } = req.body;
+
+      // Verify token
+      let decoded;
+      try {
+        decoded = jwt.verify(token, process.env.JWT_SECRET);
+        if (decoded.type !== "password-reset") {
+          return res.status(400).json({
+            success: false,
+            error: {
+              code: "INVALID_TOKEN",
+              message: "Invalid reset token",
+            },
+            timestamp: new Date().toISOString(),
+          });
+        }
+      } catch (err) {
+        return res.status(400).json({
+          success: false,
+          error: {
+            code: "EXPIRED_TOKEN",
+            message: "Invalid or expired reset token",
+          },
+          timestamp: new Date().toISOString(),
+        });
+      }
+
+      // Hash new password
+      const passwordHash = await bcrypt.hash(newPassword, 10);
+
+      // Update password
+      await prisma.user.update({
+        where: { id: decoded.sub },
+        data: { passwordHash },
+      });
+
+      logger.logAuth("PASSWORD_RESET_COMPLETED", decoded.sub, "N/A", true, req.ip);
+
+      return res.json({
+        success: true,
+        data: {
+          message: "Password reset successful. You can now login.",
+        },
+        meta: {
+          version: "2.0.0",
+          timestamp: new Date().toISOString(),
+        },
+      });
+    } catch (err) {
+      logger.logError(err, req);
+      return res.status(500).json({
+        success: false,
+        error: {
+          code: "SERVER_ERROR",
+          message: "Server error",
+          details: err.message,
+        },
+        timestamp: new Date().toISOString(),
+      });
+    }
+  }
+);
 
 module.exports = router;
