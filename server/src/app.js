@@ -44,6 +44,7 @@ const adminRoutes        = require("./routes/admin.routes");
 const docsRoutes         = require("./routes/docs.routes");
 const cacheRoutes        = require("./routes/cache.routes"); // Day 19
 const socketRoutes       = require("./routes/socket.routes");
+const searchRoutes       = require("./routes/search.routes");
 const app = express();
 
 // ══════════════════════════════════════════════════════════════
@@ -99,7 +100,7 @@ app.use(xssProtection);
 app.use(trimInputs);
 app.use(removeNullBytes);
 app.use(sqlInjectionDetection);
-
+app.use("/api/search", searchRoutes);
 // Global rate limiting & speed control
 app.use(globalLimiter);
 app.use(speedLimiter);

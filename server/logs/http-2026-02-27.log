@@ -350,3 +350,20 @@
 {"email":"admin@test.com","event":"LOGIN","ip":"::ffff:127.0.0.1","level":"info","message":"Authentication Event","service":"eduquest-api","success":true,"timestamp":"2026-02-27 03:44:30","userId":"cmlqo1zfs0000wppo8d44oet5"}
 {"duration":"223ms","ip":"::ffff:127.0.0.1","level":"http","message":"HTTP Request","method":"POST","service":"eduquest-api","statusCode":200,"timestamp":"2026-02-27 03:44:30","url":"/api/auth/login","userAgent":"Thunder Client (https://www.thunderclient.com)","userId":"anonymous"}
 {"level":"info","message":"Notification sent to user","notificationType":"TEST","service":"eduquest-api","timestamp":"2026-02-27 03:45:35","userId":"cmlqo1zfs0000wppo8d44oet5"}
+{"level":"info","message":"Socket.io server initialized","service":"eduquest-api","timestamp":"2026-02-27 03:51:38"}
+{"level":"info","message":"Redis client connected","service":"eduquest-api","timestamp":"2026-02-27 03:51:39"}
+{"level":"info","message":"Redis client ready","service":"eduquest-api","timestamp":"2026-02-27 03:51:39"}
+{"count":1,"level":"info","message":"Search tracked","query":"react","service":"eduquest-api","timestamp":"2026-02-27 03:51:40"}
+{"level":"info","message":"Socket authenticated","role":"ADMIN","service":"eduquest-api","socketId":"nPNHhMX1auMDOCZ5AAAB","timestamp":"2026-02-27 03:51:43","userId":"cmlqo1zfs0000wppo8d44oet5"}
+{"level":"info","message":"User connected","service":"eduquest-api","socketId":"nPNHhMX1auMDOCZ5AAAB","timestamp":"2026-02-27 03:51:43","totalOnline":1,"userId":"cmlqo1zfs0000wppo8d44oet5"}
+{"level":"info","message":"User disconnected","reason":"transport close","service":"eduquest-api","socketId":"nPNHhMX1auMDOCZ5AAAB","timestamp":"2026-02-27 03:52:19","totalOnline":0,"userId":"cmlqo1zfs0000wppo8d44oet5"}
+{"level":"info","message":"Socket authenticated","role":"ADMIN","service":"eduquest-api","socketId":"SFaFLf7P_Nsk0MM9AAAD","timestamp":"2026-02-27 09:28:18","userId":"cmlqo1zfs0000wppo8d44oet5"}
+{"level":"info","message":"User connected","service":"eduquest-api","socketId":"SFaFLf7P_Nsk0MM9AAAD","timestamp":"2026-02-27 09:28:18","totalOnline":1,"userId":"cmlqo1zfs0000wppo8d44oet5"}
+{"level":"info","message":"User disconnected","reason":"transport close","service":"eduquest-api","socketId":"SFaFLf7P_Nsk0MM9AAAD","timestamp":"2026-02-27 09:28:20","totalOnline":0,"userId":"cmlqo1zfs0000wppo8d44oet5"}
+{"count":2,"level":"info","message":"Search tracked","query":"react","service":"eduquest-api","timestamp":"2026-02-27 14:23:57"}
+{"count":1,"level":"info","message":"Search tracked","query":"introduction","service":"eduquest-api","timestamp":"2026-02-27 14:29:33"}
+{"count":3,"level":"info","message":"Search tracked","query":"react","service":"eduquest-api","timestamp":"2026-02-27 14:29:51"}
+{"count":1,"level":"info","message":"Search tracked","query":"reacr","service":"eduquest-api","timestamp":"2026-02-27 14:30:44"}
+{"count":1,"level":"info","message":"Search tracked","query":"student","service":"eduquest-api","timestamp":"2026-02-27 14:31:08"}
+{"count":4,"level":"info","message":"Search tracked","query":"react","service":"eduquest-api","timestamp":"2026-02-27 14:31:34"}
+{"count":5,"level":"info","message":"Search tracked","query":"react","service":"eduquest-api","timestamp":"2026-02-27 14:32:14"}
