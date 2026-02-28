@@ -1,0 +1,54 @@
+{"level":"info","message":"Socket.io server initialized","service":"eduquest-api","timestamp":"2026-02-28 16:07:04"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-28 16:07:04"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-28 16:07:04"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-28 16:07:04"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-28 16:07:04"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-28 16:07:04"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-28 16:07:04"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-28 16:07:04"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-28 16:07:04"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-28 16:07:04"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-28 16:07:04"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-28 16:07:04"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-28 16:07:04"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-28 16:07:04"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-28 16:07:04"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-28 16:07:04"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-28 16:07:05"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-28 16:07:05"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-28 16:07:05"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-28 16:07:05"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-28 16:07:05"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-28 16:07:05"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-28 16:07:05"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-28 16:07:05"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-28 16:07:05"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-28 16:07:06"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-28 16:07:06"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-28 16:07:06"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-28 16:07:06"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-28 16:07:06"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-28 16:07:06"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-28 16:07:07"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-28 16:07:07"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-28 16:07:07"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-28 16:07:07"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-28 16:07:07"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-28 16:07:07"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-28 16:07:08"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-28 16:07:08"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-28 16:07:08"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-28 16:07:09"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-28 16:07:09"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-28 16:07:09"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-28 16:07:09"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-28 16:07:09"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-28 16:07:09"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-28 16:07:10"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-28 16:07:10"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-28 16:07:10"}
+{"error":"connect ECONNREFUSED 127.0.0.1:6380","level":"error","message":"Redis client error","service":"eduquest-api","timestamp":"2026-02-28 16:07:11"}
+{"level":"warn","message":"Redis client connection closed","service":"eduquest-api","timestamp":"2026-02-28 16:07:11"}
+{"level":"info","message":"Redis client reconnecting","service":"eduquest-api","timestamp":"2026-02-28 16:07:11"}
+{"level":"info","message":"Redis client connected","service":"eduquest-api","timestamp":"2026-02-28 16:07:12"}
+{"level":"info","message":"Redis client ready","service":"eduquest-api","timestamp":"2026-02-28 16:07:12"}

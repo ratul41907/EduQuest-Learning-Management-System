@@ -7,6 +7,13 @@
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
+    "seed": "node prisma/seed.js",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f api",
+    "docker:restart": "docker-compose restart api",
+    "docker:clean": "docker-compose down -v",
     "prisma:studio": "prisma studio"
   },
   "keywords": [],

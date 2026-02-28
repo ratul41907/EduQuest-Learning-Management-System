@@ -19,6 +19,11 @@
             "date": 1772140580351,
             "name": "E:\\EduQuest\\server\\logs\\error-2026-02-27.log",
             "hash": "40144f866c2f66695e1dc41091655dfbb98589737d0d34178f87626c510163b6"
+        },
+        {
+            "date": 1772273221984,
+            "name": "E:\\EduQuest\\server\\logs\\error-2026-02-28.log",
+            "hash": "cc1796246597634ff9d87c24e3cf0248090c77099cc2208b9b87c97c465b24fb"
         }
     ],
     "hashType": "sha256"
