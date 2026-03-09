@@ -1,125 +1,102 @@
 # 🎓 EduQuest - Learning Management System API
 
-A production-ready e-learning platform backend built with Node.js, Express, Prisma ORM, and PostgreSQL. Features 75+ endpoints with JWT authentication, file uploads, email notifications, gamification, and enterprise-grade security.
+A comprehensive, production-ready Learning Management System (LMS) backend built with Node.js, Express, PostgreSQL, Redis, and Socket.io.
 
-[![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
-[![Express](https://img.shields.io/badge/Express-4.x-blue.svg)](https://expressjs.com/)
-[![Prisma](https://img.shields.io/badge/Prisma-5.x-brightgreen.svg)](https://www.prisma.io/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14+-blue.svg)](https://www.postgresql.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-20.x-green.svg)](https://nodejs.org/)
+[![Express](https://img.shields.io/badge/Express-5.x-blue.svg)](https://expressjs.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16.x-blue.svg)](https://www.postgresql.org/)
+[![Redis](https://img.shields.io/badge/Redis-7.x-red.svg)](https://redis.io/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](https://www.docker.com/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-## 📋 Table of Contents
+---
 
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Getting Started](#getting-started)
-- [API Documentation](#api-documentation)
-- [Security Features](#security-features)
-- [Project Structure](#project-structure)
-- [Environment Variables](#environment-variables)
-- [Database Schema](#database-schema)
-- [Scripts](#scripts)
-- [Testing](#testing)
-- [License](#license)
-
-## ✨ Features
+## 🌟 Features
 
 ### Core Functionality
 
-- 🔐 **JWT Authentication** - Secure token-based auth with 7-day expiry and role-based access (Student, Instructor, Admin)
-- 📚 **Course Management** - Complete CRUD with search, filtering, pagination, and thumbnails
-- 📖 **Lesson System** - Ordered lessons with progress tracking and point rewards
-- 📝 **Quiz System** - Multiple-choice quizzes with auto-grading, time limits, and instant feedback
-- 🏆 **Gamification** - 4 auto-awarded badges, points system, and level progression
-- 📜 **Certificates** - Auto-generated certificates with PDF download and public verification
-- 🏅 **Leaderboards** - All-time, weekly, and per-course rankings with custom scoring
-- ⭐ **Review System** - Student ratings and comments with automatic average calculation
-- 🔔 **Notifications** - Real-time alerts for badges, completions, and enrollments
-- 📊 **Analytics** - Request tracking, error logging, and performance monitoring
-- 📁 **File Uploads** - Profile pictures and course thumbnails with Multer validation
-- 📧 **Email System** - Welcome emails, enrollment confirmations, badge notifications, certificates, and password reset
+- ✅ **75+ RESTful API Endpoints** - Complete CRUD operations
+- ✅ **Authentication & Authorization** - JWT-based with role-based access control (RBAC)
+- ✅ **User Roles** - Student, Instructor, Admin
+- ✅ **Course Management** - Create, update, delete courses with lessons and quizzes
+- ✅ **Quiz System** - Multiple choice questions with auto-grading
+- ✅ **Progress Tracking** - Real-time student progress monitoring
+- ✅ **Certificate Generation** - Automatic certificate issuance upon course completion
 
-### Security & Performance
+### Gamification
 
-- 🛡️ **Rate Limiting** - Global (100/15min), Auth (10/15min), Upload (20/hour), Admin (200/15min)
-- 🚫 **IP Blocking** - Automatic temporary blocking for suspicious activity
-- 🔒 **Input Sanitization** - XSS protection, NoSQL injection prevention, SQL injection detection
-- 🗜️ **Response Compression** - Gzip compression for reduced payload sizes
-- ⚡ **Database Optimization** - 50+ strategic indexes for fast queries
-- 🔐 **Security Headers** - Helmet.js implementation with CSP and frame protection
-- 📝 **Request Logging** - Comprehensive request/response logging with timestamps
-- 🎯 **CORS Protection** - Configurable origin whitelist with credential support
+- 🎮 **Point System** - Earn points for completing lessons and quizzes
+- 🏆 **Badges** - 10+ achievement badges (First Lesson, Course Finisher, Quiz Master, etc.)
+- 📊 **Leaderboards** - All-time and weekly rankings
+- 📈 **Leveling System** - Progressive user levels based on total points
 
-### Role-Based Features
+### Advanced Features
 
-**Students Can:**
+- 🔒 **Security** - Rate limiting, XSS protection, SQL injection prevention, IP blocking
+- 📧 **Email Notifications** - Welcome emails, password reset, course enrollment, badges earned
+- 📁 **File Uploads** - Profile pictures, course thumbnails, lesson images (Multer)
+- 🔍 **Advanced Search** - Full-text search, fuzzy search, faceted search, auto-complete
+- 💾 **Redis Caching** - High-performance caching with 75%+ hit rate
+- 🔌 **WebSocket (Socket.io)** - Real-time notifications, online user tracking, chat rooms
+- 📝 **Logging** - Winston with daily file rotation (application, error, HTTP, security logs)
+- 🐳 **Docker Support** - Complete containerization with docker-compose
+- 🔄 **API Versioning** - v1 (deprecated) and v2 (current) with structured responses
+- 🧪 **Testing Suite** - Jest + Supertest with unit and integration tests
 
-- Browse and enroll in courses with progress tracking
-- Complete lessons and earn points (10 points/lesson)
-- Take quizzes with instant feedback and grading
-- Collect 4 achievement badges (First Lesson, Quiz Starter, Perfect Score, Course Finisher)
-- View leaderboards (all-time, weekly, per-course)
-- Submit course reviews and ratings
-- Download completion certificates as PDF
-- Upload profile pictures (2MB limit)
-- Receive email notifications for all activities
+---
 
-**Instructors Can:**
-
-- Create and manage unlimited courses
-- Add lessons with custom ordering and point values
-- Create quizzes with multiple-choice questions
-- Upload course thumbnails (5MB limit)
-- View detailed student progress and analytics
-- Access course-specific statistics (enrollment, completion, ratings)
-- Manage course enrollments
-- Receive email notifications for new enrollments
-
-**Admins Can:**
-
-- Full user management (create, update, delete, role changes, point adjustments)
-- Platform-wide analytics and insights
-- Create and award badges manually
-- Send mass notifications with role filtering
-- Access comprehensive reports:
-  - User growth trends (daily breakdown by role)
-  - Enrollment analytics with revenue tracking
-  - Quiz performance metrics
-  - Revenue reports with course breakdown
-- Force delete any content
-- View all notifications across the platform
-- Adjust user points and levels manually
-
-## 🛠️ Tech Stack
+## 🏗️ Tech Stack
 
 ### Backend
 
-- **Runtime:** Node.js 18+
-- **Framework:** Express.js 4.x
-- **ORM:** Prisma 5.x
-- **Database:** PostgreSQL 14+
+- **Runtime:** Node.js 20.x
+- **Framework:** Express 5.x
+- **Database:** PostgreSQL 16.x
+- **ORM:** Prisma 6.x
+- **Cache:** Redis 7.x (ioredis)
+- **Real-time:** Socket.io 4.x
+
+### Security & Middleware
+
 - **Authentication:** JWT (jsonwebtoken)
-- **Password Hashing:** bcrypt (10 salt rounds)
-- **File Upload:** Multer with file type validation
-- **PDF Generation:** PDFKit
-- **Email:** Nodemailer with HTML templates
-- **Validation:** Custom middleware with regex patterns
-- **Security:** Helmet.js, CORS, manual XSS/injection protection
-- **Performance:** compression, express-rate-limit, express-slow-down
+- **Password Hashing:** bcrypt
+- **Rate Limiting:** express-rate-limit
+- **Security Headers:** Helmet
+- **CORS:** cors
+- **Compression:** compression
 
-### Development Tools
+### Development & DevOps
 
-- **API Testing:** Postman / Thunder Client
-- **Database GUI:** Prisma Studio
-- **Version Control:** Git & GitHub
+- **Logging:** Winston + winston-daily-rotate-file
+- **Testing:** Jest + Supertest
+- **Containerization:** Docker + docker-compose
+- **File Upload:** Multer
+- **Email:** Nodemailer
+- **Search:** Fuse.js (fuzzy search)
 
-## 🚀 Getting Started
+---
+
+## 📊 Project Statistics
+
+- **Total Endpoints:** 75+
+- **Database Tables:** 15
+- **API Versions:** 2 (v1, v2)
+- **Security Middleware:** 7+
+- **Test Coverage:** 40-60%
+- **Docker Services:** 3 (API, PostgreSQL, Redis)
+- **Email Templates:** 6
+- **Badge Types:** 10+
+
+---
+
+## 🚀 Quick Start
 
 ### Prerequisites
 
-- Node.js 18 or higher
-- PostgreSQL 14 or higher
+- Node.js 20.x or higher
+- PostgreSQL 16.x
+- Redis 7.x (optional, for caching)
 - npm or yarn
-- Gmail account (for email features)
 
 ### Installation
 
@@ -138,438 +115,402 @@ npm install
 
 3. **Set up environment variables**
 
-Create a `.env` file in the `server` directory:
-
-```env
-# Database
-DATABASE_URL="postgresql://username:password@localhost:5432/eduquest"
-
-# Authentication
-JWT_SECRET="your-super-secret-jwt-key-min-32-characters-change-in-production"
-
-# Server
-PORT=5000
-NODE_ENV=development
-
-# CORS
-ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173
-
-# Email (Optional - for email notifications)
-EMAIL_HOST=smtp.gmail.com
-EMAIL_PORT=587
-EMAIL_USER=your-email@gmail.com
-EMAIL_PASSWORD=your-gmail-app-password
-FRONTEND_URL=http://localhost:3000
+```bash
+cp .env.example .env
+# Edit .env with your configuration
 ```
 
-4. **Set up the database**
+4. **Create database**
 
 ```bash
-# Generate Prisma Client
-npx prisma generate
+createdb eduquest
+# Or use pgAdmin to create database
+```
 
-# Push schema to database
-npx prisma db push
+5. **Run Prisma migrations**
 
-# Seed the database with initial data
+```bash
+npx prisma migrate deploy
+```
+
+6. **Seed the database** (optional)
+
+```bash
 npm run seed
 ```
 
-5. **Start the development server**
+7. **Start the server**
 
 ```bash
+# Development mode
 npm run dev
-# or
-node src/server.js
+
+# Production mode
+npm start
 ```
 
-The API will be available at `http://localhost:5000`
+Server will be running at: `http://localhost:5000`
 
-### Quick Test
+---
+
+## 🐳 Docker Deployment
+
+### Quick Start with Docker
 
 ```bash
-# Check server health
-curl http://localhost:5000/health
+# Build and start all services
+docker-compose up -d
 
-# View API documentation
-curl http://localhost:5000/api/docs
+# Check status
+docker-compose ps
 
-# View analytics
-curl http://localhost:5000/analytics
+# View logs
+docker-compose logs -f api
+
+# Stop services
+docker-compose down
 ```
 
-## 📚 API Documentation
+### Docker Services
 
-Full API documentation is available at:
+- **API:** Port 5000
+- **PostgreSQL:** Port 5432
+- **Redis:** Port 6379
 
-```
-GET http://localhost:5000/api/docs
-```
+See [DOCKER.md](DOCKER.md) for detailed Docker documentation.
 
-### Quick API Reference
-
-| Category      | Endpoint                            | Method | Auth          | Rate Limit |
-| ------------- | ----------------------------------- | ------ | ------------- | ---------- |
-| **Auth**      | `/api/auth/register`                | POST   | ❌            | 10/15min   |
-|               | `/api/auth/login`                   | POST   | ❌            | 10/15min   |
-|               | `/api/auth/forgot-password`         | POST   | ❌            | 10/15min   |
-|               | `/api/auth/reset-password`          | POST   | ❌            | 10/15min   |
-|               | `/api/auth/me`                      | GET    | ✅            | 100/15min  |
-| **Courses**   | `/api/courses`                      | GET    | ❌            | 100/15min  |
-|               | `/api/courses`                      | POST   | ✅ Instructor | 100/15min  |
-|               | `/api/courses/:id`                  | GET    | ❌            | 100/15min  |
-|               | `/api/courses/:id/enroll`           | POST   | ✅ Student    | 100/15min  |
-|               | `/api/courses/:id/upload-thumbnail` | POST   | ✅ Instructor | 20/hour    |
-| **User**      | `/api/user/me/upload-picture`       | POST   | ✅            | 20/hour    |
-| **Admin**     | `/api/admin/stats`                  | GET    | ✅ Admin      | 200/15min  |
-|               | `/api/admin/users`                  | GET    | ✅ Admin      | 200/15min  |
-|               | `/api/admin/reports/*`              | GET    | ✅ Admin      | 200/15min  |
-| **Analytics** | `/analytics`                        | GET    | Public        | 100/15min  |
-
-> **Note:** View complete endpoint list at `/api/docs`
-
-## 🔒 Security Features
-
-### Authentication & Authorization
-
-- JWT tokens with 7-day expiry
-- bcrypt password hashing (10 salt rounds)
-- Role-based access control (Student, Instructor, Admin)
-- Secure password reset with 1-hour token expiry
-
-### Rate Limiting & Throttling
-
-- **Global:** 100 requests per 15 minutes per IP
-- **Authentication:** 10 requests per 15 minutes (strict)
-- **File Uploads:** 20 uploads per hour
-- **Admin Actions:** 200 requests per 15 minutes
-- **Speed Limiter:** Adds progressive delays after 50 requests
-
-### IP Blocking System
-
-- Automatic temporary blocking after repeated rate limit violations
-- 30-minute block for general abuse
-- 1-hour block for authentication abuse
-- Memory-based storage with automatic expiry
-
-### Input Validation & Sanitization
-
-- **XSS Protection:** Strips script tags, iframes, javascript: protocols, event handlers
-- **NoSQL Injection:** Removes $ operators and dot notation from queries
-- **SQL Injection:** Detects and blocks common SQL keywords (SELECT, DROP, UNION, etc.)
-- **Null Byte Removal:** Prevents null byte injection attacks
-- **Whitespace Trimming:** Automatic trimming of all string inputs
-
-### File Upload Security
-
-- File type validation (JPEG, PNG, WEBP only)
-- Size limits (2MB profiles, 5MB courses)
-- Unique filename generation with timestamps
-- Automatic old file cleanup
-
-### Headers & Network Security
-
-- Helmet.js security headers
-- CORS with origin whitelist
-- Request size limits (10MB)
-- Trust proxy configuration for accurate IP detection
+---
 
 ## 📁 Project Structure
 
 ```
 server/
 ├── src/
-│   ├── middleware/
-│   │   ├── auth.js              # JWT authentication & role checks
-│   │   ├── validate.js          # Input validation with custom rules
-│   │   ├── logger.js            # Request/response logging
-│   │   ├── rateLimiter.js       # Rate limiting & IP blocking
-│   │   ├── sanitize.js          # XSS/injection protection
-│   │   ├── analytics.js         # Request tracking & monitoring
-│   │   └── upload.js            # File upload handling (Multer)
-│   ├── routes/
-│   │   ├── auth.routes.js       # Registration, login, password reset
-│   │   ├── user.routes.js       # Profile, dashboard, uploads
-│   │   ├── course.routes.js     # Course CRUD, enrollment, thumbnails
-│   │   ├── lesson.routes.js     # Lessons, completion, points
-│   │   ├── quiz.routes.js       # Quiz attempts, scoring
-│   │   ├── question.routes.js   # Quiz questions
-│   │   ├── badge.routes.js      # Badge management
-│   │   ├── notification.routes.js # Notifications
-│   │   ├── leaderboard.routes.js # Rankings
-│   │   ├── review.routes.js     # Course reviews
-│   │   ├── certificate.routes.js # Certificate generation & verification
-│   │   ├── instructor.routes.js # Instructor dashboard
-│   │   ├── admin.routes.js      # Admin panel & reports
-│   │   └── docs.routes.js       # API documentation
-│   ├── utils/
-│   │   └── email.js             # Email templates & sending
-│   ├── app.js                   # Express app setup
-│   ├── server.js                # Server entry with graceful shutdown
-│   └── prisma.js                # Prisma client
+│   ├── config/           # Configuration files
+│   │   ├── logger.js     # Winston logger config
+│   │   ├── redis.js      # Redis client setup
+│   │   └── socket.js     # Socket.io configuration
+│   ├── middleware/       # Express middleware
+│   │   ├── auth.js       # JWT authentication
+│   │   ├── validate.js   # Request validation
+│   │   ├── rateLimiter.js # Rate limiting & IP blocking
+│   │   ├── sanitize.js   # XSS & SQL injection protection
+│   │   ├── cache.js      # Redis caching middleware
+│   │   ├── logger.js     # HTTP request logging
+│   │   └── analytics.js  # Request tracking
+│   ├── routes/           # API route handlers
+│   │   ├── v1/           # API v1 (deprecated)
+│   │   ├── v2/           # API v2 (current)
+│   │   ├── auth.routes.js
+│   │   ├── course.routes.js
+│   │   ├── lesson.routes.js
+│   │   ├── quiz.routes.js
+│   │   ├── user.routes.js
+│   │   ├── badge.routes.js
+│   │   ├── leaderboard.routes.js
+│   │   ├── notification.routes.js
+│   │   ├── search.routes.js
+│   │   └── ... (15+ route files)
+│   ├── services/         # Business logic
+│   │   └── search.service.js
+│   ├── utils/            # Utility functions
+│   │   └── email.js      # Email sending
+│   ├── app.js            # Express app setup
+│   ├── server.js         # Server entry point
+│   └── prisma.js         # Prisma client
 ├── prisma/
-│   ├── schema.prisma            # Database schema with 13 models
-│   └── seed.js                  # Database seeding script
-├── uploads/                     # User-uploaded files
-│   ├── profiles/                # Profile pictures
-│   ├── courses/                 # Course thumbnails
-│   └── lessons/                 # Lesson images
-├── tests/                       # API test collections
-│   ├── thunder-client-collection.json
-│   └── API_TEST_GUIDE.md
-├── package.json
-└── .env
+│   ├── schema.prisma     # Database schema
+│   ├── migrations/       # Database migrations
+│   └── seed.js           # Database seeding
+├── tests/
+│   ├── unit/             # Unit tests
+│   ├── integration/      # Integration tests
+│   ├── helpers/          # Test utilities
+│   └── setup.js          # Test configuration
+├── uploads/              # Uploaded files
+│   ├── profiles/
+│   ├── courses/
+│   └── lessons/
+├── logs/                 # Application logs
+├── public/               # Static files
+│   └── socket-test.html  # WebSocket test page
+├── docker-compose.yml    # Docker compose config
+├── Dockerfile            # Docker image
+├── jest.config.js        # Jest configuration
+├── .env                  # Environment variables
+└── package.json          # Dependencies
 ```
 
-## 🗄️ Database Schema
-
-The application uses 13 Prisma models with 50+ optimized indexes:
-
-### Core Models
-
-- **User** - Authentication, profiles, points, levels, roles
-- **Course** - Course metadata, pricing, thumbnails
-- **Lesson** - Ordered lessons with content and points
-- **Enrollment** - Student-course relationships with progress
-- **LessonProgress** - Lesson completion tracking
-
-### Assessment Models
-
-- **Quiz** - Quiz metadata with time limits and pass scores
-- **Question** - Multiple-choice questions with correct answers
-- **QuizAttempt** - Student quiz submissions with scores
-
-### Gamification Models
-
-- **Badge** - Achievement badges (4 types)
-- **UserBadge** - Badge awards with timestamps
-- **Certificate** - Course completion certificates with verification codes
-
-### Social Models
-
-- **Review** - Course ratings and comments
-- **Notification** - User notifications for various events
-
-### Key Relationships
-
-```
-User (1) ──→ (N) Enrollment ──→ (1) Course
-User (1) ──→ (N) LessonProgress ──→ (1) Lesson
-User (1) ──→ (N) QuizAttempt ──→ (1) Quiz
-Course (1) ──→ (N) Lesson
-Course (1) ──→ (N) Quiz ──→ (N) Question
-User (1) ──→ (N) UserBadge ──→ (1) Badge
-User (1) ──→ (N) Certificate ──→ (1) Course
-```
-
-### Database Indexes (50+ total)
-
-- User: email, totalPoints, role
-- Course: level, price, instructorId
-- Enrollment: progress, userId, courseId
-- QuizAttempt: passed, createdAt, userId, quizId
-- Review: rating, courseId, userId
-- Notification: isRead, createdAt, userId
-- Certificate: code, userId, courseId
-
-View the full schema in `prisma/schema.prisma`
-
-## 📜 Scripts
-
-```bash
-# Development
-npm run dev          # Start development server with nodemon
-node src/server.js   # Start production server
-
-# Database
-npm run seed         # Seed database with test data
-npx prisma studio    # Open Prisma Studio GUI
-npx prisma db push   # Push schema changes to database
-npx prisma generate  # Generate Prisma Client
-
-# Testing
-# Import tests/thunder-client-collection.json into Thunder Client/Postman
-```
+---
 
 ## 🔑 Environment Variables
 
-| Variable          | Description                                     | Required | Example                                       |
-| ----------------- | ----------------------------------------------- | -------- | --------------------------------------------- |
-| `DATABASE_URL`    | PostgreSQL connection string                    | ✅       | `postgresql://user:pass@localhost:5432/db`    |
-| `JWT_SECRET`      | Secret key for JWT signing (min 32 chars)       | ✅       | `super-secret-key-change-in-production`       |
-| `PORT`            | Server port                                     | ✅       | `5000`                                        |
-| `NODE_ENV`        | Environment mode                                | ✅       | `development` or `production`                 |
-| `ALLOWED_ORIGINS` | CORS allowed origins (comma-separated)          | ✅       | `http://localhost:3000,http://localhost:5173` |
-| `EMAIL_HOST`      | SMTP server host                                | ❌       | `smtp.gmail.com`                              |
-| `EMAIL_PORT`      | SMTP server port                                | ❌       | `587`                                         |
-| `EMAIL_USER`      | Email account username                          | ❌       | `your-email@gmail.com`                        |
-| `EMAIL_PASSWORD`  | Email account password (app password for Gmail) | ❌       | `your-app-password`                           |
-| `FRONTEND_URL`    | Frontend application URL                        | ❌       | `http://localhost:3000`                       |
+Create a `.env` file in the root directory:
+
+```env
+# Server
+PORT=5000
+NODE_ENV=development
+
+# Database
+DATABASE_URL=postgresql://postgres:password@localhost:5432/eduquest
+
+# JWT
+JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+
+# Redis (optional)
+REDIS_HOST=127.0.0.1
+REDIS_PORT=6379
+REDIS_PASSWORD=
+REDIS_DB=0
+
+# CORS
+ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173
+
+# Email (Gmail example)
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USER=your-email@gmail.com
+EMAIL_PASSWORD=your-app-password
+FRONTEND_URL=http://localhost:3000
+
+# Logging
+LOG_LEVEL=info
+```
+
+---
+
+## 📖 API Documentation
+
+### Base URL
+
+```
+http://localhost:5000/api
+```
+
+### API Versions
+
+- **v1:** `/api/v1/*` (Deprecated, sunset: 2027-01-01)
+- **v2:** `/api/v2/*` (Current, recommended)
+- **Default:** `/api/*` (Uses v2)
+
+### Authentication
+
+Most endpoints require JWT authentication. Include the token in the Authorization header:
+
+```
+Authorization: Bearer <your-jwt-token>
+```
+
+### Response Format (v2)
+
+**Success Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    // Response data
+  },
+  "meta": {
+    "version": "2.0.0",
+    "timestamp": "2026-03-04T..."
+  }
+}
+```
+
+**Error Response:**
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "ERROR_CODE",
+    "message": "Error description"
+  },
+  "timestamp": "2026-03-04T..."
+}
+```
+
+### Key Endpoints
+
+#### Authentication
+
+```
+POST   /api/v2/auth/register          - Register new user
+POST   /api/v2/auth/login             - Login
+GET    /api/v2/auth/me                - Get current user info
+POST   /api/v2/auth/forgot-password   - Request password reset
+POST   /api/v2/auth/reset-password    - Reset password
+```
+
+#### Courses
+
+```
+GET    /api/v2/courses                - List all courses (with search/filters)
+POST   /api/v2/courses                - Create course (Instructor only)
+GET    /api/v2/courses/:id            - Get course by ID
+PATCH  /api/v2/courses/:id            - Update course
+DELETE /api/v2/courses/:id            - Delete course
+POST   /api/v2/courses/:id/enroll     - Enroll in course (Student only)
+GET    /api/v2/courses/:id/stats      - Get course statistics
+GET    /api/v2/courses/:id/leaderboard - Get course leaderboard
+```
+
+#### Lessons
+
+```
+GET    /api/lessons/course/:courseId  - Get lessons for a course
+POST   /api/lessons                   - Create lesson (Instructor only)
+GET    /api/lessons/:id               - Get lesson by ID
+PATCH  /api/lessons/:id               - Update lesson
+DELETE /api/lessons/:id               - Delete lesson
+POST   /api/lessons/:id/complete      - Mark lesson as complete (Student)
+```
+
+#### Quizzes
+
+```
+GET    /api/quizzes/course/:courseId  - Get quizzes for a course
+POST   /api/quizzes                   - Create quiz (Instructor only)
+GET    /api/quizzes/:id               - Get quiz by ID
+POST   /api/quizzes/:id/attempt       - Submit quiz attempt (Student)
+GET    /api/quizzes/:id/attempts      - Get my attempts
+```
+
+#### Search
+
+```
+GET    /api/search/courses            - Search courses (full-text, filters)
+GET    /api/search/lessons            - Search lessons
+GET    /api/search/global             - Search everything
+GET    /api/search/suggestions        - Auto-complete suggestions
+GET    /api/search/fuzzy              - Typo-tolerant search
+GET    /api/search/popular            - Popular search terms
+```
+
+#### Leaderboard
+
+```
+GET    /api/leaderboard/all-time      - All-time top users
+GET    /api/leaderboard/weekly        - Weekly top users
+```
+
+#### Admin
+
+```
+GET    /api/admin/users               - List all users (Admin only)
+GET    /api/admin/analytics           - System analytics
+GET    /api/admin/reports             - Generate reports
+```
+
+See [API.md](API.md) for complete endpoint documentation.
+
+---
 
 ## 🧪 Testing
 
-### Test User Accounts
-
-After running `npm run seed`:
-
-```javascript
-// Student Account
-email: student@test.com
-password: password123
-
-// Instructor Account
-email: instructor@test.com
-password: password123
-
-// Admin Account
-email: admin@test.com
-password: password123
-```
-
-### Manual Testing
-
-1. Import `tests/thunder-client-collection.json` into Thunder Client or Postman
-2. Create environment variables for tokens
-3. Follow test sequence in `tests/API_TEST_GUIDE.md`
-
-### Sample API Calls
-
-**Register a new user:**
-
 ```bash
-curl -X POST http://localhost:5000/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "fullName": "John Doe",
-    "email": "john@example.com",
-    "password": "password123",
-    "role": "STUDENT"
-  }'
+# Run all tests
+npm test
+
+# Run unit tests only
+npm run test:unit
+
+# Run integration tests
+npm run test:integration
+
+# Generate coverage report
+npm run test:coverage
+
+# Watch mode
+npm run test:watch
 ```
 
-**Login:**
+---
 
-```bash
-curl -X POST http://localhost:5000/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "student@test.com",
-    "password": "password123"
-  }'
-```
+## 📊 Database Schema
 
-**Get courses:**
+### Core Tables
 
-```bash
-curl http://localhost:5000/api/courses
-```
+- **User** - User accounts (Student, Instructor, Admin)
+- **Course** - Courses created by instructors
+- **Lesson** - Lessons within courses
+- **Quiz** - Quizzes for courses
+- **Question** - Quiz questions
+- **Enrollment** - Student course enrollments
+- **LessonProgress** - Lesson completion tracking
+- **QuizAttempt** - Quiz submission records
+- **Badge** - Achievement badges
+- **UserBadge** - Badges earned by users
+- **Certificate** - Course completion certificates
+- **Review** - Course reviews
+- **Notification** - User notifications
 
-**View analytics:**
+See [prisma/schema.prisma](prisma/schema.prisma) for complete schema.
 
-```bash
-curl http://localhost:5000/analytics
-```
+---
 
-## 📊 Key Features Explained
+## 🔐 Security Features
 
-### Badge System
+- ✅ **JWT Authentication** - Secure token-based auth
+- ✅ **Password Hashing** - bcrypt with salt rounds
+- ✅ **Rate Limiting** - Prevent brute force attacks
+- ✅ **IP Blocking** - Automatic IP blocking after violations
+- ✅ **XSS Protection** - Input sanitization
+- ✅ **SQL Injection Prevention** - Prisma ORM + validation
+- ✅ **NoSQL Injection Prevention** - Request sanitization
+- ✅ **CORS** - Configured allowed origins
+- ✅ **Helmet** - Security headers
+- ✅ **Request Size Limits** - 10MB max payload
+- ✅ **Logging** - Security event tracking
 
-4 auto-awarded badges with point bonuses:
+---
 
-- **FIRST_LESSON** (20 points) - Complete your first lesson
-- **COURSE_FINISHER** (50 points) - Complete all lessons in a course (100% progress)
-- **FIRST_QUIZ** (25 points) - Complete your first quiz attempt
-- **PERFECT_SCORE** (25 points) - Score 100% on any quiz
+## 📝 Logging
 
-### Leaderboard Scoring Formula
+Logs are stored in the `logs/` directory with daily rotation:
 
-```javascript
-score = (progress × 0.6) + min(quizPoints × 0.4, 40)
-// 60% weight on course progress
-// 40% weight on quiz points (capped at 40)
-```
+- **application-YYYY-MM-DD.log** - All logs (14 days retention)
+- **error-YYYY-MM-DD.log** - Errors only (30 days retention)
+- **http-YYYY-MM-DD.log** - HTTP requests (7 days retention)
+- **exceptions-YYYY-MM-DD.log** - Unhandled exceptions (30 days)
+- **rejections-YYYY-MM-DD.log** - Unhandled promise rejections (30 days)
 
-### Certificate Generation
+Log levels: `error`, `warn`, `info`, `http`, `debug`
 
-- Auto-generated when course progress reaches 100%
-- Unique verification code format: `CERT-{userId}-{timestamp}`
-- Downloadable as PDF with course and instructor details
-- Public verification endpoint: `/api/certificates/verify/:code`
+---
 
-### Level System
+## 🚀 Production Deployment
 
-```javascript
-level = floor(totalPoints / 100) + 1;
-// Level 1: 0-99 points
-// Level 2: 100-199 points
-// Level 3: 200-299 points
-// etc.
-```
+### Pre-deployment Checklist
 
-### Email Templates
-
-- **Welcome Email** - Sent on registration with platform introduction
-- **Enrollment Email** - Sent to student on course enrollment
-- **Instructor Notification** - Sent to instructor when new student enrolls
-- **Badge Email** - Sent when user earns a badge with description
-- **Certificate Email** - Sent on course completion with download link
-- **Password Reset** - Sent with 1-hour expiry token
-
-### Rate Limiting Behavior
-
-- After hitting rate limit, requests return 429 with `retryAfter` header
-- 3 consecutive rate limit hits trigger automatic IP blocking
-- Auth endpoint abuse (10+ attempts) triggers 1-hour IP block
-- General abuse triggers 30-minute IP block
-- Blocks stored in memory and auto-expire
-
-### Analytics Tracking
-
-- Total requests by endpoint, method, and status code
-- Top 10 most-used endpoints
-- Last 100 errors with timestamps and details
-- Last 50 slow requests (>1 second)
-- Server uptime and start time
-- Request tracking in real-time
-
-## 🚢 Deployment
-
-### Production Checklist
-
+- [ ] Update `.env` with production values
+- [ ] Change `JWT_SECRET` to a strong random string (32+ characters)
 - [ ] Set `NODE_ENV=production`
-- [ ] Use strong `JWT_SECRET` (32+ random characters)
-- [ ] Configure production PostgreSQL database
-- [ ] Set proper `ALLOWED_ORIGINS` (your frontend domains)
-- [ ] Enable SSL/TLS
-- [ ] Configure production email service (SendGrid/AWS SES)
-- [ ] Set up file storage (AWS S3/Cloudinary)
-- [ ] Configure logging service (Winston/CloudWatch)
-- [ ] Set up monitoring (Sentry/New Relic)
-- [ ] Implement database backup strategy
-- [ ] Review and adjust rate limits for production load
-- [ ] Set up reverse proxy (Nginx)
-- [ ] Configure environment-specific CORS
-- [ ] Enable database connection pooling
-- [ ] Set up CDN for static assets
+- [ ] Configure production database
+- [ ] Set up Redis (for caching)
+- [ ] Configure email service (SMTP)
+- [ ] Update `ALLOWED_ORIGINS` with your frontend URL
+- [ ] Set up SSL/TLS certificates
+- [ ] Configure reverse proxy (Nginx/Apache)
+- [ ] Set up monitoring (PM2, New Relic, etc.)
+- [ ] Configure backups
+- [ ] Test all endpoints
+- [ ] Run security audit: `npm audit`
 
-### Production Environment Example
+### Deployment Platforms
 
-```env
-NODE_ENV=production
-DATABASE_URL=postgresql://prod_user:prod_pass@prod_host:5432/prod_db
-JWT_SECRET=your-production-secret-min-32-chars-random
-PORT=5000
-ALLOWED_ORIGINS=https://yourdomain.com,https://www.yourdomain.com
-EMAIL_HOST=smtp.sendgrid.net
-EMAIL_PORT=587
-EMAIL_USER=apikey
-EMAIL_PASSWORD=your-sendgrid-api-key
-FRONTEND_URL=https://yourdomain.com
-```
+- **Docker:** Use included docker-compose setup
+- **Heroku:** See [HEROKU.md](HEROKU.md)
+- **AWS:** EC2 + RDS + ElastiCache
+- **DigitalOcean:** App Platform or Droplet
+- **Railway:** One-click deploy
+- **Render:** Free tier available
+
+---
 
 ## 🤝 Contributing
-
-Contributions are welcome! Please follow these steps:
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
@@ -577,67 +518,38 @@ Contributions are welcome! Please follow these steps:
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-### Development Guidelines
+---
 
-- Follow existing code style and patterns
-- Add appropriate error handling
-- Update documentation for new features
-- Test all endpoints before submitting PR
-- Keep commits atomic and well-described
-
-## 📝 License
+## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+---
+
 ## 👨‍💻 Author
 
-**Arafat Zaman Ratul**
+**Ratul Zaman**
 
 - GitHub: [@ratul41907](https://github.com/ratul41907)
 - Email: zamanratul419@gmail.com
 
+---
+
 ## 🙏 Acknowledgments
 
-- Built with [Express.js](https://expressjs.com/)
-- Database powered by [Prisma](https://www.prisma.io/)
-- Authentication with [JWT](https://jwt.io/)
-- File uploads via [Multer](https://github.com/expressjs/multer)
-- Email service via [Nodemailer](https://nodemailer.com/)
-- Security by [Helmet.js](https://helmetjs.github.io/)
+- Built with Node.js, Express, and PostgreSQL
+- Inspired by modern LMS platforms like Udemy, Coursera
+- Special thanks to the open-source community
+
+---
 
 ## 📞 Support
 
-For support, email zamanratul419@gmail.com or open an issue in the GitHub repository.
+For issues, questions, or suggestions:
+
+- **GitHub Issues:** [Create an issue](https://github.com/ratul41907/EduQuest-Learning-Management-System/issues)
+- **Email:** zamanratul419@gmail.com
 
 ---
 
-## 📈 Project Stats
-
-- **Total Endpoints:** 75+
-- **Route Files:** 14
-- **Middleware:** 6 custom layers
-- **Database Models:** 13
-- **Database Indexes:** 50+
-- **Development Time:** 17 days
-- **Lines of Code:** ~5,000+
-
----
-
-## 🎯 Roadmap
-
-- [ ] WebSocket integration for real-time notifications
-- [ ] Redis caching layer for improved performance
-- [ ] Advanced logging with Winston
-- [ ] Docker containerization
-- [ ] API versioning (/api/v1, /api/v2)
-- [ ] Elasticsearch for advanced search
-- [ ] Payment integration (Stripe)
-- [ ] Video streaming support
-- [ ] Mobile app API enhancements
-- [ ] GraphQL endpoint
-
----
-
-**⭐ If you find this project useful, please consider giving it a star!**
-
-**Built with ❤️ by Arafat Zaman Ratul**
+**⭐ Star this repo if you find it helpful!**
