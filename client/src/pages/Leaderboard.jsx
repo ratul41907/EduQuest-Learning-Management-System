@@ -1,0 +1,2 @@
+const Leaderboard = () => <div style={{minHeight:'100vh',background:'#0a0a0f',color:'white',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'2rem'}}>🏆 Leaderboard Coming Soon...</div>;
+export default Leaderboard;

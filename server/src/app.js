@@ -146,9 +146,12 @@ const v2Routes = require("./routes/v2");
 // Mount versioned routes
 app.use("/api/v1", v1Routes);
 app.use("/api/v2", v2Routes);
+app.use("/api", v2Routes); // Default to v2
 
-// Default version (v2 is now default)
-app.use("/api", v2Routes);
+// Enrollment routes (register separately for v2)
+const enrollmentRoutes = require('./routes/enrollment.routes');
+app.use("/api/v2/enrollments", enrollmentRoutes);
+app.use("/api/enrollments", enrollmentRoutes);
 
 // ══════════════════════════════════════════════════════════════
 // ERROR HANDLERS
