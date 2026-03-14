@@ -22,37 +22,38 @@ router.get("/my-courses", requireAuth, async (req, res) => {
                 fullName: true 
               },
             },
-            _count: {
-              select: {
-                lessons: true,
-                quizzes: true,
-              }
-            }
           },
         },
       },
-      orderBy: { enrolledAt: 'desc' },
+      orderBy: { createdAt: 'desc' },
     });
 
-    // Transform to include lessonCount and quizCount
-    const transformedEnrollments = enrollments.map(e => ({
-      ...e,
-      course: {
-        ...e.course,
-        lessonCount: e.course._count.lessons,
-        quizCount: e.course._count.quizzes,
-      }
-    }));
+    // Add lesson count and quiz count manually
+    const enrichedEnrollments = await Promise.all(
+      enrollments.map(async (e) => {
+        const lessonCount = await prisma.lesson.count({
+          where: { courseId: e.courseId }
+        });
+        const quizCount = await prisma.quiz.count({
+          where: { courseId: e.courseId }
+        });
 
-    res.json({ enrollments: transformedEnrollments });
+        return {
+          ...e,
+          course: {
+            ...e.course,
+            lessonCount,
+            quizCount,
+          }
+        };
+      })
+    );
+
+    res.json({ enrollments: enrichedEnrollments });
   } catch (error) {
     console.error('Error fetching my courses:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
-
-// ===========================
-// POST /api/enrollments/enroll (NOT USED - use /courses/:id/enroll instead)
-// ===========================
 
 module.exports = router;

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { enrollmentAPI, badgeAPI, leaderboardAPI } from '../api/api';
+import { courseAPI, badgeAPI, leaderboardAPI } from '../api/api';
 
 const StudentDashboard = () => {
   const { user, logout } = useAuth();
@@ -21,7 +21,7 @@ const StudentDashboard = () => {
       const promises = [];
       
       promises.push(
-        enrollmentAPI.getMyCourses().catch(() => ({ data: { enrollments: [] } }))
+        courseAPI.getMyCourses().catch(() => ({ data: { enrollments: [] } }))
       );
       promises.push(
         badgeAPI.getMyBadges().catch(() => ({ data: { badges: [] } }))
