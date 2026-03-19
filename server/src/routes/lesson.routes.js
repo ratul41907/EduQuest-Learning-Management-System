@@ -11,6 +11,55 @@ function calcLevel(totalPoints) {
 }
 
 // =========================================
+// POST /api/lessons - Create new lesson (for frontend compatibility)
+// =========================================
+router.post("/", requireAuth, async (req, res) => {
+  try {
+    if (req.user.role !== "INSTRUCTOR") {
+      return res.status(403).json({ message: "Instructor only" });
+    }
+
+    const { courseId, title, content, type, orderIndex, orderNo } = req.body;
+
+    if (!courseId || !title || !content) {
+      return res.status(400).json({ message: "Missing required fields: courseId, title, content" });
+    }
+
+    // Verify course ownership
+    const course = await prisma.course.findUnique({
+      where: { id: courseId },
+    });
+
+    if (!course) {
+      return res.status(404).json({ message: "Course not found" });
+    }
+
+    if (course.instructorId !== req.user.sub) {
+      return res.status(403).json({ message: "You do not own this course" });
+    }
+
+    // Use orderIndex or orderNo (frontend sends orderIndex, old routes use orderNo)
+    const finalOrderNo = orderNo || orderIndex || 1;
+
+    // Create lesson
+    const lesson = await prisma.lesson.create({
+      data: {
+        courseId,
+        title,
+        content,
+        orderNo: Number(finalOrderNo),
+        points: 10, // default points
+      },
+    });
+
+    return res.status(201).json({ message: "Lesson created successfully", lesson });
+  } catch (error) {
+    console.error('Error creating lesson:', error);
+    return res.status(500).json({ message: "Failed to create lesson", error: error.message });
+  }
+});
+
+// =========================================
 // GET /api/lessons/course/:courseId
 // =========================================
 router.get("/course/:courseId", requireAuth, async (req, res) => {
@@ -44,7 +93,7 @@ router.get("/course/:courseId", requireAuth, async (req, res) => {
 });
 
 // =========================================
-// POST /api/lessons/:courseId
+// POST /api/lessons/:courseId (old format - keep for backward compatibility)
 // =========================================
 router.post(
   "/:courseId",
@@ -75,7 +124,6 @@ router.post(
 
 // =========================================
 // POST /api/lessons/:lessonId/complete
-// Day 16: Enhanced with badge and certificate emails
 // =========================================
 router.post("/:lessonId/complete", requireAuth, async (req, res) => {
   try {
@@ -95,7 +143,6 @@ router.post("/:lessonId/complete", requireAuth, async (req, res) => {
     });
     if (!enrolled) return res.status(403).json({ message: "You must enroll first" });
 
-    // Prevent double completion
     let newlyCompleted = false;
     try {
       await prisma.lessonProgress.create({ data: { userId, lessonId: lesson.id } });
@@ -104,7 +151,6 @@ router.post("/:lessonId/complete", requireAuth, async (req, res) => {
       newlyCompleted = false;
     }
 
-    // Recalculate progress
     const totalLessons = await prisma.lesson.count({ where: { courseId: lesson.courseId } });
     const completedInCourse = await prisma.lessonProgress.count({
       where: { userId, lesson: { courseId: lesson.courseId } },
@@ -116,7 +162,6 @@ router.post("/:lessonId/complete", requireAuth, async (req, res) => {
       data: { progress },
     });
 
-    // Course completion: notification + certificate + email
     if (progress === 100) {
       const existing = await prisma.notification.findFirst({
         where: { userId, courseId: lesson.courseId, type: "COURSE_COMPLETED" },
@@ -149,7 +194,6 @@ router.post("/:lessonId/complete", requireAuth, async (req, res) => {
           },
         });
 
-        // Day 16: certificate email (non-blocking)
         const [certUser, certCourse] = await Promise.all([
           prisma.user.findUnique({ where: { id: userId }, select: { fullName: true, email: true } }),
           prisma.course.findUnique({ where: { id: lesson.courseId }, select: { title: true } }),
@@ -165,12 +209,10 @@ router.post("/:lessonId/complete", requireAuth, async (req, res) => {
       }
     }
 
-    // Already completed — no points again
     if (!newlyCompleted) {
       return res.json({ message: "Lesson already completed", lessonId, progress, completed: completedInCourse, totalLessons, pointsAwarded: 0 });
     }
 
-    // Award points
     const pointsAwarded = Number(lesson.points || 10);
     const updatedUser = await prisma.user.update({
       where: { id: userId },
@@ -188,7 +230,6 @@ router.post("/:lessonId/complete", requireAuth, async (req, res) => {
       });
     }
 
-    // Badge: FIRST_LESSON
     let badgeAwarded = null;
     const totalCompletions = await prisma.lessonProgress.count({ where: { userId } });
 
@@ -202,7 +243,6 @@ router.post("/:lessonId/complete", requireAuth, async (req, res) => {
           data: { userId, type: "BADGE_EARNED", title: "Badge Earned: First Step!", message: "You completed your first lesson. Keep going!" },
         }).catch(() => {});
 
-        // Day 16: badge email (non-blocking)
         sendBadgeEmail(
           finalUser.email,
           finalUser.fullName,
@@ -212,14 +252,12 @@ router.post("/:lessonId/complete", requireAuth, async (req, res) => {
       }
     }
 
-    // Badge: COURSE_FINISHER
     if (progress === 100) {
       const badge = await prisma.badge.findUnique({ where: { code: "COURSE_FINISHER" } });
       if (badge) {
         await prisma.userBadge.create({ data: { userId, badgeId: badge.id } }).catch(() => {});
         badgeAwarded = badgeAwarded ? `${badgeAwarded},COURSE_FINISHER` : "COURSE_FINISHER";
 
-        // Day 16: badge email (non-blocking)
         sendBadgeEmail(
           finalUser.email,
           finalUser.fullName,
@@ -229,7 +267,6 @@ router.post("/:lessonId/complete", requireAuth, async (req, res) => {
       }
     }
 
-    // Strip email from returned user object
     const { email: _email, ...userProgress } = finalUser;
 
     return res.json({ message: "Lesson completed! ✅", lessonId, progress, completed: completedInCourse, totalLessons, pointsAwarded, userProgress, badgeAwarded });
@@ -258,7 +295,7 @@ router.patch("/:lessonId", requireAuth, async (req, res) => {
     const updated = await prisma.lesson.update({
       where: { id: lessonId },
       data: {
-        ...(title   && { title }),
+        ...(title && { title }),
         ...(content && { content }),
         ...(points != null && { points: Number(points) }),
       },

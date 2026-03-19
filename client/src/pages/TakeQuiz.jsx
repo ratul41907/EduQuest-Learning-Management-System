@@ -36,37 +36,12 @@ const TakeQuiz = () => {
     setAnswers({ ...answers, [questionId]: answer });
   };
 
-const handleSubmit = async () => {
-  const unanswered = questions.filter(q => !answers[q.id]);
-  if (unanswered.length > 0) {
-    toast.error(`Please answer all ${questions.length} questions`);
-    return;
-  }
-
-  setSubmitting(true);
-  try {
-    const formattedAnswers = Object.entries(answers).map(([questionId, answer]) => ({
-      questionId,
-      answer,
-    }));
-
-    const res = await quizAPI.attempt(id, formattedAnswers);
-    const attemptId = res.data.id || res.data.attempt?.id;
-    
-    toast.success('✅ Quiz submitted successfully!');
-    
-    // Redirect to results page
-    if (attemptId) {
-      navigate(`/quiz-results/${attemptId}`);
-    } else {
-      navigate(`/courses/${quiz.courseId}`);
+  const handleSubmit = async () => {
+    const unanswered = questions.filter(q => !answers[q.id]);
+    if (unanswered.length > 0) {
+      toast.error(`Please answer all ${questions.length} questions`);
+      return;
     }
-  } catch (error) {
-    toast.error('Failed to submit quiz');
-  } finally {
-    setSubmitting(false);
-  }
-};
 
     setSubmitting(true);
     try {
@@ -75,9 +50,16 @@ const handleSubmit = async () => {
         answer,
       }));
 
-      await quizAPI.attempt(id, formattedAnswers);
+      const res = await quizAPI.attempt(id, formattedAnswers);
+      const attemptId = res.data.id || res.data.attempt?.id;
+      
       toast.success('✅ Quiz submitted successfully!');
-      navigate(`/courses/${quiz.courseId}`);
+      
+      if (attemptId) {
+        navigate(`/quiz-results/${attemptId}`);
+      } else {
+        navigate(`/courses/${quiz.courseId}`);
+      }
     } catch (error) {
       toast.error('Failed to submit quiz');
     } finally {
@@ -116,7 +98,6 @@ const handleSubmit = async () => {
       </nav>
 
       <div style={styles.content}>
-        {/* Quiz Header */}
         <div style={styles.header}>
           <h1 style={styles.title}>{quiz.title}</h1>
           <div style={styles.quizMeta}>
@@ -129,7 +110,6 @@ const handleSubmit = async () => {
           </div>
         </div>
 
-        {/* Question Card */}
         <div style={styles.questionCard}>
           <h2 style={styles.questionTitle}>
             <span style={styles.questionNumber}>Q{currentQuestion + 1}</span>
@@ -158,7 +138,6 @@ const handleSubmit = async () => {
           </div>
         </div>
 
-        {/* Navigation */}
         <div style={styles.navigation}>
           <button
             onClick={() => setCurrentQuestion(Math.max(0, currentQuestion - 1))}

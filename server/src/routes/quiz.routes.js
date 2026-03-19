@@ -11,69 +11,75 @@ function calcLevel(totalPoints) {
 }
 
 // =========================================
-// GET /api/quizzes/my/attempts
+// POST /api/quizzes - Create new quiz (for frontend compatibility)
 // =========================================
-router.get("/my/attempts", requireAuth, async (req, res) => {
+router.post("/", requireAuth, async (req, res) => {
   try {
-    const attempts = await prisma.quizAttempt.findMany({
-      where: { userId: req.user.sub },
-      select: { id: true, quizId: true, score: true, percent: true, passed: true, earnedPoints: true, createdAt: true, quiz: { select: { id: true, title: true, courseId: true, passScore: true } } },
-      orderBy: { createdAt: "desc" },
-    });
-    return res.json(attempts);
-  } catch (err) {
-    return res.status(500).json({ message: "Error fetching my attempts", error: err.message });
-  }
-});
+    if (req.user.role !== "INSTRUCTOR") {
+      return res.status(403).json({ message: "Instructor only" });
+    }
 
-// =========================================
-// GET /api/quizzes/:id/my-attempts
-// IMPORTANT: above /:id
-// =========================================
-router.get("/:id/my-attempts", requireAuth, async (req, res) => {
-  try {
-    const { id: quizId } = req.params;
-    const userId = req.user.sub;
+    const { courseId, title, description, passingScore, timeLimit, questions } = req.body;
 
-    const quiz = await prisma.quiz.findUnique({ where: { id: quizId }, select: { id: true, title: true, passScore: true, courseId: true } });
-    if (!quiz) return res.status(404).json({ message: "Quiz not found" });
+    if (!courseId || !title) {
+      return res.status(400).json({ message: "Missing required fields: courseId, title" });
+    }
 
-    const attempts = await prisma.quizAttempt.findMany({
-      where: { userId, quizId },
-      select: { id: true, score: true, percent: true, passed: true, earnedPoints: true, createdAt: true },
-      orderBy: { createdAt: "desc" },
+    // Verify course ownership
+    const course = await prisma.course.findUnique({
+      where: { id: courseId },
     });
 
-    if (attempts.length === 0) return res.json({ quizId, title: quiz.title, passScore: quiz.passScore, totalAttempts: 0, bestPercent: 0, bestScore: 0, hasPassed: false, attempts: [] });
+    if (!course) {
+      return res.status(404).json({ message: "Course not found" });
+    }
 
-    const bestAttempt = attempts.reduce((best, a) => a.percent > best.percent ? a : best);
+    if (course.instructorId !== req.user.sub) {
+      return res.status(403).json({ message: "You do not own this course" });
+    }
 
-    return res.json({ quizId, title: quiz.title, passScore: quiz.passScore, totalAttempts: attempts.length, bestPercent: bestAttempt.percent, bestScore: bestAttempt.score, hasPassed: attempts.some((a) => a.passed), attempts });
-  } catch (err) {
-    return res.status(500).json({ message: "Error fetching quiz attempts", error: err.message });
-  }
-});
-
-// =========================================
-// GET /api/quizzes/:id/attempts
-// IMPORTANT: above /:id
-// =========================================
-router.get("/:id/attempts", requireAuth, async (req, res) => {
-  const { id } = req.params;
-  try {
-    if (req.user.role !== "INSTRUCTOR" && req.user.role !== "ADMIN") return res.status(403).json({ message: "Access denied" });
-
-    const quiz = await prisma.quiz.findUnique({ where: { id } });
-    if (!quiz) return res.status(404).json({ message: "Quiz not found" });
-
-    const attempts = await prisma.quizAttempt.findMany({
-      where: { quizId: id },
-      select: { id: true, quizId: true, score: true, percent: true, passed: true, earnedPoints: true, createdAt: true, user: { select: { id: true, fullName: true, email: true, role: true } } },
-      orderBy: { createdAt: "desc" },
+    // Create quiz
+    const quiz = await prisma.quiz.create({
+      data: {
+        courseId,
+        title,
+        description: description || null,
+        passScore: passingScore ? Number(passingScore) : 70,
+        timeLimit: timeLimit ? Number(timeLimit) : 30,
+      },
     });
-    return res.json(attempts);
-  } catch (err) {
-    return res.status(500).json({ message: "Error fetching quiz attempts", error: err.message });
+
+    // Create questions if provided
+    if (questions && Array.isArray(questions) && questions.length > 0) {
+      await prisma.question.createMany({
+        data: questions.map((q, index) => ({
+          quizId: quiz.id,
+          questionText: q.questionText,
+          optionA: q.optionA,
+          optionB: q.optionB,
+          optionC: q.optionC,
+          optionD: q.optionD,
+          correct: q.correctAnswer,
+          points: 10,
+          orderNo: index + 1,
+        })),
+      });
+    }
+
+    // Fetch quiz with questions
+    const quizWithQuestions = await prisma.quiz.findUnique({
+      where: { id: quiz.id },
+      include: { questions: true },
+    });
+
+    return res.status(201).json({ message: "Quiz created successfully", quiz: quizWithQuestions });
+} catch (error) {
+    console.error('========== QUIZ CREATION ERROR ==========');
+    console.error('Full error:', error);
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
+    console.error('========================================');
+    return res.status(500).json({ message: "Failed to create quiz", error: error.message });
   }
 });
 
@@ -83,7 +89,7 @@ router.get("/:id/attempts", requireAuth, async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const quizzes = await prisma.quiz.findMany({
-      select: { id: true, title: true, timeLimit: true, passScore: true, courseId: true, createdAt: true, updatedAt: true },
+      select: { id: true, title: true, description: true, timeLimit: true, passScore: true, courseId: true, createdAt: true, updatedAt: true },
       orderBy: { createdAt: "desc" },
     });
     return res.json(quizzes);
@@ -99,7 +105,10 @@ router.get("/course/:courseId", async (req, res) => {
   try {
     const quizzes = await prisma.quiz.findMany({
       where: { courseId: req.params.courseId },
-      select: { id: true, title: true, timeLimit: true, passScore: true, courseId: true, createdAt: true, updatedAt: true },
+      include: {
+        questions: true,
+        _count: { select: { questions: true } },
+      },
       orderBy: { createdAt: "desc" },
     });
     return res.json(quizzes);
@@ -109,7 +118,7 @@ router.get("/course/:courseId", async (req, res) => {
 });
 
 // =========================================
-// POST /api/quizzes/:courseId
+// POST /api/quizzes/:courseId (old format - keep for backward compatibility)
 // =========================================
 router.post("/:courseId", requireAuth, validate({ title: "required|min:3|max:200" }), async (req, res) => {
   const { courseId } = req.params;
@@ -140,7 +149,6 @@ router.post("/:courseId", requireAuth, validate({ title: "required|min:3|max:200
 
 // =========================================
 // POST /api/quizzes/:id/attempt
-// Day 16: Enhanced with badge emails
 // =========================================
 router.post("/:id/attempt", requireAuth, async (req, res) => {
   const { id } = req.params;
@@ -154,25 +162,35 @@ router.post("/:id/attempt", requireAuth, async (req, res) => {
     if (!quiz) return res.status(404).json({ message: "Quiz not found" });
     if (!quiz.questions || quiz.questions.length === 0) return res.status(400).json({ message: "Quiz has no questions yet" });
 
-    // Score calculation
-    let score = 0;
-    let totalPoints = 0;
-    quiz.questions.forEach((q, index) => {
-      totalPoints += q.points;
-      const userAnswer = answers[index] ? String(answers[index]).toUpperCase() : null;
-      if (userAnswer && userAnswer === String(q.correct).toUpperCase()) score += q.points;
+    let correctCount = 0;
+    const totalQuestions = quiz.questions.length;
+
+    // Check each answer
+    answers.forEach((answerObj) => {
+      const question = quiz.questions.find(q => q.id === answerObj.questionId);
+      if (question && answerObj.answer === question.correct) {
+        correctCount++;
+      }
     });
 
-    const percent      = totalPoints > 0 ? Math.round((score / totalPoints) * 100) : 0;
-    const passed       = percent >= quiz.passScore;
-    const earnedPoints = score;
-    const userId       = req.user.sub;
+    const percent = Math.round((correctCount / totalQuestions) * 100);
+    const passed = percent >= quiz.passScore;
+    const earnedPoints = passed ? correctCount * 10 : 0;
+    const userId = req.user.sub;
 
     const previousAttemptCount = await prisma.quizAttempt.count({ where: { userId } });
     const isFirstAttempt = previousAttemptCount === 0;
 
     const attempt = await prisma.quizAttempt.create({
-      data: { userId, quizId: id, score, percent, passed, earnedPoints },
+      data: { 
+        userId, 
+        quizId: id, 
+        score: percent, 
+        percent, 
+        passed, 
+        earnedPoints,
+        answers: JSON.stringify(answers),
+      },
       select: { id: true, userId: true, quizId: true, score: true, percent: true, passed: true, earnedPoints: true, createdAt: true },
     });
 
@@ -194,7 +212,6 @@ router.post("/:id/attempt", requireAuth, async (req, res) => {
 
     const badgesAwarded = [];
 
-    // FIRST_QUIZ badge
     if (isFirstAttempt) {
       const badge = await prisma.badge.findUnique({ where: { code: "FIRST_QUIZ" } });
       if (badge) {
@@ -205,7 +222,6 @@ router.post("/:id/attempt", requireAuth, async (req, res) => {
           data: { userId, type: "BADGE_EARNED", title: "Badge Earned: Quiz Starter!", message: "You completed your first quiz. Keep it up!" },
         }).catch(() => {});
 
-        // Day 16: badge email (non-blocking)
         sendBadgeEmail(
           finalUser.email,
           finalUser.fullName,
@@ -215,7 +231,6 @@ router.post("/:id/attempt", requireAuth, async (req, res) => {
       }
     }
 
-    // PERFECT_SCORE badge
     if (percent === 100) {
       const badge = await prisma.badge.findUnique({ where: { code: "PERFECT_SCORE" } });
       if (badge) {
@@ -228,7 +243,6 @@ router.post("/:id/attempt", requireAuth, async (req, res) => {
             data: { userId, type: "BADGE_EARNED", title: "Badge Earned: Perfect Score!", message: `You scored 100% on "${quiz.title}". Incredible!` },
           }).catch(() => {});
 
-          // Day 16: badge email (non-blocking)
           sendBadgeEmail(
             finalUser.email,
             finalUser.fullName,
@@ -239,10 +253,9 @@ router.post("/:id/attempt", requireAuth, async (req, res) => {
       }
     }
 
-    // Strip email from returned user object
     const { email: _email, ...userProgress } = finalUser;
 
-    return res.status(201).json({ attempt, userProgress, badgesAwarded });
+    return res.status(201).json({ attempt, userProgress, badgesAwarded, correctAnswers: correctCount });
   } catch (err) {
     return res.status(500).json({ message: "Error submitting quiz attempt", error: err.message });
   }
@@ -280,7 +293,16 @@ router.patch("/:id", requireAuth, async (req, res) => {
 router.delete("/:id", requireAuth, async (req, res) => {
   try {
     if (req.user.role !== "INSTRUCTOR") return res.status(403).json({ message: "Access denied" });
+    
+    // Delete all questions first
+    await prisma.question.deleteMany({ where: { quizId: req.params.id } });
+    
+    // Delete quiz attempts
+    await prisma.quizAttempt.deleteMany({ where: { quizId: req.params.id } });
+    
+    // Delete quiz
     await prisma.quiz.delete({ where: { id: req.params.id } });
+    
     return res.json({ message: "Quiz deleted successfully" });
   } catch (err) {
     return res.status(500).json({ message: "Error deleting quiz", error: err.message });

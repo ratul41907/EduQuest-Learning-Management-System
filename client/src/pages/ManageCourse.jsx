@@ -21,15 +21,16 @@ const ManageCourse = () => {
   const fetchCourseData = async () => {
     try {
       const [courseRes, lessonsRes, quizzesRes] = await Promise.all([
-        courseAPI.getById(id),
-        lessonAPI.getByCourse(id),
-        quizAPI.getByCourse(id),
+        courseAPI.getById(id).catch(() => ({ data: null })),
+        lessonAPI.getByCourse(id).catch(() => ({ data: [] })),
+        quizAPI.getByCourse(id).catch(() => ({ data: [] })),
       ]);
 
       setCourse(courseRes.data);
-      setLessons(lessonsRes.data || []);
-      setQuizzes(quizzesRes.data || []);
+      setLessons(Array.isArray(lessonsRes.data) ? lessonsRes.data : lessonsRes.data?.lessons || []);
+      setQuizzes(Array.isArray(quizzesRes.data) ? quizzesRes.data : quizzesRes.data?.quizzes || []);
     } catch (error) {
+      console.error('Error fetching course data:', error);
       toast.error('Failed to load course');
       navigate('/dashboard');
     } finally {
@@ -70,6 +71,17 @@ const ManageCourse = () => {
     );
   }
 
+  if (!course) {
+    return (
+      <div style={styles.loading}>
+        <h2 style={{ color: '#ccd6f6' }}>Course not found</h2>
+        <button onClick={() => navigate('/dashboard')} style={styles.backBtn}>
+          ← Back to Dashboard
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div style={styles.container}>
       <nav style={styles.navbar}>
@@ -89,8 +101,8 @@ const ManageCourse = () => {
 
         <div style={styles.header}>
           <div>
-            <h1 style={styles.title}>{course?.title}</h1>
-            <p style={styles.subtitle}>{course?.description}</p>
+            <h1 style={styles.title}>{course.title}</h1>
+            <p style={styles.subtitle}>{course.description}</p>
           </div>
           <div style={styles.actions}>
             <button onClick={() => navigate(`/instructor/course/${id}/add-lesson`)} style={styles.addBtn}>
@@ -114,7 +126,7 @@ const ManageCourse = () => {
         {activeTab === 'lessons' && (
           <div style={styles.section}>
             {lessons.length === 0 ? (
-              <p style={{ color: '#8892b0', textAlign: 'center', padding: '2rem' }}>No lessons yet</p>
+              <p style={{ color: '#8892b0', textAlign: 'center', padding: '2rem' }}>No lessons yet. Click "➕ Add Lesson" to create one!</p>
             ) : (
               <div style={styles.list}>
                 {lessons.map((lesson, index) => (
@@ -127,9 +139,6 @@ const ManageCourse = () => {
                     </div>
                     <p style={styles.cardDesc}>{lesson.content?.substring(0, 150)}...</p>
                     <div style={styles.cardActions}>
-                      <button onClick={() => navigate(`/instructor/lesson/${lesson.id}/edit`)} style={styles.editBtn}>
-                        ✏️ Edit
-                      </button>
                       <button onClick={() => handleDeleteLesson(lesson.id)} style={styles.deleteBtn}>
                         🗑️ Delete
                       </button>
@@ -144,10 +153,10 @@ const ManageCourse = () => {
         {activeTab === 'quizzes' && (
           <div style={styles.section}>
             {quizzes.length === 0 ? (
-              <p style={{ color: '#8892b0', textAlign: 'center', padding: '2rem' }}>No quizzes yet</p>
+              <p style={{ color: '#8892b0', textAlign: 'center', padding: '2rem' }}>No quizzes yet. Click "➕ Add Quiz" to create one!</p>
             ) : (
               <div style={styles.list}>
-                {quizzes.map((quiz, index) => (
+                {quizzes.map((quiz) => (
                   <div key={quiz.id} style={styles.card}>
                     <div style={styles.cardHeader}>
                       <h3 style={styles.cardTitle}>
@@ -155,15 +164,12 @@ const ManageCourse = () => {
                         {quiz.title}
                       </h3>
                     </div>
-                    <p style={styles.cardDesc}>{quiz.description}</p>
+                    <p style={styles.cardDesc}>{quiz.description || 'No description'}</p>
                     <div style={styles.quizMeta}>
                       <span>Passing: {quiz.passingScore}%</span>
-                      <span>Questions: {quiz._count?.questions || 0}</span>
+                      <span>Questions: {quiz.questions?.length || 0}</span>
                     </div>
                     <div style={styles.cardActions}>
-                      <button onClick={() => navigate(`/instructor/quiz/${quiz.id}/edit`)} style={styles.editBtn}>
-                        ✏️ Edit
-                      </button>
                       <button onClick={() => handleDeleteQuiz(quiz.id)} style={styles.deleteBtn}>
                         🗑️ Delete
                       </button>
@@ -181,7 +187,7 @@ const ManageCourse = () => {
 
 const styles = {
   container: { minHeight: '100vh', background: '#0a0a0f' },
-  loading: { minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#0a0a0f' },
+  loading: { minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#0a0a0f', gap: '1rem' },
   navbar: { background: '#1a1a2e', borderBottom: '1px solid rgba(255,255,255,0.1)', padding: '1rem 0' },
   navContent: { maxWidth: '1400px', margin: '0 auto', padding: '0 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
   logo: { fontSize: '1.5rem', fontWeight: 'bold', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', margin: 0 },
@@ -193,7 +199,7 @@ const styles = {
   header: { background: '#1a1a2e', borderRadius: '12px', padding: '2rem', marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' },
   title: { fontSize: '2rem', color: '#ccd6f6', margin: '0 0 0.5rem 0' },
   subtitle: { fontSize: '1rem', color: '#8892b0', margin: 0 },
-  actions: { display: 'flex', gap: '1rem' },
+  actions: { display: 'flex', gap: '1rem', flexWrap: 'wrap' },
   addBtn: { padding: '0.75rem 1.5rem', background: '#667eea', border: 'none', color: 'white', cursor: 'pointer', borderRadius: '8px', fontSize: '0.9rem', fontWeight: '600' },
   tabs: { display: 'flex', gap: '1rem', marginBottom: '2rem', borderBottom: '1px solid rgba(255,255,255,0.1)' },
   tab: { padding: '1rem 1.5rem', background: 'transparent', border: 'none', color: '#8892b0', cursor: 'pointer', fontSize: '1rem', borderBottom: '2px solid transparent' },
@@ -208,7 +214,6 @@ const styles = {
   cardDesc: { fontSize: '0.95rem', color: '#8892b0', margin: '0 0 1rem 0', lineHeight: '1.5' },
   quizMeta: { fontSize: '0.875rem', color: '#8892b0', marginBottom: '1rem', display: 'flex', gap: '1.5rem' },
   cardActions: { display: 'flex', gap: '1rem' },
-  editBtn: { padding: '0.75rem 1.5rem', background: 'transparent', border: '1px solid #667eea', color: '#667eea', cursor: 'pointer', borderRadius: '8px', fontSize: '0.9rem' },
   deleteBtn: { padding: '0.75rem 1.5rem', background: 'transparent', border: '1px solid #ef4444', color: '#ef4444', cursor: 'pointer', borderRadius: '8px', fontSize: '0.9rem' },
 };
 

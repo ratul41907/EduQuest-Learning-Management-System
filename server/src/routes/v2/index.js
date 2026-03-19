@@ -1,10 +1,8 @@
 // Path: E:\EduQuest\server\src\routes\v2\index.js
-
 const express = require("express");
 const authRoutes = require("./auth.routes");
 
-// Import other v2 routes as they're created
-// For now, we'll use v1 routes for endpoints not yet upgraded
+// Import v1 routes for endpoints not yet upgraded
 const userRoutes         = require("../user.routes");
 const courseRoutes       = require("../course.routes");
 const lessonRoutes       = require("../lesson.routes");
