@@ -63,8 +63,12 @@ export const courseAPI = {
 // ==================== LESSONS ====================
 export const lessonAPI = {
   getByCourse: (courseId) => api.get(`/lessons/course/${courseId}`),
+  getById: (id) => api.get(`/lessons/${id}`),
   create: (data) => api.post('/lessons', data),
+  update: (id, data) => api.patch(`/lessons/${id}`, data),
+  delete: (id) => api.delete(`/lessons/${id}`),
   markComplete: (id) => api.post(`/lessons/${id}/complete`),
+  getProgress: (courseId) => api.get(`/lessons/progress/${courseId}`),
 };
 
 // ==================== QUIZZES ====================
@@ -73,6 +77,8 @@ export const quizAPI = {
   getById: (id) => api.get(`/quizzes/${id}`),
   create: (data) => api.post('/quizzes', data),
   attempt: (id, answers) => api.post(`/quizzes/${id}/attempt`, { answers }),
+  getMyAttempts: (quizId) => api.get(`/quizzes/${quizId}/my-attempts`),
+  getAttemptById: (attemptId) => api.get(`/quiz-attempts/${attemptId}`),
 };
 
 // ==================== LEADERBOARD ====================
@@ -80,7 +86,19 @@ export const leaderboardAPI = {
   getAllTime: (limit = 10) => api.get('/leaderboard/all-time', { params: { limit } }),
   getWeekly: (limit = 10) => api.get('/leaderboard/weekly', { params: { limit } }),
 };
+// ==================== CERTIFICATES ====================
+export const certificateAPI = {
+  getMyCertificates: () => api.get('/certificates/my'),
+  getById: (id) => api.get(`/certificates/${id}`),
+  download: (id) => api.get(`/certificates/${id}/download`, { responseType: 'blob' }),
+};
 
+// ==================== NOTIFICATIONS ====================
+export const notificationAPI = {
+  getMyNotifications: () => api.get('/notifications/my'),
+  markAsRead: (id) => api.patch(`/notifications/${id}/read`),
+  markAllAsRead: () => api.patch('/notifications/read-all'),
+};
 // ==================== BADGES ====================
 export const badgeAPI = {
   getAll: () => api.get('/badges'),
