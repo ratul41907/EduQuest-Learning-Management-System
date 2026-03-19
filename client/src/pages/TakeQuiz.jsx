@@ -36,12 +36,37 @@ const TakeQuiz = () => {
     setAnswers({ ...answers, [questionId]: answer });
   };
 
-  const handleSubmit = async () => {
-    const unanswered = questions.filter(q => !answers[q.id]);
-    if (unanswered.length > 0) {
-      toast.error(`Please answer all ${questions.length} questions`);
-      return;
+const handleSubmit = async () => {
+  const unanswered = questions.filter(q => !answers[q.id]);
+  if (unanswered.length > 0) {
+    toast.error(`Please answer all ${questions.length} questions`);
+    return;
+  }
+
+  setSubmitting(true);
+  try {
+    const formattedAnswers = Object.entries(answers).map(([questionId, answer]) => ({
+      questionId,
+      answer,
+    }));
+
+    const res = await quizAPI.attempt(id, formattedAnswers);
+    const attemptId = res.data.id || res.data.attempt?.id;
+    
+    toast.success('✅ Quiz submitted successfully!');
+    
+    // Redirect to results page
+    if (attemptId) {
+      navigate(`/quiz-results/${attemptId}`);
+    } else {
+      navigate(`/courses/${quiz.courseId}`);
     }
+  } catch (error) {
+    toast.error('Failed to submit quiz');
+  } finally {
+    setSubmitting(false);
+  }
+};
 
     setSubmitting(true);
     try {

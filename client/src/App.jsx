@@ -9,6 +9,8 @@ import CourseDetails from './pages/CourseDetails';
 import Leaderboard from './pages/Leaderboard';
 import Badges from './pages/Badges';
 import Profile from './pages/Profile';
+import QuizResults from './pages/QuizResults';
+import Certificates from './pages/Certificates';
 import './App.css';
 
 function App() {
@@ -43,7 +45,8 @@ function App() {
       <Route path="/leaderboard" element={user ? <Leaderboard /> : <Navigate to="/login" />} />
       <Route path="/badges" element={user ? <Badges /> : <Navigate to="/login" />} />
       <Route path="/profile" element={user ? <Profile /> : <Navigate to="/login" />} />
-      
+      <Route path="/quiz-results/:attemptId" element={user ? <QuizResults /> : <Navigate to="/login" />} />
+      <Route path="/certificates" element={user ? <Certificates /> : <Navigate to="/login" />} />
       <Route path="/" element={<Navigate to={user ? "/dashboard" : "/login"} />} />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
