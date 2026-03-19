@@ -13,6 +13,8 @@ import QuizResults from './pages/QuizResults';
 import Certificates from './pages/Certificates';
 import CreateCourse from './pages/CreateCourse';
 import ManageCourse from './pages/ManageCourse';
+import AddLesson from './pages/AddLesson';
+import AddQuiz from './pages/AddQuiz';
 import './App.css';
 
 function App() {
@@ -52,6 +54,8 @@ function App() {
       <Route path="/" element={<Navigate to={user ? "/dashboard" : "/login"} />} />
       <Route path="/instructor/create-course" element={user?.role === 'INSTRUCTOR' ? <CreateCourse /> : <Navigate to="/login" />} />
       <Route path="/instructor/course/:id" element={user?.role === 'INSTRUCTOR' ? <ManageCourse /> : <Navigate to="/login" />} />
+      <Route path="/instructor/course/:id/add-lesson" element={user?.role === 'INSTRUCTOR' ? <AddLesson /> : <Navigate to="/login" />} />
+      <Route path="/instructor/course/:id/add-quiz" element={user?.role === 'INSTRUCTOR' ? <AddQuiz /> : <Navigate to="/login" />} />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );
