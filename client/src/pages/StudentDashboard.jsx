@@ -17,7 +17,6 @@ const StudentDashboard = () => {
 
   const fetchData = async () => {
     try {
-      // Try to fetch data, but don't crash if it fails
       const promises = [];
       
       promises.push(
@@ -49,9 +48,10 @@ const StudentDashboard = () => {
           <h1 style={styles.logo}>🎓 EduQuest</h1>
           <div style={styles.navLinks}>
             <button onClick={() => navigate('/dashboard')} style={styles.navLinkActive}>Dashboard</button>
-            <button onClick={() => navigate('/courses')} style={styles.navLink}>Browse Courses</button>
+            <button onClick={() => navigate('/courses')} style={styles.navLink}>Courses</button>
             <button onClick={() => navigate('/leaderboard')} style={styles.navLink}>Leaderboard</button>
             <button onClick={() => navigate('/badges')} style={styles.navLink}>Badges</button>
+            <button onClick={() => navigate('/certificates')} style={styles.navLink}>Certificates</button>
             <button onClick={logout} style={styles.logoutBtn}>Logout</button>
           </div>
         </div>
@@ -61,7 +61,6 @@ const StudentDashboard = () => {
         <h1 style={styles.title}>Welcome back, {user?.fullName?.split(' ')[0]} 👋</h1>
         <p style={styles.subtitle}>Here's your learning dashboard</p>
 
-        {/* Stats */}
         <div style={styles.statsGrid}>
           <div style={styles.statCard}>
             <div style={styles.statIcon}>👤</div>
@@ -93,7 +92,6 @@ const StudentDashboard = () => {
           </div>
         </div>
 
-        {/* My Courses */}
         <div style={styles.section}>
           <h2 style={styles.sectionTitle}>📚 My Courses ({myCourses.length})</h2>
           {loading ? (
@@ -116,27 +114,33 @@ const StudentDashboard = () => {
           )}
         </div>
 
-        {/* Quick Actions */}
         <div style={styles.actionsGrid}>
           <button onClick={() => navigate('/courses')} style={styles.actionCard}>
-            <span style={{ fontSize: '2rem' }}>📚</span>
+            <span style={styles.actionIcon}>📚</span>
             <div>
               <h3 style={styles.actionTitle}>Browse Courses</h3>
               <p style={styles.actionDesc}>Explore new courses</p>
             </div>
           </button>
           <button onClick={() => navigate('/leaderboard')} style={styles.actionCard}>
-            <span style={{ fontSize: '2rem' }}>🏆</span>
+            <span style={styles.actionIcon}>🏆</span>
             <div>
               <h3 style={styles.actionTitle}>Leaderboard</h3>
               <p style={styles.actionDesc}>Check your ranking</p>
             </div>
           </button>
           <button onClick={() => navigate('/badges')} style={styles.actionCard}>
-            <span style={{ fontSize: '2rem' }}>🎖️</span>
+            <span style={styles.actionIcon}>🎖️</span>
             <div>
               <h3 style={styles.actionTitle}>My Badges</h3>
               <p style={styles.actionDesc}>View achievements</p>
+            </div>
+          </button>
+          <button onClick={() => navigate('/certificates')} style={styles.actionCard}>
+            <span style={styles.actionIcon}>📜</span>
+            <div>
+              <h3 style={styles.actionTitle}>Certificates</h3>
+              <p style={styles.actionDesc}>View earned certificates</p>
             </div>
           </button>
         </div>
@@ -172,8 +176,9 @@ const styles = {
   progressFill: { height: '100%', background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)', transition: 'width 0.3s' },
   progressText: { fontSize: '0.875rem', color: '#8892b0', margin: 0 },
   actionsGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' },
-  actionCard: { background: '#1a1a2e', borderRadius: '12px', padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem', cursor: 'pointer', border: '1px solid rgba(255,255,255,0.05)', textAlign: 'left' },
-  actionTitle: { fontSize: '1.125rem', color: '#ccd6f6', margin: '0 0 0.25rem 0' },
+  actionCard: { background: '#1a1a2e', borderRadius: '12px', padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem', cursor: 'pointer', border: '1px solid rgba(255,255,255,0.05)', textAlign: 'left', transition: 'all 0.2s' },
+  actionIcon: { fontSize: '2.5rem' },
+  actionTitle: { fontSize: '1.125rem', color: '#ccd6f6', margin: '0 0 0.25rem 0', fontWeight: '600' },
   actionDesc: { fontSize: '0.875rem', color: '#8892b0', margin: 0 },
 };
 
